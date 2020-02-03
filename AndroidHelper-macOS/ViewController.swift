@@ -1,8 +1,20 @@
 import Cocoa
 
-let buildProjectCommand = "./gradlew clean cleanBuildCache :app:assembleDebug"
-let listDevicesCommand = "~/Library/Android/sdk/platform-tools/adb devices"
-let listEmulatorsCommand = "~/Library/Android/sdk/emulator/emulator -list-avds"
+let gradlePath = "./gradlew"
+let adbPath = "~/Library/Android/sdk/platform-tools/adb"
+let emulatorPath = "~/Library/Android/sdk/emulator/emulator"
+
+let gradleFlagListAllTasks = "tasks --all"
+let gradleFlagCleanCache = "clean cleanBuildCache"
+
+let adbFlagListDevices = "devices"
+
+let emulatorFlagListEmulators = "-list-avds"
+
+let listDevicesCommand = "\(adbPath) \(adbFlagListDevices)"
+let listEmulatorsCommand = "\(emulatorPath) \(emulatorFlagListEmulators)"
+let listGradleTasksCommand = "\(gradlePath) \(gradleFlagListAllTasks)"
+let buildProjectCommand = "\(gradlePath) \(gradleFlagCleanCache) :app:assembleDebug"
 
 class ViewController: NSViewController {
     
