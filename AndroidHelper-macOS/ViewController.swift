@@ -18,8 +18,7 @@ class ViewController: NSViewController {
     }
     
     override func viewDidLoad() {
-        log("Current directory: \(FileManager.default.currentDirectoryPath)")
-        commandTextField.stringValue = "./gradlew clean cleanBuildCache :app:assembleDebug"
+        commandTextField.stringValue = buildProjectCommand
     }
     
     @IBAction func runCustomCommandClicked(_ sender: NSButton) {
