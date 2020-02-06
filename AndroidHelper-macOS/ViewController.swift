@@ -2,8 +2,9 @@ import Cocoa
 
 class ViewController: NSViewController {
     
-    @IBOutlet weak var logTextField: NSTextField!
     @IBOutlet weak var projectDirectoryTextField: NSTextField!
+    @IBOutlet weak var logScrollView: NSScrollView!
+    @IBOutlet var logTextView: NSTextView!
     
     private var projectDirectory: String = "/Users/timojaask/projects/work/pluto-tv-android"
     
@@ -12,7 +13,7 @@ class ViewController: NSViewController {
         projectDirectoryTextField.stringValue = projectDirectory
     }
     
-    @IBAction func buildClicked(_ sender: Any) {
+    @IBAction func assembleMobileClicked(_ sender: Any) {
         let assembleCommand = Command.assemble(configuration: .debug, cleanCache: true, platform: .mobile)
         Shell.runAsync(command: assembleCommand, directory: projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
@@ -42,7 +43,7 @@ class ViewController: NSViewController {
     }
     
     @IBAction func clearLogClicked(_ sender: NSButton) {
-        logTextField.stringValue = ""
+        logTextView.string = ""
     }
     
     private func progressHandler(_ progress: Shell.Progress) {
@@ -60,7 +61,8 @@ class ViewController: NSViewController {
     }
     
     private func log(_ text: String) {
-        logTextField.stringValue.append("\(text)\n")
+        logTextView.textStorage?.mutableString.append(text)
+        logTextView.scrollToEndOfDocument(self)
         print(text)
     }
 }
