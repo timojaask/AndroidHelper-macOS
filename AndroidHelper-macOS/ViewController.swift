@@ -12,14 +12,9 @@ class ViewController: NSViewController {
         projectDirectoryTextField.stringValue = projectDirectory
     }
     
-    func log(_ text: String) {
-        logTextField.stringValue.append("\(text)\n")
-        print(text)
-    }
-    
     @IBAction func buildClicked(_ sender: Any) {
         let assembleCommand = Command.assemble(configuration: .debug, cleanCache: true, platform: .mobile)
-        runAsync(command: assembleCommand, directory: projectDirectory) { [weak self] progress in
+        Shell.runAsync(command: assembleCommand, directory: projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
         }
     }
@@ -28,7 +23,7 @@ class ViewController: NSViewController {
         let emulatorPath = "~/Library/Android/sdk/emulator/emulator"
         let emulatorFlagListEmulators = "-list-avds"
         let rawCommand = "\(emulatorPath) \(emulatorFlagListEmulators)"
-        debug_runRowCommand(rawCommand: rawCommand, directory: projectDirectory) { [weak self] progress in
+        Shell.debug_runRowCommand(rawCommand: rawCommand, directory: projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
         }
     }
@@ -37,7 +32,7 @@ class ViewController: NSViewController {
         let adbPath = "~/Library/Android/sdk/platform-tools/adb"
         let adbFlagListDevices = "devices"
         let rawCommand = "\(adbPath) \(adbFlagListDevices)"
-        debug_runRowCommand(rawCommand: rawCommand, directory: projectDirectory) { [weak self] progress in
+        Shell.debug_runRowCommand(rawCommand: rawCommand, directory: projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
         }
     }
@@ -50,7 +45,7 @@ class ViewController: NSViewController {
         logTextField.stringValue = ""
     }
     
-    private func progressHandler(_ progress: ShellCommandProgress) {
+    private func progressHandler(_ progress: Shell.Progress) {
         switch progress {
         case .output(let string):
             log(string)
@@ -62,5 +57,10 @@ class ViewController: NSViewController {
                 log("Terminated with success")
             }
         }
+    }
+    
+    private func log(_ text: String) {
+        logTextField.stringValue.append("\(text)\n")
+        print(text)
     }
 }
