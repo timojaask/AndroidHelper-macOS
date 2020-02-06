@@ -1,25 +1,8 @@
 import Cocoa
 
-let gradlePath = "./gradlew"
-let adbPath = "~/Library/Android/sdk/platform-tools/adb"
-let emulatorPath = "~/Library/Android/sdk/emulator/emulator"
-
-let gradleFlagListAllTasks = "tasks --all"
-let gradleFlagCleanCache = "clean cleanBuildCache"
-
-let adbFlagListDevices = "devices"
-
-let emulatorFlagListEmulators = "-list-avds"
-
-let listDevicesCommand = "\(adbPath) \(adbFlagListDevices)"
-let listEmulatorsCommand = "\(emulatorPath) \(emulatorFlagListEmulators)"
-let listGradleTasksCommand = "\(gradlePath) \(gradleFlagListAllTasks)"
-let buildProjectCommand = "\(gradlePath) \(gradleFlagCleanCache) :app:assembleDebug"
-
 class ViewController: NSViewController {
     
     @IBOutlet weak var logTextField: NSTextField!
-    @IBOutlet weak var commandTextField: NSTextField!
     @IBOutlet weak var projectDirectoryTextField: NSTextField!
     
     private var projectDirectory: String = "/"
@@ -29,25 +12,22 @@ class ViewController: NSViewController {
         print(text)
     }
     
-    override func viewDidLoad() {
-        commandTextField.stringValue = buildProjectCommand
-    }
-    
-    @IBAction func runCustomCommandClicked(_ sender: NSButton) {
-        let command = commandTextField.stringValue
-        runAsync(command: command)
-    }
-    
     @IBAction func buildClicked(_ sender: Any) {
-        runAsync(command: buildProjectCommand)
+        runAsync(command: Command.assemble(configuration: .debug, cleanCache: true, platform: .mobile))
     }
     
     @IBAction func listEmulatorsClicked(_ sender: Any) {
-        runAsync(command: listEmulatorsCommand)
+        let emulatorPath = "~/Library/Android/sdk/emulator/emulator"
+        let emulatorFlagListEmulators = "-list-avds"
+        let process = createProcess(command: "\(emulatorPath) \(emulatorFlagListEmulators)")
+        runProcessAsync(process: process)
     }
     
     @IBAction func listActiveDevicesClicked(_ sender: Any) {
-        runAsync(command: listDevicesCommand)
+        let adbPath = "~/Library/Android/sdk/platform-tools/adb"
+        let adbFlagListDevices = "devices"
+        let process = createProcess(command: "\(adbPath) \(adbFlagListDevices)")
+        runProcessAsync(process: process)
     }
     
     @IBAction func setProjectDirectoryClicked(_ sender: Any) {
@@ -58,8 +38,8 @@ class ViewController: NSViewController {
         logTextField.stringValue = ""
     }
     
-    func runAsync(command: String) {
-        let process = createProcess(command: command)
+    func runAsync(command: Command) {
+        let process = createProcess(command: command.toString())
         runProcessAsync(process: process)
     }
     
@@ -82,9 +62,9 @@ class ViewController: NSViewController {
     
     func runProcessAsync(process: Process) {
         let queue = DispatchQueue(label: "com.timojaask.AndroidHelper-macOS",
-            qos: .default,
-            attributes: [],
-            autoreleaseFrequency: .inherit)
+                                  qos: .default,
+                                  attributes: [],
+                                  autoreleaseFrequency: .inherit)
         
         let outputPipe = Pipe()
         process.standardOutput = outputPipe

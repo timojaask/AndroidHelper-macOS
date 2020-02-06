@@ -11,7 +11,25 @@
 		2FB7FF0423E7BD200075530A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0323E7BD200075530A /* ViewController.swift */; };
 		2FB7FF0623E7BD210075530A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0523E7BD210075530A /* Assets.xcassets */; };
 		2FB7FF0923E7BD210075530A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0723E7BD210075530A /* Main.storyboard */; };
+		2FFD0F9723EBB4CF0059BB4B /* ShellCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0F9623EBB4CF0059BB4B /* ShellCommands.swift */; };
+		2FFD0F9F23EBB5730059BB4B /* AssembleCommand_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0F9E23EBB5730059BB4B /* AssembleCommand_Tests.swift */; };
+		2FFD0FA723EBB98C0059BB4B /* InstallCommand_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0FA623EBB98C0059BB4B /* InstallCommand_Tests.swift */; };
+		2FFD0FA923EBBBE90059BB4B /* Target_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0FA823EBBBE90059BB4B /* Target_Tests.swift */; };
+		2FFD0FAB23EBBF9A0059BB4B /* StartCommand_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0FAA23EBBF9A0059BB4B /* StartCommand_Tests.swift */; };
+		2FFD0FAF23EBC1980059BB4B /* StopCommand_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0FAE23EBC1980059BB4B /* StopCommand_Tests.swift */; };
+		2FFD0FB123EBC1F50059BB4B /* AdbCommand_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0FB023EBC1F50059BB4B /* AdbCommand_Tests.swift */; };
+		2FFD0FB323EBC4170059BB4B /* Array_SafeIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0FB223EBC4170059BB4B /* Array_SafeIndex.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2FFD0FA123EBB5730059BB4B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2FB7FEF623E7BD200075530A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2FB7FEFD23E7BD200075530A;
+			remoteInfo = "AndroidHelper-macOS";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		2FB7FEFE23E7BD200075530A /* AndroidHelper-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AndroidHelper-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -21,10 +39,27 @@
 		2FB7FF0823E7BD210075530A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		2FB7FF0A23E7BD210075530A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2FB7FF0B23E7BD210075530A /* AndroidHelper_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AndroidHelper_macOS.entitlements; sourceTree = "<group>"; };
+		2FFD0F9623EBB4CF0059BB4B /* ShellCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellCommands.swift; sourceTree = "<group>"; };
+		2FFD0F9C23EBB5730059BB4B /* AndroidHelper-macOS-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "AndroidHelper-macOS-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2FFD0F9E23EBB5730059BB4B /* AssembleCommand_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssembleCommand_Tests.swift; sourceTree = "<group>"; };
+		2FFD0FA023EBB5730059BB4B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2FFD0FA623EBB98C0059BB4B /* InstallCommand_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallCommand_Tests.swift; sourceTree = "<group>"; };
+		2FFD0FA823EBBBE90059BB4B /* Target_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Target_Tests.swift; sourceTree = "<group>"; };
+		2FFD0FAA23EBBF9A0059BB4B /* StartCommand_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartCommand_Tests.swift; sourceTree = "<group>"; };
+		2FFD0FAE23EBC1980059BB4B /* StopCommand_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopCommand_Tests.swift; sourceTree = "<group>"; };
+		2FFD0FB023EBC1F50059BB4B /* AdbCommand_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdbCommand_Tests.swift; sourceTree = "<group>"; };
+		2FFD0FB223EBC4170059BB4B /* Array_SafeIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array_SafeIndex.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		2FB7FEFB23E7BD200075530A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2FFD0F9923EBB5730059BB4B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -38,6 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				2FB7FF0023E7BD200075530A /* AndroidHelper-macOS */,
+				2FFD0F9D23EBB5730059BB4B /* AndroidHelper-macOS-Tests */,
 				2FB7FEFF23E7BD200075530A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -46,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				2FB7FEFE23E7BD200075530A /* AndroidHelper-macOS.app */,
+				2FFD0F9C23EBB5730059BB4B /* AndroidHelper-macOS-Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -55,12 +92,28 @@
 			children = (
 				2FB7FF0123E7BD200075530A /* AppDelegate.swift */,
 				2FB7FF0323E7BD200075530A /* ViewController.swift */,
+				2FFD0F9623EBB4CF0059BB4B /* ShellCommands.swift */,
 				2FB7FF0523E7BD210075530A /* Assets.xcassets */,
 				2FB7FF0723E7BD210075530A /* Main.storyboard */,
 				2FB7FF0A23E7BD210075530A /* Info.plist */,
 				2FB7FF0B23E7BD210075530A /* AndroidHelper_macOS.entitlements */,
+				2FFD0FB223EBC4170059BB4B /* Array_SafeIndex.swift */,
 			);
 			path = "AndroidHelper-macOS";
+			sourceTree = "<group>";
+		};
+		2FFD0F9D23EBB5730059BB4B /* AndroidHelper-macOS-Tests */ = {
+			isa = PBXGroup;
+			children = (
+				2FFD0F9E23EBB5730059BB4B /* AssembleCommand_Tests.swift */,
+				2FFD0FA623EBB98C0059BB4B /* InstallCommand_Tests.swift */,
+				2FFD0FAA23EBBF9A0059BB4B /* StartCommand_Tests.swift */,
+				2FFD0FAE23EBC1980059BB4B /* StopCommand_Tests.swift */,
+				2FFD0FA823EBBBE90059BB4B /* Target_Tests.swift */,
+				2FFD0FB023EBC1F50059BB4B /* AdbCommand_Tests.swift */,
+				2FFD0FA023EBB5730059BB4B /* Info.plist */,
+			);
+			path = "AndroidHelper-macOS-Tests";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -83,6 +136,24 @@
 			productReference = 2FB7FEFE23E7BD200075530A /* AndroidHelper-macOS.app */;
 			productType = "com.apple.product-type.application";
 		};
+		2FFD0F9B23EBB5730059BB4B /* AndroidHelper-macOS-Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2FFD0FA323EBB5730059BB4B /* Build configuration list for PBXNativeTarget "AndroidHelper-macOS-Tests" */;
+			buildPhases = (
+				2FFD0F9823EBB5730059BB4B /* Sources */,
+				2FFD0F9923EBB5730059BB4B /* Frameworks */,
+				2FFD0F9A23EBB5730059BB4B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2FFD0FA223EBB5730059BB4B /* PBXTargetDependency */,
+			);
+			name = "AndroidHelper-macOS-Tests";
+			productName = "AndroidHelper-macOS-Tests";
+			productReference = 2FFD0F9C23EBB5730059BB4B /* AndroidHelper-macOS-Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -95,6 +166,10 @@
 				TargetAttributes = {
 					2FB7FEFD23E7BD200075530A = {
 						CreatedOnToolsVersion = 11.3.1;
+					};
+					2FFD0F9B23EBB5730059BB4B = {
+						CreatedOnToolsVersion = 11.3.1;
+						TestTargetID = 2FB7FEFD23E7BD200075530A;
 					};
 				};
 			};
@@ -112,6 +187,7 @@
 			projectRoot = "";
 			targets = (
 				2FB7FEFD23E7BD200075530A /* AndroidHelper-macOS */,
+				2FFD0F9B23EBB5730059BB4B /* AndroidHelper-macOS-Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -126,6 +202,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2FFD0F9A23EBB5730059BB4B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -134,11 +217,34 @@
 			buildActionMask = 2147483647;
 			files = (
 				2FB7FF0423E7BD200075530A /* ViewController.swift in Sources */,
+				2FFD0FB323EBC4170059BB4B /* Array_SafeIndex.swift in Sources */,
+				2FFD0F9723EBB4CF0059BB4B /* ShellCommands.swift in Sources */,
 				2FB7FF0223E7BD200075530A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2FFD0F9823EBB5730059BB4B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2FFD0F9F23EBB5730059BB4B /* AssembleCommand_Tests.swift in Sources */,
+				2FFD0FB123EBC1F50059BB4B /* AdbCommand_Tests.swift in Sources */,
+				2FFD0FAB23EBBF9A0059BB4B /* StartCommand_Tests.swift in Sources */,
+				2FFD0FA723EBB98C0059BB4B /* InstallCommand_Tests.swift in Sources */,
+				2FFD0FAF23EBC1980059BB4B /* StopCommand_Tests.swift in Sources */,
+				2FFD0FA923EBBBE90059BB4B /* Target_Tests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2FFD0FA223EBB5730059BB4B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2FB7FEFD23E7BD200075530A /* AndroidHelper-macOS */;
+			targetProxy = 2FFD0FA123EBB5730059BB4B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		2FB7FF0723E7BD210075530A /* Main.storyboard */ = {
@@ -305,6 +411,46 @@
 			};
 			name = Release;
 		};
+		2FFD0FA423EBB5730059BB4B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 6W4GZQ5Z99;
+				INFOPLIST_FILE = "AndroidHelper-macOS-Tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.timojaask.AndroidHelper-macOS-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AndroidHelper-macOS.app/Contents/MacOS/AndroidHelper-macOS";
+			};
+			name = Debug;
+		};
+		2FFD0FA523EBB5730059BB4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 6W4GZQ5Z99;
+				INFOPLIST_FILE = "AndroidHelper-macOS-Tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.timojaask.AndroidHelper-macOS-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AndroidHelper-macOS.app/Contents/MacOS/AndroidHelper-macOS";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -322,6 +468,15 @@
 			buildConfigurations = (
 				2FB7FF0F23E7BD210075530A /* Debug */,
 				2FB7FF1023E7BD210075530A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2FFD0FA323EBB5730059BB4B /* Build configuration list for PBXNativeTarget "AndroidHelper-macOS-Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2FFD0FA423EBB5730059BB4B /* Debug */,
+				2FFD0FA523EBB5730059BB4B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
