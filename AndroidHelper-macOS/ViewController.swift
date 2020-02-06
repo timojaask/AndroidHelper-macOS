@@ -5,8 +5,13 @@ class ViewController: NSViewController {
     @IBOutlet weak var projectDirectoryTextField: NSTextField!
     @IBOutlet weak var logScrollView: NSScrollView!
     @IBOutlet var logTextView: NSTextView!
+    @IBOutlet weak var clearCacheCheckbox: NSButton!
     
     private var projectDirectory: String = "/Users/timojaask/projects/work/pluto-tv-android"
+    
+    private var clearCache: Bool {
+        get { return clearCacheCheckbox.state == .on }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -14,11 +19,56 @@ class ViewController: NSViewController {
     }
     
     @IBAction func assembleMobileClicked(_ sender: Any) {
-        let assembleCommand = Command.assemble(configuration: .debug, cleanCache: true, platform: .mobile)
-        Shell.runAsync(command: assembleCommand, directory: projectDirectory) { [weak self] progress in
+        let command = Command.assemble(configuration: .debug, cleanCache: clearCache, platform: .mobile)
+        Shell.runAsync(command: command, directory: projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
         }
     }
+    
+    @IBAction func installDeviceMobileClicked(_ sender: Any) {
+        let target = Target.device(serial: "9AGAY1DGK8")
+        let command = Command.install(configuration: .debug, cleanCache: clearCache, platform: .mobile, target: target)
+        Shell.runAsync(command: command, directory: projectDirectory) { [weak self] progress in
+            self?.progressHandler(progress)
+        }
+    }
+    
+    @IBAction func startDeviceClicked(_ sender: Any) {
+        let command = Command.start(target: Target.device(serial: "9AGAY1DGK8"))
+        Shell.runAsync(command: command, directory: projectDirectory) { [weak self] progress in
+            self?.progressHandler(progress)
+        }
+    }
+    
+    @IBAction func stopDeviceClicked(_ sender: Any) {
+        let command = Command.stop(target: Target.device(serial: "9AGAY1DGK8"))
+        Shell.runAsync(command: command, directory: projectDirectory) { [weak self] progress in
+            self?.progressHandler(progress)
+        }
+    }
+    
+    @IBAction func installEmulatorMobileClicked(_ sender: Any) {
+        let target = Target.emulator(port: 5554)
+        let command = Command.install(configuration: .debug, cleanCache: clearCache, platform: .mobile, target: target)
+        Shell.runAsync(command: command, directory: projectDirectory) { [weak self] progress in
+            self?.progressHandler(progress)
+        }
+    }
+    
+    @IBAction func startEmulatorClicked(_ sender: Any) {
+        let command = Command.start(target: Target.emulator(port: 5554))
+        Shell.runAsync(command: command, directory: projectDirectory) { [weak self] progress in
+            self?.progressHandler(progress)
+        }
+    }
+    
+    @IBAction func stopEmulatorClicked(_ sender: Any) {
+        let command = Command.stop(target: Target.emulator(port: 5554))
+        Shell.runAsync(command: command, directory: projectDirectory) { [weak self] progress in
+            self?.progressHandler(progress)
+        }
+    }
+    
     
     @IBAction func listEmulatorsClicked(_ sender: Any) {
         let emulatorPath = "~/Library/Android/sdk/emulator/emulator"
