@@ -750,6 +750,9 @@
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
+                                                <connections>
+                                                    <action selector="clearCacheToggled:" target="XfG-lQ-9wD" id="RdV-a4-8nh"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>

@@ -4,12 +4,14 @@ struct State {
     var projectDirectory = "/"
     var targets: [Target] = []
     var selectedTarget: Target? = nil
+    var clearCacheEnabled: Bool = false
 }
 
 enum Action {
     case setProjectDirectory(newProjectDirectory: String)
     case setTargets(newTargets: [Target])
     case setSelectedTarget(newSelectedTarget: Target?)
+    case setClearCacheEnabled(newClearCacheEnabledValue: Bool)
 }
 
 func applyAction(state: State, action: Action) -> State {
@@ -30,6 +32,8 @@ func applyAction(state: State, action: Action) -> State {
         } else {
             newState.selectedTarget = newState.targets.first
         }
+    case .setClearCacheEnabled(let newClearCacheEnabledValue):
+        newState.clearCacheEnabled = newClearCacheEnabledValue
     }
     return newState
 }
@@ -58,10 +62,8 @@ class ViewController: NSViewController {
         } else {
             targetsPopupButton.select(nil)
         }
-    }
-    
-    private var clearCache: Bool {
-        get { return clearCacheCheckbox.state == .on }
+
+        clearCacheCheckbox.state = state.clearCacheEnabled ? .on : .off
     }
     
     override func viewDidLoad() {
@@ -71,7 +73,7 @@ class ViewController: NSViewController {
     }
     
     @IBAction func assembleMobileClicked(_ sender: Any) {
-        let command = Command.assemble(configuration: .debug, cleanCache: clearCache, platform: .mobile)
+        let command = Command.assemble(configuration: .debug, cleanCache: state.clearCacheEnabled, platform: .mobile)
         logln(command.toString())
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
@@ -80,7 +82,7 @@ class ViewController: NSViewController {
     
     @IBAction func installDeviceMobileClicked(_ sender: Any) {
         guard let target = state.selectedTarget else { return }
-        let command = Command.install(configuration: .debug, cleanCache: clearCache, platform: .mobile, target: target)
+        let command = Command.install(configuration: .debug, cleanCache: state.clearCacheEnabled, platform: .mobile, target: target)
         logln(command.toString())
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
@@ -134,6 +136,11 @@ class ViewController: NSViewController {
     
     @IBAction func refreshTargetsClicked(_ sender: NSButton) {
         refreshTargets()
+    }
+
+    @IBAction func clearCacheToggled(_ sender: NSButton) {
+        let clearCacheEnabled = sender.state == .on
+        updateState(action: .setClearCacheEnabled(newClearCacheEnabledValue: clearCacheEnabled))
     }
     
     private func refreshTargets() {
