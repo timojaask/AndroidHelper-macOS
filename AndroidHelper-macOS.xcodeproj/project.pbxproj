@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2F4A013523F1F03D00F9E519 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 2F4A013423F1F03D00F9E519 /* README.md */; };
+		2F4A013723F2161B00F9E519 /* UIStateUpdateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4A013623F2161B00F9E519 /* UIStateUpdateExtensions.swift */; };
 		2FB7FF0223E7BD200075530A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0123E7BD200075530A /* AppDelegate.swift */; };
 		2FB7FF0423E7BD200075530A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0323E7BD200075530A /* ViewController.swift */; };
 		2FB7FF0623E7BD210075530A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0523E7BD210075530A /* Assets.xcassets */; };
@@ -35,6 +36,7 @@
 
 /* Begin PBXFileReference section */
 		2F4A013423F1F03D00F9E519 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		2F4A013623F2161B00F9E519 /* UIStateUpdateExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStateUpdateExtensions.swift; sourceTree = "<group>"; };
 		2FB7FEFE23E7BD200075530A /* AndroidHelper-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AndroidHelper-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FB7FF0123E7BD200075530A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2FB7FF0323E7BD200075530A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 			children = (
 				2FB7FF0123E7BD200075530A /* AppDelegate.swift */,
 				2FB7FF0323E7BD200075530A /* ViewController.swift */,
+				2F4A013623F2161B00F9E519 /* UIStateUpdateExtensions.swift */,
 				2FFD0F9623EBB4CF0059BB4B /* Commands.swift */,
 				2FFD0FB423EBC7AC0059BB4B /* Shell.swift */,
 				2FFD0FB223EBC4170059BB4B /* Array_SafeIndex.swift */,
@@ -223,6 +226,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F4A013723F2161B00F9E519 /* UIStateUpdateExtensions.swift in Sources */,
 				2FB7FF0423E7BD200075530A /* ViewController.swift in Sources */,
 				2FFD0FB323EBC4170059BB4B /* Array_SafeIndex.swift in Sources */,
 				2FFD0FB523EBC7AC0059BB4B /* Shell.swift in Sources */,

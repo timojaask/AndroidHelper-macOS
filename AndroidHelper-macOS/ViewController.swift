@@ -38,17 +38,6 @@ func applyAction(state: State, action: Action) -> State {
     return newState
 }
 
-extension NSButton {
-    func setIsChecked(isChecked: Bool) {
-        let currentIsCheckedState = self.state == .on
-        guard currentIsCheckedState != isChecked else {
-            // The current checkbox state is already same as requested. Do not do anything
-            return
-        }
-        self.state = isChecked ? .on : .off
-    }
-}
-
 class ViewController: NSViewController {
     
     @IBOutlet weak var projectDirectoryTextField: NSTextField!
@@ -58,23 +47,20 @@ class ViewController: NSViewController {
     @IBOutlet weak var targetsPopupButton: NSPopUpButton!
     
     private var state = State()
+
     private func updateState(action: Action) {
         state = applyAction(state: state, action: action)
         updateUi(state: state)
     }
-    private func updateUi(state: State) {
-        projectDirectoryTextField.stringValue = state.projectDirectory
-        
-        targetsPopupButton.removeAllItems()
-        targetsPopupButton.addItems(withTitles: state.targets.map({ $0.serialNumber() }))
-        
-        if let selectedTargetSerialNumber = state.selectedTarget?.serialNumber() {
-            targetsPopupButton.selectItem(withTitle: selectedTargetSerialNumber)
-        } else {
-            targetsPopupButton.select(nil)
-        }
 
-        clearCacheCheckbox.setIsChecked(isChecked: state.clearCacheEnabled)
+    private func updateUi(state: State) {
+        projectDirectoryTextField.updateState(text: state.projectDirectory)
+
+        targetsPopupButton.updateState(
+            items: state.targets.map { $0.serialNumber() },
+            selectedItemTitle: state.selectedTarget?.serialNumber())
+
+        clearCacheCheckbox.updateCheckedState(isChecked: state.clearCacheEnabled)
     }
     
     override func viewDidLoad() {
@@ -132,7 +118,7 @@ class ViewController: NSViewController {
     }
     
     @IBAction func clearLogClicked(_ sender: NSButton) {
-        logTextView.string = ""
+        clearLog()
     }
     
     @IBAction func targetsPopupButtonChanged(_ sender: NSPopUpButton) {
@@ -206,5 +192,9 @@ class ViewController: NSViewController {
         logTextView.textStorage?.mutableString.append(text)
         logTextView.scrollToEndOfDocument(self)
         print(text)
+    }
+
+    private func clearLog() {
+        logTextView.string = ""
     }
 }
