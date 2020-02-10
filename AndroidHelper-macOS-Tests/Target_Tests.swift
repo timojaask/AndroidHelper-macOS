@@ -35,24 +35,3 @@ class Target_Tests: XCTestCase {
         Target.emulator(port: 2222))
     }
 }
-
-extension Target: Equatable {
-    public static func == (lhs: Target, rhs: Target) -> Bool {
-        switch lhs {
-        case .device(let lhsSerial):
-            switch rhs {
-            case .device(let rhsSerial):
-                return lhsSerial == rhsSerial
-            case .emulator(_):
-                return false
-            }
-        case .emulator(let lhsPort):
-            switch rhs {
-            case .device(_):
-                return false
-            case .emulator(let rhsPort):
-                return lhsPort == rhsPort
-            }
-        }
-    }
-}
