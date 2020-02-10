@@ -38,6 +38,17 @@ func applyAction(state: State, action: Action) -> State {
     return newState
 }
 
+extension NSButton {
+    func setIsChecked(isChecked: Bool) {
+        let currentIsCheckedState = self.state == .on
+        guard currentIsCheckedState != isChecked else {
+            // The current checkbox state is already same as requested. Do not do anything
+            return
+        }
+        self.state = isChecked ? .on : .off
+    }
+}
+
 class ViewController: NSViewController {
     
     @IBOutlet weak var projectDirectoryTextField: NSTextField!
@@ -63,7 +74,7 @@ class ViewController: NSViewController {
             targetsPopupButton.select(nil)
         }
 
-        clearCacheCheckbox.state = state.clearCacheEnabled ? .on : .off
+        clearCacheCheckbox.setIsChecked(isChecked: state.clearCacheEnabled)
     }
     
     override func viewDidLoad() {
