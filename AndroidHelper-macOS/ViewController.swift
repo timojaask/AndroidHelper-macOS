@@ -66,7 +66,7 @@ class ViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        updateState(action: .setProjectDirectory(newProjectDirectory: "/Users/timojaask/projects/work/pluto-tv-android"))
+        updateState(action: .setProjectDirectory(newProjectDirectory: "/Users/timojaask/projects/work/pluto-tv/pluto-tv-android"))
         refreshTargets()
     }
     
@@ -154,8 +154,13 @@ class ViewController: NSViewController {
                     let newTargets = AdbCommand.parseListTargetsResponse(response: fullOutput)
                     strongSelf.updateState(action: .setTargets(newTargets: newTargets))
                     strongSelf.logln("Available targets: \(strongSelf.state.targets.map { String($0.serialNumber()) })")
-                case .error(_):
-                    strongSelf.logln("Failed")
+                case .error(let reason):
+                    switch reason {
+                    case .processLaunchingError(let localizedDescription):
+                        strongSelf.logln("Error launching process: \(localizedDescription)")
+                    case .processTerminatedWithError(let status):
+                        strongSelf.logln("Process terminated with error code: \(status)")
+                    }
                 }
             }
         }

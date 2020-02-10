@@ -2,10 +2,15 @@ import Foundation
 
 struct Shell {
     typealias ShellCommandProgressHandler = (_ progress: Progress) -> ()
-    
+
+    enum Error {
+        case processLaunchingError(localizedDescription: String)
+        case processTerminatedWithError(status: Int)
+    }
+
     enum TerminationStatus {
         case success
-        case error(status: Int)
+        case error(reason: Error)
     }
     
     enum Progress {
@@ -55,12 +60,11 @@ struct Shell {
                 }
             }
         }
-        process.launch()
         process.terminationHandler = { process in
             queue.async {
                 if process.terminationStatus != 0 {
                     DispatchQueue.main.async {
-                        progressHandler(.termination(status: .error(status: Int(process.terminationStatus))))
+                        progressHandler(.termination(status: .error(reason: .processTerminatedWithError(status: Int(process.terminationStatus)))))
                     }
                 } else {
                     DispatchQueue.main.async {
@@ -68,6 +72,11 @@ struct Shell {
                     }
                 }
             }
+        }
+        do {
+            try process.run()
+        } catch {
+            progressHandler(.termination(status: .error(reason: .processLaunchingError(localizedDescription: error.localizedDescription))))
         }
     }
 }
