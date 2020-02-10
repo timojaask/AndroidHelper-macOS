@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F4A013523F1F03D00F9E519 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 2F4A013423F1F03D00F9E519 /* README.md */; };
 		2FB7FF0223E7BD200075530A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0123E7BD200075530A /* AppDelegate.swift */; };
 		2FB7FF0423E7BD200075530A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0323E7BD200075530A /* ViewController.swift */; };
 		2FB7FF0623E7BD210075530A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0523E7BD210075530A /* Assets.xcassets */; };
@@ -33,6 +34,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2F4A013423F1F03D00F9E519 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		2FB7FEFE23E7BD200075530A /* AndroidHelper-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AndroidHelper-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FB7FF0123E7BD200075530A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2FB7FF0323E7BD200075530A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -74,6 +76,7 @@
 		2FB7FEF523E7BD200075530A = {
 			isa = PBXGroup;
 			children = (
+				2F4A013423F1F03D00F9E519 /* README.md */,
 				2FB7FF0023E7BD200075530A /* AndroidHelper-macOS */,
 				2FFD0F9D23EBB5730059BB4B /* AndroidHelper-macOS-Tests */,
 				2FB7FEFF23E7BD200075530A /* Products */,
@@ -200,6 +203,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F4A013523F1F03D00F9E519 /* README.md in Resources */,
 				2FB7FF0623E7BD210075530A /* Assets.xcassets in Resources */,
 				2FB7FF0923E7BD210075530A /* Main.storyboard in Resources */,
 			);
