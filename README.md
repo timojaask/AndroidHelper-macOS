@@ -2,6 +2,7 @@
 Running Android dev related commands from a GUI, just for fun? 🤷‍♀️🤷‍♂️
 
 ## Next tasks
+- Add auto-start on successful install
 - Extract command running and parsing into some kind of Runner module
 - Before heavily investing in writing unit tests, one of the next thing to do should probably be making commands more general purpose, preparing them to become standalone libraries. So this would include: module and variant selection.
 - The state update logic is important, so spend tome time making it readable
