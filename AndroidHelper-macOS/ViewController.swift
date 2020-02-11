@@ -86,14 +86,11 @@ class ViewController: NSViewController {
             switch progress {
             case .output(let string):
                 strongSelf.log(string)
-            case .termination(let status):
-                switch status {
-                case .error(let terminationStatus):
-                    strongSelf.logln("Terminated with error status: \(terminationStatus)")
-                case .success:
-                    strongSelf.logln("Terminated with success")
-                    strongSelf.startDeviceClicked(sender)
-                }
+            case .error(let terminationStatus):
+                strongSelf.logln("Terminated with error status: \(terminationStatus)")
+            case .success:
+                strongSelf.logln("Terminated with success")
+                strongSelf.startDeviceClicked(sender)
             }
         }
     }
@@ -164,19 +161,16 @@ class ViewController: NSViewController {
             switch progress {
             case .output(let string):
                 onOutput(string: string)
-            case .termination(let status):
-                switch status {
-                case .success:
-                    let newTargets = AdbCommand.parseListTargetsResponse(response: fullOutput)
-                    strongSelf.updateState(action: .setTargets(newTargets: newTargets))
-                    strongSelf.logln("Available targets: \(strongSelf.state.targets.map { String($0.serialNumber()) })")
-                case .error(let reason):
-                    switch reason {
-                    case .processLaunchingError(let localizedDescription):
-                        strongSelf.logln("Error launching process: \(localizedDescription)")
-                    case .processTerminatedWithError(let status):
-                        strongSelf.logln("Process terminated with error code: \(status)")
-                    }
+            case .success:
+                let newTargets = AdbCommand.parseListTargetsResponse(response: fullOutput)
+                strongSelf.updateState(action: .setTargets(newTargets: newTargets))
+                strongSelf.logln("Available targets: \(strongSelf.state.targets.map { String($0.serialNumber()) })")
+            case .error(let reason):
+                switch reason {
+                case .processLaunchingError(let localizedDescription):
+                    strongSelf.logln("Error launching process: \(localizedDescription)")
+                case .processTerminatedWithError(let status):
+                    strongSelf.logln("Process terminated with error code: \(status)")
                 }
             }
         }
@@ -186,13 +180,10 @@ class ViewController: NSViewController {
         switch progress {
         case .output(let string):
             log(string)
-        case .termination(let status):
-            switch status {
-            case .error(let terminationStatus):
-                logln("Terminated with error status: \(terminationStatus)")
-            case .success:
-                logln("Terminated with success")
-            }
+        case .error(let terminationStatus):
+            logln("Terminated with error status: \(terminationStatus)")
+        case .success:
+            logln("Terminated with success")
         }
     }
     

@@ -7,15 +7,11 @@ struct Shell {
         case processLaunchingError(localizedDescription: String)
         case processTerminatedWithError(status: Int)
     }
-
-    enum TerminationStatus {
-        case success
-        case error(reason: Error)
-    }
     
     enum Progress {
         case output(string: String)
-        case termination(status: TerminationStatus)
+        case success
+        case error(reason: Error)
     }
 
     static func debug_runRowCommand(rawCommand: String, directory: String, progressHandler: @escaping ShellCommandProgressHandler) {
@@ -64,11 +60,11 @@ struct Shell {
             queue.async {
                 if process.terminationStatus != 0 {
                     DispatchQueue.main.async {
-                        progressHandler(.termination(status: .error(reason: .processTerminatedWithError(status: Int(process.terminationStatus)))))
+                        progressHandler(.error(reason: .processTerminatedWithError(status: Int(process.terminationStatus))))
                     }
                 } else {
                     DispatchQueue.main.async {
-                        progressHandler(.termination(status: .success))
+                        progressHandler(.success)
                     }
                 }
             }
@@ -76,7 +72,7 @@ struct Shell {
         do {
             try process.run()
         } catch {
-            progressHandler(.termination(status: .error(reason: .processLaunchingError(localizedDescription: error.localizedDescription))))
+            progressHandler(.error(reason: .processLaunchingError(localizedDescription: error.localizedDescription)))
         }
     }
 }
