@@ -166,12 +166,7 @@ class ViewController: NSViewController {
                 strongSelf.updateState(action: .setTargets(newTargets: newTargets))
                 strongSelf.logln("Available targets: \(strongSelf.state.targets.map { String($0.serialNumber()) })")
             case .error(let reason):
-                switch reason {
-                case .processLaunchingError(let localizedDescription):
-                    strongSelf.logln("Error launching process: \(localizedDescription)")
-                case .processTerminatedWithError(let status):
-                    strongSelf.logln("Process terminated with error code: \(status)")
-                }
+                strongSelf.logln(reason.toString())
             }
         }
     }

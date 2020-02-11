@@ -6,6 +6,15 @@ struct Shell {
     enum Error {
         case processLaunchingError(localizedDescription: String)
         case processTerminatedWithError(status: Int)
+        
+        func toString() -> String {
+            switch self {
+            case .processLaunchingError(let localizedDescription):
+                return "Error launching process: \(localizedDescription)"
+            case .processTerminatedWithError(let status):
+                return "Process terminated with error code: \(status)"
+            }
+        }
     }
     
     enum Progress {
