@@ -3,6 +3,7 @@ import Foundation
 public enum Command {
     case assemble(configuration: BuildConfiguration, cleanCache: Bool, platform: Platform)
     case install(configuration: BuildConfiguration, cleanCache: Bool, platform: Platform, target: Target)
+    case tasks
     case listTargets
     case start(target: Target)
     case stop(target: Target)
@@ -17,6 +18,8 @@ public enum Command {
             return GradleCommand.assemble(configuration: configuration, cleanCache: cleanCache, platform: platform).toString()
         case .install(let configuration, let cleanCache, let platform, let target):
             return GradleCommand.install(configuration: configuration, cleanCache: cleanCache, platform: platform, targetSerial: target.serialNumber()).toString()
+        case .tasks:
+            return GradleCommand.tasks.toString()
         case .listTargets:
             return AdbCommand.listTargets.toString(adbPath: Command.adbPath)
         case .start(let target):
@@ -30,6 +33,7 @@ public enum Command {
 public enum GradleCommand {
     case assemble(configuration: BuildConfiguration, cleanCache: Bool, platform: Platform)
     case install(configuration: BuildConfiguration, cleanCache: Bool, platform: Platform, targetSerial: String)
+    case tasks
     
     func toString() -> String {
         switch self {
@@ -39,6 +43,9 @@ public enum GradleCommand {
             let prefix = "ANDROID_SERIAL=\"\(targetSerial)\""
             let command = format(command: "install", configuration: configuration, cleanCache: cleanCache, platform: platform)
             return "\(prefix) \(command)"
+        case .tasks:
+            let command = "./gradlew tasks --all --console=plain --warning-mode=none -Dorg.gradle.logging.level=quiet"
+            return command
         }
     }
     
@@ -53,7 +60,7 @@ public enum AdbCommand {
     case start(targetSerial: String, packageName: String, activity: String)
     case stop(targetSerial: String, packageName: String)
     case listTargets
-
+    
     // TODO: Needs fixing: We have a leaking abstraction here. The command is made via "Command" enum, but response is supposed to be parsed via "AdbCommand" enum?
     // TODO: Needs fixing: This confuses the purpose of "AdbCommand" -- so at first we just have this command enum to make so called strongly typed commands. But now this also does response parsing? Perhaps we need an "Adb" module (e.g. Swift Struct) that would have available commands ("AdbCommand" enum) and also ways of parsing Adb responses as two separate sub-concepts.
     public static func parseListTargetsResponse(response: String) -> [Target] {

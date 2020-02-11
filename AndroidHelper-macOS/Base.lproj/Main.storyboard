@@ -930,6 +930,16 @@
                                     <action selector="setProjectDirectoryClicked:" target="XfG-lQ-9wD" id="xZN-yY-Ll9"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Xe-0r-OEj">
+                                <rect key="frame" x="140" y="13" width="98" height="32"/>
+                                <buttonCell key="cell" type="push" title="List tasks" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eP1-fu-5gr">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="listTasksClicked:" target="XfG-lQ-9wD" id="Cxl-N8-tWu"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="SDR-hE-d1k" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="4Jg-Vk-Y0l"/>
@@ -938,7 +948,9 @@
                             <constraint firstAttribute="trailing" secondItem="eIK-PS-En5" secondAttribute="trailing" constant="20" id="Cmt-X9-vCb"/>
                             <constraint firstItem="l3a-00-9HM" firstAttribute="top" secondItem="Hzb-Ew-4DB" secondAttribute="bottom" constant="20" id="DJz-zK-xnh"/>
                             <constraint firstItem="S7R-Z1-ptX" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="DP6-sg-Yrn"/>
+                            <constraint firstItem="0Xe-0r-OEj" firstAttribute="centerY" secondItem="S7R-Z1-ptX" secondAttribute="centerY" id="F9g-Cx-ZvK"/>
                             <constraint firstItem="2xb-0o-d9e" firstAttribute="top" secondItem="SDR-hE-d1k" secondAttribute="bottom" constant="8" id="RJe-W1-2IF"/>
+                            <constraint firstItem="0Xe-0r-OEj" firstAttribute="leading" secondItem="S7R-Z1-ptX" secondAttribute="trailing" constant="12" id="Rll-gc-RqP"/>
                             <constraint firstItem="Hzb-Ew-4DB" firstAttribute="top" secondItem="2xb-0o-d9e" secondAttribute="bottom" constant="8" id="VFc-0a-WH1"/>
                             <constraint firstAttribute="trailing" secondItem="fE2-Qz-Uye" secondAttribute="trailing" constant="20" id="Xv9-Xs-XSZ"/>
                             <constraint firstItem="fE2-Qz-Uye" firstAttribute="centerY" secondItem="2xb-0o-d9e" secondAttribute="centerY" id="Z8O-ad-sAE"/>

@@ -122,6 +122,55 @@ class ViewController: NSViewController {
         }
     }
     
+    @IBAction func listTasksClicked(_ sender: NSButton) {
+        var commandOutput = ""
+        struct Task {
+            let projectName: String
+            let taskName: String
+            let description: String
+        }
+        func processOutput() -> [String:[Task]] {
+            // removeSubrange
+            // subscript
+            // suffix
+            guard let rangeOfAndroidTasksTitle = commandOutput.range(of: "Android tasks") else { return [:] }
+            let dataSubstring = commandOutput.suffix(from: rangeOfAndroidTasksTitle.upperBound)
+            let lines = dataSubstring.split(separator: "\n")
+            let tasks = lines.compactMap { (line: Substring) -> Task? in
+                guard line.contains(":") else { return nil }
+                let splitByColon = line.split(separator: ":")
+                let projectName = splitByColon[0]
+                var taskName: Substring = ""
+                var description: Substring = ""
+                if splitByColon[1].contains(" - ") {
+                    let splitByDash = splitByColon[1].split(separator: "-")
+                    taskName = splitByDash[0]
+                    description = splitByDash[1]
+                } else {
+                    taskName = splitByColon[1]
+                }
+                return Task(
+                    projectName: projectName.trimmingCharacters(in: .whitespacesAndNewlines),
+                    taskName: taskName.trimmingCharacters(in: .whitespacesAndNewlines),
+                    description: description.trimmingCharacters(in: .whitespacesAndNewlines)
+                )
+            }
+            let grouped = Dictionary(grouping: tasks) { $0.projectName }
+            return grouped
+        }
+        Shell.runAsync(command: Command.tasks, directory: state.projectDirectory) { [weak self] progress in
+            guard let strongSelf = self else { return }
+            switch progress {
+            case .output(let string):
+                commandOutput.append(string)
+            case .error(let reason):
+                strongSelf.logln(reason.toString())
+            case .success:
+                strongSelf.logln(processOutput().map { "\($0.key):\($0.value.map { task in task.taskName }.joined(separator: ", "))" }.joined(separator: "\n"))
+            }
+        }
+    }
+    
     @IBAction func setProjectDirectoryClicked(_ sender: Any) {
         updateState(action: .setProjectDirectory(newProjectDirectory: projectDirectoryTextField.stringValue))
     }
