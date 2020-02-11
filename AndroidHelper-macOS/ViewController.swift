@@ -82,7 +82,19 @@ class ViewController: NSViewController {
         let command = Command.install(configuration: .debug, cleanCache: state.clearCacheEnabled, platform: .mobile, target: target)
         logln(command.toString())
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
-            self?.progressHandler(progress)
+            guard let strongSelf = self else { return }
+            switch progress {
+            case .output(let string):
+                strongSelf.log(string)
+            case .termination(let status):
+                switch status {
+                case .error(let terminationStatus):
+                    strongSelf.logln("Terminated with error status: \(terminationStatus)")
+                case .success:
+                    strongSelf.logln("Terminated with success")
+                    strongSelf.startDeviceClicked(sender)
+                }
+            }
         }
     }
     
