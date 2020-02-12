@@ -2,26 +2,26 @@ import Cocoa
 
 extension NSButton {
     func updateCheckedState(isChecked: Bool) {
-        let currentIsCheckedState = self.state == .on
+        let currentIsCheckedState = state == .on
         guard currentIsCheckedState != isChecked else {
             // The current checkbox state is already same as requested. Do not do anything
             return
         }
-        self.state = isChecked ? .on : .off
+        state = isChecked ? .on : .off
     }
 }
 
 extension NSPopUpButton {
     func updateState(items: [String], selectedItemTitle: String?) {
-        if self.itemTitles != items {
-            self.removeAllItems()
-            self.addItems(withTitles: items)
+        if itemTitles != items {
+            removeAllItems()
+            addItems(withTitles: items)
         }
         if self.titleOfSelectedItem != selectedItemTitle {
             if let selectedItemTitle = selectedItemTitle {
-                self.selectItem(withTitle: selectedItemTitle)
+                selectItem(withTitle: selectedItemTitle)
             } else {
-                self.select(nil)
+                select(nil)
             }
         }
     }
@@ -29,8 +29,20 @@ extension NSPopUpButton {
 
 extension NSTextField {
     func updateState(text: String) {
-        if self.stringValue != text {
-            self.stringValue = text
+        if stringValue != text {
+            stringValue = text
+        }
+    }
+}
+
+extension NSComboBox {
+    func updateState(items: [String], selectedItem: String?) {
+        if objectValues as? [String] != items {
+            removeAllItems()
+            addItems(withObjectValues: items)
+        }
+        if objectValueOfSelectedItem as? String != selectedItem {
+            selectItem(withObjectValue: selectedItem)
         }
     }
 }

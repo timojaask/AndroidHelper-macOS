@@ -729,10 +729,21 @@
                                 <rect key="frame" x="20" y="362" width="429" height="87"/>
                                 <subviews>
                                     <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="12" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a8T-Lv-PB0">
-                                        <rect key="frame" x="0.0" y="66" width="243" height="21"/>
+                                        <rect key="frame" x="0.0" y="66" width="351" height="21"/>
                                         <subviews>
+                                            <comboBox verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uPI-8a-74M">
+                                                <rect key="frame" x="0.0" y="-2" width="99" height="25"/>
+                                                <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" numberOfVisibleItems="10" id="Lre-bw-i3U">
+                                                    <font key="font" metaFont="system"/>
+                                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </comboBoxCell>
+                                                <connections>
+                                                    <action selector="projectsComboBoxUpdated:" target="XfG-lQ-9wD" id="bAL-La-val"/>
+                                                </connections>
+                                            </comboBox>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0NZ-wf-vbT">
-                                                <rect key="frame" x="-6" y="-7" width="153" height="32"/>
+                                                <rect key="frame" x="102" y="-7" width="153" height="32"/>
                                                 <buttonCell key="cell" type="push" title="Assemble (mobile)" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jb1-Pw-3OS">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -742,7 +753,7 @@
                                                 </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="atj-5u-1OL">
-                                                <rect key="frame" x="151" y="2" width="94" height="18"/>
+                                                <rect key="frame" x="259" y="2" width="94" height="18"/>
                                                 <buttonCell key="cell" type="check" title="Clear cache" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="fei-HG-Kmb">
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -758,8 +769,10 @@
                                         <visibilityPriorities>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
+                                            <integer value="1000"/>
                                         </visibilityPriorities>
                                         <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
@@ -931,13 +944,13 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Xe-0r-OEj">
-                                <rect key="frame" x="140" y="13" width="98" height="32"/>
-                                <buttonCell key="cell" type="push" title="List tasks" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eP1-fu-5gr">
+                                <rect key="frame" x="140" y="13" width="115" height="32"/>
+                                <buttonCell key="cell" type="push" title="List projects" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eP1-fu-5gr">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="listTasksClicked:" target="XfG-lQ-9wD" id="Cxl-N8-tWu"/>
+                                    <action selector="listProjectsClicked:" target="XfG-lQ-9wD" id="Cxl-N8-tWu"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -968,6 +981,7 @@
                         <outlet property="logScrollView" destination="eIK-PS-En5" id="qPJ-cu-Zrf"/>
                         <outlet property="logTextView" destination="l3a-00-9HM" id="e8S-ZE-44g"/>
                         <outlet property="projectDirectoryTextField" destination="2xb-0o-d9e" id="sfS-Ix-icw"/>
+                        <outlet property="projectsComboBox" destination="uPI-8a-74M" id="yMl-qm-fvM"/>
                         <outlet property="targetsPopupButton" destination="v2W-hp-gX7" id="Alh-ST-yLy"/>
                     </connections>
                 </viewController>

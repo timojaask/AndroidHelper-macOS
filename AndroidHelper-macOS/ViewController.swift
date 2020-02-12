@@ -1,10 +1,31 @@
 import Cocoa
 
+struct Task {
+    let taskName: String
+    let description: String
+}
+
+struct Project {
+    let name: String
+    let tasks: [Task]
+}
+
+extension Project: Equatable {
+    /**
+     Does shallow comparison by matching by comparing just the project `name` fields.
+     */
+    static func == (lhs: Project, rhs: Project) -> Bool {
+        return lhs.name == rhs.name
+    }
+}
+
 struct State {
     var projectDirectory = "/"
     var targets: [Target] = []
     var selectedTarget: Target? = nil
     var clearCacheEnabled: Bool = false
+    var projects: [Project] = []
+    var selectedProject: Project? = nil
 }
 
 enum Action {
@@ -12,30 +33,115 @@ enum Action {
     case setTargets(newTargets: [Target])
     case setSelectedTarget(newSelectedTarget: Target?)
     case setClearCacheEnabled(newClearCacheEnabledValue: Bool)
+    case setProjects(newProjects: [Project])
+    case setSelectedProject(newSelectedProjectName: String?)
 }
 
 func applyAction(state: State, action: Action) -> State {
+    func targetExists(targets: [Target], target: Target?) -> Bool {
+        guard let target = target else { return false }
+        return targets.contains(target)
+    }
+
+    func projectExists(projects: [Project], project: Project?) -> Bool {
+        guard let project = project else { return false }
+        return projects.contains(project)
+    }
+    
+    func findProjectNamedLike(projects: [Project], searchString: String?) -> Project? {
+        guard let searchString = searchString else { return nil }
+        return projects.first(where: { $0.name.starts(with: searchString) })
+    }
+    
     var newState = state
     switch action {
     case .setProjectDirectory(let newProjectDirectory):
         newState.projectDirectory = newProjectDirectory
     case .setTargets(let newTargets):
         newState.targets = newTargets
-        if let selectedTarget = newState.selectedTarget, !newTargets.contains(selectedTarget) {
-            newState.selectedTarget = newTargets.first
-        } else if newState.selectedTarget == nil {
+        if !targetExists(targets: newTargets, target: newState.selectedTarget) {
             newState.selectedTarget = newTargets.first
         }
     case .setSelectedTarget(let newSelectedTarget):
-        if let selectedTarget = newSelectedTarget, newState.targets.contains(selectedTarget) {
-            newState.selectedTarget = selectedTarget
+        if targetExists(targets: newState.targets, target: newSelectedTarget) {
+            newState.selectedTarget = newSelectedTarget
         } else {
             newState.selectedTarget = newState.targets.first
         }
     case .setClearCacheEnabled(let newClearCacheEnabledValue):
         newState.clearCacheEnabled = newClearCacheEnabledValue
+    case .setProjects(let newProjects):
+        newState.projects = newProjects
+        if !projectExists(projects: newProjects, project: newState.selectedProject) {
+            newState.selectedProject = newProjects.first
+        }
+    case .setSelectedProject(let newSelectedProjectName):
+        if let selectedProject = newState.projects.first(where: { $0.name == newSelectedProjectName }) {
+            newState.selectedProject = selectedProject
+        } else {
+            newState.selectedProject = findProjectNamedLike(projects: newState.projects, searchString: newSelectedProjectName) ?? newState.projects.first
+        }
     }
     return newState
+}
+
+
+/**
+ Parse project specific Gradle tasks from raw `gradle tasks --all` command output
+ */
+func parseProjects(fromString string: String) -> [Project] {
+    guard let rangeOfAndroidTasksTitle = string.range(of: "Android tasks") else { return [] }
+    let dataSubstring = string.suffix(from: rangeOfAndroidTasksTitle.upperBound)
+    let lines = dataSubstring.split(separator: "\n")
+    struct TempTask {
+        let projectName: String
+        let taskName: String
+        let description: String
+    }
+    let projects = lines.compactMap { (line: Substring) -> TempTask? in
+        guard line.contains(":") else { return nil }
+        let splitByColon = line.split(separator: ":")
+        let projectName = splitByColon[0]
+        var taskName: Substring = ""
+        var description: Substring = ""
+        if splitByColon[1].contains(" - ") {
+            let splitByDash = splitByColon[1].split(separator: "-")
+            taskName = splitByDash[0]
+            description = splitByDash[1]
+        } else {
+            taskName = splitByColon[1]
+        }
+        return TempTask(
+            projectName: projectName.trimmingCharacters(in: .whitespacesAndNewlines),
+            taskName: taskName.trimmingCharacters(in: .whitespacesAndNewlines),
+            description: description.trimmingCharacters(in: .whitespacesAndNewlines)
+        )
+    }
+    let groupedAndSorted = Dictionary(grouping: projects) { $0.projectName }.sorted { (val1, val2) -> Bool in
+        val1.key < val2.key
+    }.map { (key, value) -> Project in
+        Project(name: key, tasks: value.map { Task(taskName: $0.taskName, description: $0.description) })
+    }
+    return groupedAndSorted
+}
+
+/**
+Parse currently available target devices or emulators from `adb devices` command output
+*/
+func parseTargets(fromString string: String) -> [Target] {
+    func parseTarget(targetString: String) -> Target? {
+        let parts = targetString.split(separator: "\t")
+        guard parts.count == 2 else { return nil }
+        let name = parts[0]
+        let statusString = parts[1]
+        let isOnline = statusString != "offline"
+        return Target.fromSerialNumber(serialNumber: name, isOnline: isOnline)
+    }
+    
+    return string
+        .split(separator: "\n")
+        .dropFirst()
+        .compactMap { parseTarget(targetString: String($0)) }
 }
 
 class ViewController: NSViewController {
@@ -45,6 +151,7 @@ class ViewController: NSViewController {
     @IBOutlet var logTextView: NSTextView!
     @IBOutlet weak var clearCacheCheckbox: NSButton!
     @IBOutlet weak var targetsPopupButton: NSPopUpButton!
+    @IBOutlet weak var projectsComboBox: NSComboBox!
     
     private var state = State()
 
@@ -61,6 +168,10 @@ class ViewController: NSViewController {
             selectedItemTitle: state.selectedTarget?.serialNumber())
 
         clearCacheCheckbox.updateCheckedState(isChecked: state.clearCacheEnabled)
+        
+        projectsComboBox.updateState(
+            items: state.projects.map { $0.name } ,
+            selectedItem: state.selectedProject?.name)
     }
     
     override func viewDidLoad() {
@@ -70,7 +181,8 @@ class ViewController: NSViewController {
     }
     
     @IBAction func assembleMobileClicked(_ sender: Any) {
-        let command = Command.assemble(configuration: .debug, cleanCache: state.clearCacheEnabled, platform: .mobile)
+        guard let project = state.selectedProject else { return }
+        let command = Command.assemble(configuration: .debug, cleanCache: state.clearCacheEnabled, project: project.name)
         logln(command.toString())
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
@@ -78,8 +190,9 @@ class ViewController: NSViewController {
     }
     
     @IBAction func installDeviceMobileClicked(_ sender: Any) {
+        guard let project = state.selectedProject else { return }
         guard let target = state.selectedTarget else { return }
-        let command = Command.install(configuration: .debug, cleanCache: state.clearCacheEnabled, platform: .mobile, target: target)
+        let command = Command.install(configuration: .debug, cleanCache: state.clearCacheEnabled, project: project.name, target: target)
         logln(command.toString())
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             guard let strongSelf = self else { return }
@@ -122,43 +235,10 @@ class ViewController: NSViewController {
         }
     }
     
-    @IBAction func listTasksClicked(_ sender: NSButton) {
+    @IBAction func listProjectsClicked(_ sender: NSButton) {
         var commandOutput = ""
-        struct Task {
-            let projectName: String
-            let taskName: String
-            let description: String
-        }
-        func processOutput() -> [String:[Task]] {
-            // removeSubrange
-            // subscript
-            // suffix
-            guard let rangeOfAndroidTasksTitle = commandOutput.range(of: "Android tasks") else { return [:] }
-            let dataSubstring = commandOutput.suffix(from: rangeOfAndroidTasksTitle.upperBound)
-            let lines = dataSubstring.split(separator: "\n")
-            let tasks = lines.compactMap { (line: Substring) -> Task? in
-                guard line.contains(":") else { return nil }
-                let splitByColon = line.split(separator: ":")
-                let projectName = splitByColon[0]
-                var taskName: Substring = ""
-                var description: Substring = ""
-                if splitByColon[1].contains(" - ") {
-                    let splitByDash = splitByColon[1].split(separator: "-")
-                    taskName = splitByDash[0]
-                    description = splitByDash[1]
-                } else {
-                    taskName = splitByColon[1]
-                }
-                return Task(
-                    projectName: projectName.trimmingCharacters(in: .whitespacesAndNewlines),
-                    taskName: taskName.trimmingCharacters(in: .whitespacesAndNewlines),
-                    description: description.trimmingCharacters(in: .whitespacesAndNewlines)
-                )
-            }
-            let grouped = Dictionary(grouping: tasks) { $0.projectName }
-            return grouped
-        }
-        Shell.runAsync(command: Command.tasks, directory: state.projectDirectory) { [weak self] progress in
+        logln("Discovering projects...")
+        Shell.runAsync(command: Command.projects, directory: state.projectDirectory) { [weak self] progress in
             guard let strongSelf = self else { return }
             switch progress {
             case .output(let string):
@@ -166,7 +246,9 @@ class ViewController: NSViewController {
             case .error(let reason):
                 strongSelf.logln(reason.toString())
             case .success:
-                strongSelf.logln(processOutput().map { "\($0.key):\($0.value.map { task in task.taskName }.joined(separator: ", "))" }.joined(separator: "\n"))
+                let projects = parseProjects(fromString: commandOutput)
+                strongSelf.logln("Number of projects found: \(projects.count)")
+                strongSelf.updateState(action: .setProjects(newProjects: projects))
             }
         }
     }
@@ -177,6 +259,11 @@ class ViewController: NSViewController {
     
     @IBAction func clearLogClicked(_ sender: NSButton) {
         clearLog()
+    }
+    
+    @IBAction func projectsComboBoxUpdated(_ sender: NSComboBox) {
+        let selectedProjectName = sender.objectValueOfSelectedItem as? String ?? sender.stringValue
+        updateState(action: .setSelectedProject(newSelectedProjectName: selectedProjectName))
     }
     
     @IBAction func targetsPopupButtonChanged(_ sender: NSPopUpButton) {
@@ -199,19 +286,16 @@ class ViewController: NSViewController {
     }
     
     private func refreshTargets() {
-        var fullOutput: String = ""
-        func onOutput(string: String) {
-            fullOutput = fullOutput.appending(string)
-        }
+        var commandOutput = ""
         let command = Command.listTargets
         logln(command.toString())
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             guard let strongSelf = self else { return }
             switch progress {
             case .output(let string):
-                onOutput(string: string)
+                commandOutput.append(string)
             case .success:
-                let newTargets = AdbCommand.parseListTargetsResponse(response: fullOutput)
+                let newTargets = parseTargets(fromString: commandOutput)
                 strongSelf.updateState(action: .setTargets(newTargets: newTargets))
                 strongSelf.logln("Available targets: \(strongSelf.state.targets.map { String($0.serialNumber()) })")
             case .error(let reason):

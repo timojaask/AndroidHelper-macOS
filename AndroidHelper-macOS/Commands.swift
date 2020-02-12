@@ -1,9 +1,9 @@
 import Foundation
 
 public enum Command {
-    case assemble(configuration: BuildConfiguration, cleanCache: Bool, platform: Platform)
-    case install(configuration: BuildConfiguration, cleanCache: Bool, platform: Platform, target: Target)
-    case tasks
+    case assemble(configuration: BuildConfiguration, cleanCache: Bool, project: String)
+    case install(configuration: BuildConfiguration, cleanCache: Bool, project: String, target: Target)
+    case projects
     case listTargets
     case start(target: Target)
     case stop(target: Target)
@@ -14,11 +14,11 @@ public enum Command {
     
     public func toString() -> String {
         switch self {
-        case .assemble(let configuration, let cleanCache, let platform):
-            return GradleCommand.assemble(configuration: configuration, cleanCache: cleanCache, platform: platform).toString()
-        case .install(let configuration, let cleanCache, let platform, let target):
-            return GradleCommand.install(configuration: configuration, cleanCache: cleanCache, platform: platform, targetSerial: target.serialNumber()).toString()
-        case .tasks:
+        case .assemble(let configuration, let cleanCache, let project):
+            return GradleCommand.assemble(configuration: configuration, cleanCache: cleanCache, project: project).toString()
+        case .install(let configuration, let cleanCache, let project, let target):
+            return GradleCommand.install(configuration: configuration, cleanCache: cleanCache, project: project, targetSerial: target.serialNumber()).toString()
+        case .projects:
             return GradleCommand.tasks.toString()
         case .listTargets:
             return AdbCommand.listTargets.toString(adbPath: Command.adbPath)
@@ -31,17 +31,17 @@ public enum Command {
 }
 
 public enum GradleCommand {
-    case assemble(configuration: BuildConfiguration, cleanCache: Bool, platform: Platform)
-    case install(configuration: BuildConfiguration, cleanCache: Bool, platform: Platform, targetSerial: String)
+    case assemble(configuration: BuildConfiguration, cleanCache: Bool, project: String)
+    case install(configuration: BuildConfiguration, cleanCache: Bool, project: String, targetSerial: String)
     case tasks
     
     func toString() -> String {
         switch self {
-        case .assemble(let configuration, let cleanCache, let platform):
-            return format(command: "assemble", configuration: configuration, cleanCache: cleanCache, platform: platform)
-        case .install(let configuration, let cleanCache, let platform, let targetSerial):
+        case .assemble(let configuration, let cleanCache, let project):
+            return format(command: "assemble", configuration: configuration, cleanCache: cleanCache, project: project)
+        case .install(let configuration, let cleanCache, let project, let targetSerial):
             let prefix = "ANDROID_SERIAL=\"\(targetSerial)\""
-            let command = format(command: "install", configuration: configuration, cleanCache: cleanCache, platform: platform)
+            let command = format(command: "install", configuration: configuration, cleanCache: cleanCache, project: project)
             return "\(prefix) \(command)"
         case .tasks:
             let command = "./gradlew tasks --all --console=plain --warning-mode=none -Dorg.gradle.logging.level=quiet"
@@ -49,10 +49,10 @@ public enum GradleCommand {
         }
     }
     
-    private func format(command: String, configuration: BuildConfiguration, cleanCache: Bool, platform: Platform) -> String {
+    private func format(command: String, configuration: BuildConfiguration, cleanCache: Bool, project: String) -> String {
         let gradlePath = "./gradlew"
         let cleanCacheFlag = cleanCache ? " clean cleanBuildCache" : ""
-        return "\(gradlePath)\(cleanCacheFlag) :\(platform.toString()):\(command)\(configuration.toString())"
+        return "\(gradlePath)\(cleanCacheFlag) :\(project):\(command)\(configuration.toString())"
     }
 }
 
@@ -60,24 +60,6 @@ public enum AdbCommand {
     case start(targetSerial: String, packageName: String, activity: String)
     case stop(targetSerial: String, packageName: String)
     case listTargets
-    
-    // TODO: Needs fixing: We have a leaking abstraction here. The command is made via "Command" enum, but response is supposed to be parsed via "AdbCommand" enum?
-    // TODO: Needs fixing: This confuses the purpose of "AdbCommand" -- so at first we just have this command enum to make so called strongly typed commands. But now this also does response parsing? Perhaps we need an "Adb" module (e.g. Swift Struct) that would have available commands ("AdbCommand" enum) and also ways of parsing Adb responses as two separate sub-concepts.
-    public static func parseListTargetsResponse(response: String) -> [Target] {
-        return response
-            .split(separator: "\n")
-            .dropFirst()
-            .compactMap { parseTarget(targetString: String($0)) }
-    }
-    
-    private static func parseTarget(targetString: String) -> Target? {
-        let parts = targetString.split(separator: "\t")
-        guard parts.count == 2 else { return nil }
-        let name = parts[0]
-        let statusString = parts[1]
-        let isOnline = statusString != "offline"
-        return Target.fromSerialNumber(serialNumber: name, isOnline: isOnline)
-    }
     
     public func toString(adbPath: String) -> String {
         switch self {
@@ -96,20 +78,6 @@ public enum AdbCommand {
     
     private func formatAdbShellCommand(adbPath: String, command: String, targetSerial: String, arguments: String) -> String {
         return "\(adbPath) -s \"\(targetSerial)\" shell am \(command) \(arguments)"
-    }
-}
-
-public enum Platform {
-    case mobile
-    case leanback
-    
-    func toString() -> String {
-        switch self {
-        case .mobile:
-            return "app-mobile"
-        case .leanback:
-            return "app-leanback"
-        }
     }
 }
 
