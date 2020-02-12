@@ -729,7 +729,7 @@
                                 <rect key="frame" x="20" y="362" width="429" height="87"/>
                                 <subviews>
                                     <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="12" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a8T-Lv-PB0">
-                                        <rect key="frame" x="0.0" y="66" width="351" height="21"/>
+                                        <rect key="frame" x="0.0" y="66" width="297" height="21"/>
                                         <subviews>
                                             <comboBox verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uPI-8a-74M">
                                                 <rect key="frame" x="0.0" y="-2" width="99" height="25"/>
@@ -743,8 +743,8 @@
                                                 </connections>
                                             </comboBox>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0NZ-wf-vbT">
-                                                <rect key="frame" x="102" y="-7" width="153" height="32"/>
-                                                <buttonCell key="cell" type="push" title="Assemble (mobile)" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jb1-Pw-3OS">
+                                                <rect key="frame" x="102" y="-7" width="99" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Assemble" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jb1-Pw-3OS">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
@@ -753,7 +753,7 @@
                                                 </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="atj-5u-1OL">
-                                                <rect key="frame" x="259" y="2" width="94" height="18"/>
+                                                <rect key="frame" x="205" y="2" width="94" height="18"/>
                                                 <buttonCell key="cell" type="check" title="Clear cache" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="fei-HG-Kmb">
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -835,7 +835,7 @@
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="135" id="W8b-gD-8mi"/>
                                                 </constraints>
-                                                <buttonCell key="cell" type="push" title="Install (mobile)" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1EG-6a-lY2">
+                                                <buttonCell key="cell" type="push" title="Install" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1EG-6a-lY2">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
