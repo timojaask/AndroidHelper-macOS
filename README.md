@@ -9,5 +9,7 @@ Running Android dev related commands from a GUI, just for fun? 🤷‍♀️🤷
 - Add ability to start and stop emulators
 - Auto-refresh list of active targets
 - Make use of the "offline/device" status of running targets -- perhaps wait until a target becomes active
+- Save project preferences inside the project directory, and cache parsed modules and variants
+- Add ability to easily open previously saved projects
 - Extract command running and parsing into some kind of Runner module. For example, right now ViewController has some business logic in refreshTargets function.
 
