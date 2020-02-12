@@ -1,13 +1,9 @@
 import Cocoa
 
-struct Task {
-    let taskName: String
-    let description: String
-}
-
+// TODO: installTasks are not really tasks -- they are build variants
 struct Project {
     let name: String
-    let tasks: [Task]
+    let installTasks: [String]
 }
 
 extension Project: Equatable {
@@ -87,42 +83,55 @@ func applyAction(state: State, action: Action) -> State {
 
 
 /**
- Parse project specific Gradle tasks from raw `gradle tasks --all` command output
+ Parse project specific Gradle tasks from raw `gradle tasks --all` command output. Returns a list of projects that can be installed, along with installable build variants
  */
-func parseProjects(fromString string: String) -> [Project] {
+func parseInstallableProjects(fromString string: String) -> [Project] {
     guard let rangeOfAndroidTasksTitle = string.range(of: "Android tasks") else { return [] }
-    let dataSubstring = string.suffix(from: rangeOfAndroidTasksTitle.upperBound)
-    let lines = dataSubstring.split(separator: "\n")
-    struct TempTask {
-        let projectName: String
-        let taskName: String
-        let description: String
-    }
-    let projects = lines.compactMap { (line: Substring) -> TempTask? in
-        guard line.contains(":") else { return nil }
-        let splitByColon = line.split(separator: ":")
-        let projectName = splitByColon[0]
-        var taskName: Substring = ""
-        var description: Substring = ""
+    func parseProjectAndTask(from string: Substring) -> (Substring, Substring)? {
+        guard string.contains(":") else { return nil }
+        let splitByColon = string.split(separator: ":")
+        let project = splitByColon[0]
+        var task: Substring = ""
         if splitByColon[1].contains(" - ") {
             let splitByDash = splitByColon[1].split(separator: "-")
-            taskName = splitByDash[0]
-            description = splitByDash[1]
+            // Drop the last character because it's a space. `trimmingCharacters` won't work because it converts to a String.
+            task = splitByDash[0].dropLast()
         } else {
-            taskName = splitByColon[1]
+            task = splitByColon[1]
         }
-        return TempTask(
-            projectName: projectName.trimmingCharacters(in: .whitespacesAndNewlines),
-            taskName: taskName.trimmingCharacters(in: .whitespacesAndNewlines),
-            description: description.trimmingCharacters(in: .whitespacesAndNewlines)
-        )
+        return (project, task)
     }
-    let groupedAndSorted = Dictionary(grouping: projects) { $0.projectName }.sorted { (val1, val2) -> Bool in
-        val1.key < val2.key
-    }.map { (key, value) -> Project in
-        Project(name: key, tasks: value.map { Task(taskName: $0.taskName, description: $0.description) })
+    func parseInstallTask(from line: Substring) -> (Substring, Substring)? {
+        guard let (project, task) = parseProjectAndTask(from: line) else { return nil }
+        guard task.hasPrefix("install") && !task.hasSuffix("AndroidTest") else { return nil }
+        return (project, task)
     }
-    return groupedAndSorted
+    func groupToInstallableProject(from grouped: (Substring, [(Substring, Substring)])) -> Project? {
+        let (projectName, tupleProjectAndTasks) = grouped
+        let installTasks = tupleProjectAndTasks
+            .map { String($0.1.dropPrefix(prefix: "install")) }
+            .sorted { $0 < $1 }
+        
+        return installTasks.count > 0 ? Project(name: String(projectName),installTasks: installTasks) : nil
+    }
+    func groupByProjectName(projectsAndTasks: [(Substring, Substring)]) -> [Substring: [(Substring, Substring)]] {
+        return Dictionary(grouping: projectsAndTasks) { $0.0 }
+    }
+    
+    let dataSubstring = string.suffix(from: rangeOfAndroidTasksTitle.upperBound)
+    let lines = dataSubstring.split(separator: "\n")
+    let installableProjectsAndTasks = lines.compactMap(parseInstallTask(from:))
+    return groupByProjectName(projectsAndTasks: installableProjectsAndTasks)
+        .compactMap(groupToInstallableProject(from:))
+        .sorted(by: { $0.name < $1.name })
+}
+
+
+extension Substring {
+    func dropPrefix(prefix: Substring) -> Substring {
+        guard hasPrefix(prefix) else { return self }
+        return dropFirst(prefix.count)
+    }
 }
 
 /**
@@ -158,6 +167,15 @@ class ViewController: NSViewController {
     private func updateState(action: Action) {
         state = applyAction(state: state, action: action)
         updateUi(state: state)
+        
+        // DEBUG
+        switch action {
+        case .setSelectedProject(let newSelectedProjectName):
+            let installTasks = state.projects.first(where: { $0.name == newSelectedProjectName })?.installTasks ?? []
+            logln("Install tasks for \(newSelectedProjectName ?? "nil"):\n\(installTasks.joined(separator: "\n"))")
+        default:
+            break
+        }
     }
 
     private func updateUi(state: State) {
@@ -246,7 +264,7 @@ class ViewController: NSViewController {
             case .error(let reason):
                 strongSelf.logln(reason.toString())
             case .success:
-                let projects = parseProjects(fromString: commandOutput)
+                let projects = parseInstallableProjects(fromString: commandOutput)
                 strongSelf.logln("Number of projects found: \(projects.count)")
                 strongSelf.updateState(action: .setProjects(newProjects: projects))
             }
