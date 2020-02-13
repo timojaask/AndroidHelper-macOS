@@ -4,64 +4,64 @@ import AndroidHelper_macOS
 class AssembleCommand_Tests: XCTestCase {
     func testAssembleDebugMobile() {
         XCTAssertEqual(Command.assemble(
-            configuration: BuildConfiguration.debug,
+            buildVariant: "GoogleDebug",
             cleanCache: false,
-            platform: Platform.mobile).toString(),
+            project: "app-mobile").toString(),
         "./gradlew :app-mobile:assembleGoogleDebug")
     }
 
     func testAssembleCleanCacheDebugMobile() {
         XCTAssertEqual(Command.assemble(
-            configuration: BuildConfiguration.debug,
+            buildVariant: "GoogleDebug",
             cleanCache: true,
-            platform: Platform.mobile).toString(),
+            project: "app-mobile").toString(),
         "./gradlew clean cleanBuildCache :app-mobile:assembleGoogleDebug")
     }
     
     func testAssembleReleaseMobile() {
         XCTAssertEqual(Command.assemble(
-            configuration: BuildConfiguration.release,
+            buildVariant: "GoogleRelease",
             cleanCache: false,
-            platform: Platform.mobile).toString(),
+            project: "app-mobile").toString(),
         "./gradlew :app-mobile:assembleGoogleRelease")
     }
 
     func testAssembleCleanCacheReleaseMobile() {
         XCTAssertEqual(Command.assemble(
-            configuration: BuildConfiguration.release,
+            buildVariant: "GoogleRelease",
             cleanCache: true,
-            platform: Platform.mobile).toString(),
+            project: "app-mobile").toString(),
         "./gradlew clean cleanBuildCache :app-mobile:assembleGoogleRelease")
     }
     func testAssembleDebugLeanback() {
         XCTAssertEqual(Command.assemble(
-            configuration: BuildConfiguration.debug,
+            buildVariant: "GoogleDebug",
             cleanCache: false,
-            platform: Platform.leanback).toString(),
+            project: "app-leanback").toString(),
         "./gradlew :app-leanback:assembleGoogleDebug")
     }
 
     func testAssembleCleanCacheDebugLeanback() {
         XCTAssertEqual(Command.assemble(
-            configuration: BuildConfiguration.debug,
+            buildVariant: "GoogleDebug",
             cleanCache: true,
-            platform: Platform.leanback).toString(),
+            project: "app-leanback").toString(),
         "./gradlew clean cleanBuildCache :app-leanback:assembleGoogleDebug")
     }
     
     func testAssembleReleaseLeanback() {
         XCTAssertEqual(Command.assemble(
-            configuration: BuildConfiguration.release,
+            buildVariant: "GoogleRelease",
             cleanCache: false,
-            platform: Platform.leanback).toString(),
+            project: "app-leanback").toString(),
         "./gradlew :app-leanback:assembleGoogleRelease")
     }
 
     func testAssembleCleanCacheReleaseLeanback() {
         XCTAssertEqual(Command.assemble(
-            configuration: BuildConfiguration.release,
+            buildVariant: "GoogleRelease",
             cleanCache: true,
-            platform: Platform.leanback).toString(),
+            project: "app-leanback").toString(),
         "./gradlew clean cleanBuildCache :app-leanback:assembleGoogleRelease")
     }
 }
