@@ -1,16 +1,15 @@
 import Cocoa
 
-// TODO: installTasks are not really tasks -- they are build variants
-struct Project {
+struct Module {
     let name: String
-    let installTasks: [String]
+    let buildVariants: [String]
 }
 
-extension Project: Equatable {
+extension Module: Equatable {
     /**
-     Does shallow comparison by matching by comparing just the project `name` fields.
+     Does shallow comparison by matching by comparing just the module `name` fields.
      */
-    static func == (lhs: Project, rhs: Project) -> Bool {
+    static func == (lhs: Module, rhs: Module) -> Bool {
         return lhs.name == rhs.name
     }
 }
@@ -20,8 +19,8 @@ struct State {
     var targets: [Target] = []
     var selectedTarget: Target? = nil
     var clearCacheEnabled: Bool = false
-    var projects: [Project] = []
-    var selectedProject: Project? = nil
+    var modules: [Module] = []
+    var selectedModule: Module? = nil
 }
 
 enum Action {
@@ -29,8 +28,8 @@ enum Action {
     case setTargets(newTargets: [Target])
     case setSelectedTarget(newSelectedTarget: Target?)
     case setClearCacheEnabled(newClearCacheEnabledValue: Bool)
-    case setProjects(newProjects: [Project])
-    case setSelectedProject(newSelectedProjectName: String?)
+    case setModules(newModules: [Module])
+    case setSelectedModule(newSelectedModuleName: String?)
 }
 
 func applyAction(state: State, action: Action) -> State {
@@ -39,14 +38,14 @@ func applyAction(state: State, action: Action) -> State {
         return targets.contains(target)
     }
 
-    func projectExists(projects: [Project], project: Project?) -> Bool {
-        guard let project = project else { return false }
-        return projects.contains(project)
+    func moduleExists(modules: [Module], module: Module?) -> Bool {
+        guard let module = module else { return false }
+        return modules.contains(module)
     }
     
-    func findProjectNamedLike(projects: [Project], searchString: String?) -> Project? {
+    func findModuleNamedLike(modules: [Module], searchString: String?) -> Module? {
         guard let searchString = searchString else { return nil }
-        return projects.first(where: { $0.name.starts(with: searchString) })
+        return modules.first(where: { $0.name.starts(with: searchString) })
     }
     
     var newState = state
@@ -66,16 +65,16 @@ func applyAction(state: State, action: Action) -> State {
         }
     case .setClearCacheEnabled(let newClearCacheEnabledValue):
         newState.clearCacheEnabled = newClearCacheEnabledValue
-    case .setProjects(let newProjects):
-        newState.projects = newProjects
-        if !projectExists(projects: newProjects, project: newState.selectedProject) {
-            newState.selectedProject = newProjects.first
+    case .setModules(let newModules):
+        newState.modules = newModules
+        if !moduleExists(modules: newModules, module: newState.selectedModule) {
+            newState.selectedModule = newModules.first
         }
-    case .setSelectedProject(let newSelectedProjectName):
-        if let selectedProject = newState.projects.first(where: { $0.name == newSelectedProjectName }) {
-            newState.selectedProject = selectedProject
+    case .setSelectedModule(let newSelectedModuleName):
+        if let selectedModule = newState.modules.first(where: { $0.name == newSelectedModuleName }) {
+            newState.selectedModule = selectedModule
         } else {
-            newState.selectedProject = findProjectNamedLike(projects: newState.projects, searchString: newSelectedProjectName) ?? newState.projects.first
+            newState.selectedModule = findModuleNamedLike(modules: newState.modules, searchString: newSelectedModuleName) ?? newState.modules.first
         }
     }
     return newState
@@ -83,14 +82,14 @@ func applyAction(state: State, action: Action) -> State {
 
 
 /**
- Parse project specific Gradle tasks from raw `gradle tasks --all` command output. Returns a list of projects that can be installed, along with installable build variants
+ Parse project specific Gradle tasks from raw `gradle tasks --all` command output. Returns a list of modules that can be installed, along with installable build variants
  */
-func parseInstallableProjects(fromString string: String) -> [Project] {
+func parseInstallableModules(fromString string: String) -> [Module] {
     guard let rangeOfAndroidTasksTitle = string.range(of: "Android tasks") else { return [] }
-    func parseProjectAndTask(from string: Substring) -> (Substring, Substring)? {
+    func parseModuleAndTask(from string: Substring) -> (Substring, Substring)? {
         guard string.contains(":") else { return nil }
         let splitByColon = string.split(separator: ":")
-        let project = splitByColon[0]
+        let module = splitByColon[0]
         var task: Substring = ""
         if splitByColon[1].contains(" - ") {
             let splitByDash = splitByColon[1].split(separator: "-")
@@ -99,30 +98,30 @@ func parseInstallableProjects(fromString string: String) -> [Project] {
         } else {
             task = splitByColon[1]
         }
-        return (project, task)
+        return (module, task)
     }
     func parseInstallTask(from line: Substring) -> (Substring, Substring)? {
-        guard let (project, task) = parseProjectAndTask(from: line) else { return nil }
+        guard let (module, task) = parseModuleAndTask(from: line) else { return nil }
         guard task.hasPrefix("install") && !task.hasSuffix("AndroidTest") else { return nil }
-        return (project, task)
+        return (module, task)
     }
-    func groupToInstallableProject(from grouped: (Substring, [(Substring, Substring)])) -> Project? {
-        let (projectName, tupleProjectAndTasks) = grouped
-        let installTasks = tupleProjectAndTasks
+    func groupToInstallableModule(from grouped: (Substring, [(Substring, Substring)])) -> Module? {
+        let (moduleName, tupleModuleAndTasks) = grouped
+        let buildVariants = tupleModuleAndTasks
             .map { String($0.1.dropPrefix(prefix: "install")) }
             .sorted { $0 < $1 }
         
-        return installTasks.count > 0 ? Project(name: String(projectName),installTasks: installTasks) : nil
+        return buildVariants.count > 0 ? Module(name: String(moduleName), buildVariants: buildVariants) : nil
     }
-    func groupByProjectName(projectsAndTasks: [(Substring, Substring)]) -> [Substring: [(Substring, Substring)]] {
-        return Dictionary(grouping: projectsAndTasks) { $0.0 }
+    func groupByModuleName(modulesAndTasks: [(Substring, Substring)]) -> [Substring: [(Substring, Substring)]] {
+        return Dictionary(grouping: modulesAndTasks) { $0.0 }
     }
     
     let dataSubstring = string.suffix(from: rangeOfAndroidTasksTitle.upperBound)
     let lines = dataSubstring.split(separator: "\n")
-    let installableProjectsAndTasks = lines.compactMap(parseInstallTask(from:))
-    return groupByProjectName(projectsAndTasks: installableProjectsAndTasks)
-        .compactMap(groupToInstallableProject(from:))
+    let installableModulesAndTasks = lines.compactMap(parseInstallTask(from:))
+    return groupByModuleName(modulesAndTasks: installableModulesAndTasks)
+        .compactMap(groupToInstallableModule(from:))
         .sorted(by: { $0.name < $1.name })
 }
 
@@ -160,7 +159,7 @@ class ViewController: NSViewController {
     @IBOutlet var logTextView: NSTextView!
     @IBOutlet weak var clearCacheCheckbox: NSButton!
     @IBOutlet weak var targetsPopupButton: NSPopUpButton!
-    @IBOutlet weak var projectsComboBox: NSComboBox!
+    @IBOutlet weak var modulesComboBox: NSComboBox!
     
     private var state = State()
 
@@ -170,9 +169,9 @@ class ViewController: NSViewController {
         
         // DEBUG
         switch action {
-        case .setSelectedProject(let newSelectedProjectName):
-            let installTasks = state.projects.first(where: { $0.name == newSelectedProjectName })?.installTasks ?? []
-            logln("Install tasks for \(newSelectedProjectName ?? "nil"):\n\(installTasks.joined(separator: "\n"))")
+        case .setSelectedModule(let newSelectedModuleName):
+            let buildVariants = state.modules.first(where: { $0.name == newSelectedModuleName })?.buildVariants ?? []
+            logln("Build variants for \(newSelectedModuleName ?? "nil"):\n\(buildVariants.joined(separator: "\n"))")
         default:
             break
         }
@@ -187,9 +186,9 @@ class ViewController: NSViewController {
 
         clearCacheCheckbox.updateCheckedState(isChecked: state.clearCacheEnabled)
         
-        projectsComboBox.updateState(
-            items: state.projects.map { $0.name } ,
-            selectedItem: state.selectedProject?.name)
+        modulesComboBox.updateState(
+            items: state.modules.map { $0.name } ,
+            selectedItem: state.selectedModule?.name)
     }
     
     override func viewDidLoad() {
@@ -199,7 +198,7 @@ class ViewController: NSViewController {
     }
     
     @IBAction func assembleMobileClicked(_ sender: Any) {
-        guard let project = state.selectedProject else { return }
+        guard let project = state.selectedModule else { return }
         let command = Command.assemble(configuration: .debug, cleanCache: state.clearCacheEnabled, project: project.name)
         logln(command.toString())
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
@@ -208,7 +207,7 @@ class ViewController: NSViewController {
     }
     
     @IBAction func installDeviceMobileClicked(_ sender: Any) {
-        guard let project = state.selectedProject else { return }
+        guard let project = state.selectedModule else { return }
         guard let target = state.selectedTarget else { return }
         let command = Command.install(configuration: .debug, cleanCache: state.clearCacheEnabled, project: project.name, target: target)
         logln(command.toString())
@@ -253,7 +252,7 @@ class ViewController: NSViewController {
         }
     }
     
-    @IBAction func listProjectsClicked(_ sender: NSButton) {
+    @IBAction func listModulesClicked(_ sender: NSButton) {
         var commandOutput = ""
         logln("Discovering projects...")
         Shell.runAsync(command: Command.projects, directory: state.projectDirectory) { [weak self] progress in
@@ -264,9 +263,9 @@ class ViewController: NSViewController {
             case .error(let reason):
                 strongSelf.logln(reason.toString())
             case .success:
-                let projects = parseInstallableProjects(fromString: commandOutput)
-                strongSelf.logln("Number of projects found: \(projects.count)")
-                strongSelf.updateState(action: .setProjects(newProjects: projects))
+                let modules = parseInstallableModules(fromString: commandOutput)
+                strongSelf.logln("Number of modules found: \(modules.count)")
+                strongSelf.updateState(action: .setModules(newModules: modules))
             }
         }
     }
@@ -279,9 +278,9 @@ class ViewController: NSViewController {
         clearLog()
     }
     
-    @IBAction func projectsComboBoxUpdated(_ sender: NSComboBox) {
-        let selectedProjectName = sender.objectValueOfSelectedItem as? String ?? sender.stringValue
-        updateState(action: .setSelectedProject(newSelectedProjectName: selectedProjectName))
+    @IBAction func modulesComboBoxUpdated(_ sender: NSComboBox) {
+        let selectedModuleName = sender.objectValueOfSelectedItem as? String ?? sender.stringValue
+        updateState(action: .setSelectedModule(newSelectedModuleName: selectedModuleName))
     }
     
     @IBAction func targetsPopupButtonChanged(_ sender: NSPopUpButton) {
