@@ -1,8 +1,8 @@
 import Foundation
 
 public enum Command {
-    case assemble(configuration: BuildConfiguration, cleanCache: Bool, project: String)
-    case install(configuration: BuildConfiguration, cleanCache: Bool, project: String, target: Target)
+    case assemble(buildVariant: String, cleanCache: Bool, project: String)
+    case install(buildVariant: String, cleanCache: Bool, project: String, target: Target)
     case projects
     case listTargets
     case start(target: Target)
@@ -14,10 +14,10 @@ public enum Command {
     
     public func toString() -> String {
         switch self {
-        case .assemble(let configuration, let cleanCache, let project):
-            return GradleCommand.assemble(configuration: configuration, cleanCache: cleanCache, project: project).toString()
-        case .install(let configuration, let cleanCache, let project, let target):
-            return GradleCommand.install(configuration: configuration, cleanCache: cleanCache, project: project, targetSerial: target.serialNumber()).toString()
+        case .assemble(let buildVariant, let cleanCache, let project):
+            return GradleCommand.assemble(buildVariant: buildVariant, cleanCache: cleanCache, project: project).toString()
+        case .install(let buildVariant, let cleanCache, let project, let target):
+            return GradleCommand.install(buildVariant: buildVariant, cleanCache: cleanCache, project: project, targetSerial: target.serialNumber()).toString()
         case .projects:
             return GradleCommand.tasks.toString()
         case .listTargets:
@@ -31,17 +31,17 @@ public enum Command {
 }
 
 public enum GradleCommand {
-    case assemble(configuration: BuildConfiguration, cleanCache: Bool, project: String)
-    case install(configuration: BuildConfiguration, cleanCache: Bool, project: String, targetSerial: String)
+    case assemble(buildVariant: String, cleanCache: Bool, project: String)
+    case install(buildVariant: String, cleanCache: Bool, project: String, targetSerial: String)
     case tasks
     
     func toString() -> String {
         switch self {
-        case .assemble(let configuration, let cleanCache, let project):
-            return format(command: "assemble", configuration: configuration, cleanCache: cleanCache, project: project)
-        case .install(let configuration, let cleanCache, let project, let targetSerial):
+        case .assemble(let buildVariant, let cleanCache, let project):
+            return format(command: "assemble", buildVariant: buildVariant, cleanCache: cleanCache, project: project)
+        case .install(let buildVariant, let cleanCache, let project, let targetSerial):
             let prefix = "ANDROID_SERIAL=\"\(targetSerial)\""
-            let command = format(command: "install", configuration: configuration, cleanCache: cleanCache, project: project)
+            let command = format(command: "install", buildVariant: buildVariant, cleanCache: cleanCache, project: project)
             return "\(prefix) \(command)"
         case .tasks:
             let command = "./gradlew tasks --all --console=plain --warning-mode=none -Dorg.gradle.logging.level=quiet"
@@ -49,10 +49,10 @@ public enum GradleCommand {
         }
     }
     
-    private func format(command: String, configuration: BuildConfiguration, cleanCache: Bool, project: String) -> String {
+    private func format(command: String, buildVariant: String, cleanCache: Bool, project: String) -> String {
         let gradlePath = "./gradlew"
         let cleanCacheFlag = cleanCache ? " clean cleanBuildCache" : ""
-        return "\(gradlePath)\(cleanCacheFlag) :\(project):\(command)\(configuration.toString())"
+        return "\(gradlePath)\(cleanCacheFlag) :\(project):\(command)\(buildVariant)"
     }
 }
 
@@ -79,23 +79,6 @@ public enum AdbCommand {
     private func formatAdbShellCommand(adbPath: String, command: String, targetSerial: String, arguments: String) -> String {
         return "\(adbPath) -s \"\(targetSerial)\" shell am \(command) \(arguments)"
     }
-}
-
-public enum BuildConfiguration {
-    case debug
-    case release
-    
-    func toString() -> String {
-        switch self {
-        case .debug:
-            return "GoogleDebug"
-        case .release:
-            return "GoogleRelease"
-        }
-    }
-}
-
-public struct EmulatorCommand {
 }
 
 public enum Target {

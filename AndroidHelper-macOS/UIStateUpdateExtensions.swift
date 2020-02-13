@@ -34,15 +34,3 @@ extension NSTextField {
         }
     }
 }
-
-extension NSComboBox {
-    func updateState(items: [String], selectedItem: String?) {
-        if objectValues as? [String] != items {
-            removeAllItems()
-            addItems(withObjectValues: items)
-        }
-        if objectValueOfSelectedItem as? String != selectedItem {
-            selectItem(withObjectValue: selectedItem)
-        }
-    }
-}

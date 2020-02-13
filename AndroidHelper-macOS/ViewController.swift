@@ -20,7 +20,8 @@ struct State {
     var selectedTarget: Target? = nil
     var clearCacheEnabled: Bool = false
     var modules: [Module] = []
-    var selectedModule: Module? = nil
+    var selectedModuleName: String? = nil
+    var selectedBuildVariant: String? = nil
 }
 
 enum Action {
@@ -29,7 +30,8 @@ enum Action {
     case setSelectedTarget(newSelectedTarget: Target?)
     case setClearCacheEnabled(newClearCacheEnabledValue: Bool)
     case setModules(newModules: [Module])
-    case setSelectedModule(newSelectedModuleName: String?)
+    case setSelectedModuleName(newSelectedModuleName: String?)
+    case setSelectedBuildVariant(newSelectedBuildVariant: String?)
 }
 
 func applyAction(state: State, action: Action) -> State {
@@ -38,14 +40,20 @@ func applyAction(state: State, action: Action) -> State {
         return targets.contains(target)
     }
 
-    func moduleExists(modules: [Module], module: Module?) -> Bool {
-        guard let module = module else { return false }
-        return modules.contains(module)
+    func moduleExists(modules: [Module], moduleName: String?) -> Bool {
+        guard let moduleName = moduleName else { return false }
+        return modules.contains(where: { $0.name == moduleName })
     }
     
-    func findModuleNamedLike(modules: [Module], searchString: String?) -> Module? {
-        guard let searchString = searchString else { return nil }
-        return modules.first(where: { $0.name.starts(with: searchString) })
+    func buildVariantExists(modules: [Module], moduleName: String?, buildVariantName: String?) -> Bool {
+        guard let moduleName = moduleName, let buildVariantName = buildVariantName else { return false }
+        guard let module = modules.first(where: { $0.name == moduleName }) else { return false }
+        return module.buildVariants.contains(buildVariantName)
+    }
+    
+    func defaultBuildVariant(modules: [Module], moduleName: String?) -> String? {
+        guard let module = modules.first(where: { $0.name == moduleName }) else { return nil }
+        return module.buildVariants.first
     }
     
     var newState = state
@@ -66,15 +74,28 @@ func applyAction(state: State, action: Action) -> State {
     case .setClearCacheEnabled(let newClearCacheEnabledValue):
         newState.clearCacheEnabled = newClearCacheEnabledValue
     case .setModules(let newModules):
+        // TODO: This case is getting complicated. Make it more human readable
         newState.modules = newModules
-        if !moduleExists(modules: newModules, module: newState.selectedModule) {
-            newState.selectedModule = newModules.first
+        if !moduleExists(modules: newModules, moduleName: newState.selectedModuleName) {
+            newState.selectedModuleName = newModules.first?.name
+            if !buildVariantExists(modules: newModules, moduleName: newState.selectedModuleName, buildVariantName: newState.selectedBuildVariant) {
+                newState.selectedBuildVariant = defaultBuildVariant(modules: newModules, moduleName: newState.selectedModuleName)
+            }
         }
-    case .setSelectedModule(let newSelectedModuleName):
-        if let selectedModule = newState.modules.first(where: { $0.name == newSelectedModuleName }) {
-            newState.selectedModule = selectedModule
+    case .setSelectedModuleName(let newSelectedModuleName):
+        if moduleExists(modules: newState.modules, moduleName: newSelectedModuleName) {
+            newState.selectedModuleName = newSelectedModuleName
         } else {
-            newState.selectedModule = findModuleNamedLike(modules: newState.modules, searchString: newSelectedModuleName) ?? newState.modules.first
+            newState.selectedModuleName = newState.modules.first?.name
+        }
+        if !buildVariantExists(modules: newState.modules, moduleName: newState.selectedModuleName, buildVariantName: newState.selectedBuildVariant) {
+            newState.selectedBuildVariant = defaultBuildVariant(modules: newState.modules, moduleName: newState.selectedModuleName)
+        }
+    case .setSelectedBuildVariant(let newSelectedBuildVariant):
+        if buildVariantExists(modules: newState.modules, moduleName: newState.selectedModuleName, buildVariantName: newSelectedBuildVariant) {
+            newState.selectedBuildVariant = newSelectedBuildVariant
+        } else {
+            newState.selectedBuildVariant = defaultBuildVariant(modules: newState.modules, moduleName: newState.selectedModuleName)
         }
     }
     return newState
@@ -159,7 +180,8 @@ class ViewController: NSViewController {
     @IBOutlet var logTextView: NSTextView!
     @IBOutlet weak var clearCacheCheckbox: NSButton!
     @IBOutlet weak var targetsPopupButton: NSPopUpButton!
-    @IBOutlet weak var modulesComboBox: NSComboBox!
+    @IBOutlet weak var modulesPopupButton: NSPopUpButton!
+    @IBOutlet weak var buildVariantsPopupButton: NSPopUpButton!
     
     private var state = State()
 
@@ -169,7 +191,7 @@ class ViewController: NSViewController {
         
         // DEBUG
         switch action {
-        case .setSelectedModule(let newSelectedModuleName):
+        case .setSelectedModuleName(let newSelectedModuleName):
             let buildVariants = state.modules.first(where: { $0.name == newSelectedModuleName })?.buildVariants ?? []
             logln("Build variants for \(newSelectedModuleName ?? "nil"):\n\(buildVariants.joined(separator: "\n"))")
         default:
@@ -178,6 +200,11 @@ class ViewController: NSViewController {
     }
 
     private func updateUi(state: State) {
+        func variantsForModule(modules: [Module], moduleName: String?) -> [String] {
+            guard let module = modules.first(where: { $0.name == moduleName }) else { return [] }
+            return module.buildVariants
+        }
+        
         projectDirectoryTextField.updateState(text: state.projectDirectory)
 
         targetsPopupButton.updateState(
@@ -186,9 +213,13 @@ class ViewController: NSViewController {
 
         clearCacheCheckbox.updateCheckedState(isChecked: state.clearCacheEnabled)
         
-        modulesComboBox.updateState(
-            items: state.modules.map { $0.name } ,
-            selectedItem: state.selectedModule?.name)
+        modulesPopupButton.updateState(
+            items: state.modules.map { $0.name },
+            selectedItemTitle: state.selectedModuleName)
+        
+        buildVariantsPopupButton.updateState(
+            items: variantsForModule(modules: state.modules, moduleName: state.selectedModuleName),
+            selectedItemTitle: state.selectedBuildVariant)
     }
     
     override func viewDidLoad() {
@@ -198,8 +229,8 @@ class ViewController: NSViewController {
     }
     
     @IBAction func assembleMobileClicked(_ sender: Any) {
-        guard let project = state.selectedModule else { return }
-        let command = Command.assemble(configuration: .debug, cleanCache: state.clearCacheEnabled, project: project.name)
+        guard let moduleName = state.selectedModuleName, let buildVariant = state.selectedBuildVariant else { return }
+        let command = Command.assemble(buildVariant: buildVariant, cleanCache: state.clearCacheEnabled, project: moduleName)
         logln(command.toString())
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
@@ -207,9 +238,10 @@ class ViewController: NSViewController {
     }
     
     @IBAction func installDeviceMobileClicked(_ sender: Any) {
-        guard let project = state.selectedModule else { return }
-        guard let target = state.selectedTarget else { return }
-        let command = Command.install(configuration: .debug, cleanCache: state.clearCacheEnabled, project: project.name, target: target)
+        guard let moduleName = state.selectedModuleName,
+            let buildVariant = state.selectedBuildVariant,
+            let target = state.selectedTarget else { return }
+        let command = Command.install(buildVariant: buildVariant, cleanCache: state.clearCacheEnabled, project: moduleName, target: target)
         logln(command.toString())
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             guard let strongSelf = self else { return }
@@ -278,9 +310,11 @@ class ViewController: NSViewController {
         clearLog()
     }
     
-    @IBAction func modulesComboBoxUpdated(_ sender: NSComboBox) {
-        let selectedModuleName = sender.objectValueOfSelectedItem as? String ?? sender.stringValue
-        updateState(action: .setSelectedModule(newSelectedModuleName: selectedModuleName))
+    @IBAction func modulesPopupButtonUpdated(_ sender: NSPopUpButton) {
+        updateState(action: .setSelectedModuleName(newSelectedModuleName: sender.selectedItem?.title))
+    }
+    @IBAction func buildVariantsPopupButtonUpdated(_ sender: NSPopUpButton) {
+        updateState(action: .setSelectedBuildVariant(newSelectedBuildVariant: sender.selectedItem?.title))
     }
     
     @IBAction func targetsPopupButtonChanged(_ sender: NSPopUpButton) {

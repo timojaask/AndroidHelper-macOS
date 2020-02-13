@@ -726,25 +726,48 @@
                                 </textFieldCell>
                             </textField>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="12" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hzb-Ew-4DB">
-                                <rect key="frame" x="20" y="362" width="429" height="87"/>
+                                <rect key="frame" x="20" y="361" width="459" height="88"/>
                                 <subviews>
-                                    <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="12" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a8T-Lv-PB0">
-                                        <rect key="frame" x="0.0" y="66" width="297" height="21"/>
+                                    <stackView distribution="fillEqually" orientation="horizontal" alignment="top" spacing="33" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a8T-Lv-PB0">
+                                        <rect key="frame" x="0.0" y="66" width="459" height="22"/>
                                         <subviews>
-                                            <comboBox verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uPI-8a-74M">
-                                                <rect key="frame" x="0.0" y="-2" width="99" height="25"/>
-                                                <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" numberOfVisibleItems="10" id="Lre-bw-i3U">
+                                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QMG-1d-U7A">
+                                                <rect key="frame" x="0.0" y="-1" width="90" height="23"/>
+                                                <popUpButtonCell key="cell" type="roundTextured" title="Item 1" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" selectedItem="hiX-Ub-tKX" id="oMr-TY-qlF">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
-                                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                </comboBoxCell>
+                                                    <menu key="menu" id="pXS-uD-0cK">
+                                                        <items>
+                                                            <menuItem title="Item 1" state="on" id="hiX-Ub-tKX"/>
+                                                            <menuItem title="Item 2" id="DDD-y9-pRI"/>
+                                                            <menuItem title="Item 3" id="Av0-K1-8mQ"/>
+                                                        </items>
+                                                    </menu>
+                                                </popUpButtonCell>
                                                 <connections>
-                                                    <action selector="modulesComboBoxUpdated:" target="XfG-lQ-9wD" id="bAL-La-val"/>
+                                                    <action selector="modulesPopupButtonUpdated:" target="XfG-lQ-9wD" id="8fU-sb-zTM"/>
                                                 </connections>
-                                            </comboBox>
+                                            </popUpButton>
+                                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YtG-nT-IzO">
+                                                <rect key="frame" x="123" y="-1" width="90" height="23"/>
+                                                <popUpButtonCell key="cell" type="roundTextured" title="Item 1" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="6mr-FW-pA1" id="OQ2-Ka-5Bw">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                    <menu key="menu" id="1mN-BS-wKm">
+                                                        <items>
+                                                            <menuItem title="Item 1" state="on" id="6mr-FW-pA1"/>
+                                                            <menuItem title="Item 2" id="TA7-tJ-lGw"/>
+                                                            <menuItem title="Item 3" id="ivT-Ge-7ju"/>
+                                                        </items>
+                                                    </menu>
+                                                </popUpButtonCell>
+                                                <connections>
+                                                    <action selector="buildVariantsPopupButtonUpdated:" target="XfG-lQ-9wD" id="4Gh-g1-DFz"/>
+                                                </connections>
+                                            </popUpButton>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0NZ-wf-vbT">
-                                                <rect key="frame" x="102" y="-7" width="99" height="32"/>
-                                                <buttonCell key="cell" type="push" title="Assemble" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jb1-Pw-3OS">
+                                                <rect key="frame" x="245.5" y="-1" width="91" height="23"/>
+                                                <buttonCell key="cell" type="roundTextured" title="Assemble" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jb1-Pw-3OS">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
@@ -753,7 +776,7 @@
                                                 </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="atj-5u-1OL">
-                                                <rect key="frame" x="205" y="2" width="94" height="18"/>
+                                                <rect key="frame" x="367" y="3" width="94" height="18"/>
                                                 <buttonCell key="cell" type="check" title="Clear cache" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="fei-HG-Kmb">
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -770,8 +793,10 @@
                                             <integer value="1000"/>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
+                                            <integer value="1000"/>
                                         </visibilityPriorities>
                                         <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
@@ -908,17 +933,17 @@
                                 </connections>
                             </button>
                             <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eIK-PS-En5">
-                                <rect key="frame" x="20" y="61" width="605" height="281"/>
+                                <rect key="frame" x="20" y="61" width="605" height="280"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="ugD-Vw-D2V">
-                                    <rect key="frame" x="0.0" y="0.0" width="605" height="281"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="605" height="280"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="l3a-00-9HM">
-                                            <rect key="frame" x="0.0" y="0.0" width="605" height="281"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="605" height="280"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="minSize" width="605" height="281"/>
+                                            <size key="minSize" width="605" height="280"/>
                                             <size key="maxSize" width="614" height="10000000"/>
                                             <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                         </textView>
@@ -929,7 +954,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="Cso-C8-FOE">
-                                    <rect key="frame" x="589" y="0.0" width="16" height="281"/>
+                                    <rect key="frame" x="589" y="0.0" width="16" height="280"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
@@ -977,10 +1002,11 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="buildVariantsPopupButton" destination="YtG-nT-IzO" id="Kah-gY-UPG"/>
                         <outlet property="clearCacheCheckbox" destination="atj-5u-1OL" id="R98-QN-Gje"/>
                         <outlet property="logScrollView" destination="eIK-PS-En5" id="qPJ-cu-Zrf"/>
                         <outlet property="logTextView" destination="l3a-00-9HM" id="e8S-ZE-44g"/>
-                        <outlet property="modulesComboBox" destination="uPI-8a-74M" id="yMl-qm-fvM"/>
+                        <outlet property="modulesPopupButton" destination="QMG-1d-U7A" id="rPe-zR-kxQ"/>
                         <outlet property="projectDirectoryTextField" destination="2xb-0o-d9e" id="sfS-Ix-icw"/>
                         <outlet property="targetsPopupButton" destination="v2W-hp-gX7" id="Alh-ST-yLy"/>
                     </connections>
