@@ -7,7 +7,7 @@ class AssembleCommand_Tests: XCTestCase {
             buildVariant: "GoogleDebug",
             cleanCache: false,
             project: "app-mobile").toString(),
-        "./gradlew :app-mobile:assembleGoogleDebug")
+        "./gradlew --parallel :app-mobile:assembleGoogleDebug")
     }
 
     func testAssembleCleanCacheDebugMobile() {
@@ -15,7 +15,7 @@ class AssembleCommand_Tests: XCTestCase {
             buildVariant: "GoogleDebug",
             cleanCache: true,
             project: "app-mobile").toString(),
-        "./gradlew clean cleanBuildCache :app-mobile:assembleGoogleDebug")
+        "./gradlew clean cleanBuildCache --parallel :app-mobile:assembleGoogleDebug")
     }
     
     func testAssembleReleaseMobile() {
@@ -23,7 +23,7 @@ class AssembleCommand_Tests: XCTestCase {
             buildVariant: "GoogleRelease",
             cleanCache: false,
             project: "app-mobile").toString(),
-        "./gradlew :app-mobile:assembleGoogleRelease")
+        "./gradlew --parallel :app-mobile:assembleGoogleRelease")
     }
 
     func testAssembleCleanCacheReleaseMobile() {
@@ -31,14 +31,14 @@ class AssembleCommand_Tests: XCTestCase {
             buildVariant: "GoogleRelease",
             cleanCache: true,
             project: "app-mobile").toString(),
-        "./gradlew clean cleanBuildCache :app-mobile:assembleGoogleRelease")
+        "./gradlew clean cleanBuildCache --parallel :app-mobile:assembleGoogleRelease")
     }
     func testAssembleDebugLeanback() {
         XCTAssertEqual(Command.assemble(
             buildVariant: "GoogleDebug",
             cleanCache: false,
             project: "app-leanback").toString(),
-        "./gradlew :app-leanback:assembleGoogleDebug")
+        "./gradlew --parallel :app-leanback:assembleGoogleDebug")
     }
 
     func testAssembleCleanCacheDebugLeanback() {
@@ -46,7 +46,7 @@ class AssembleCommand_Tests: XCTestCase {
             buildVariant: "GoogleDebug",
             cleanCache: true,
             project: "app-leanback").toString(),
-        "./gradlew clean cleanBuildCache :app-leanback:assembleGoogleDebug")
+        "./gradlew clean cleanBuildCache --parallel :app-leanback:assembleGoogleDebug")
     }
     
     func testAssembleReleaseLeanback() {
@@ -54,7 +54,7 @@ class AssembleCommand_Tests: XCTestCase {
             buildVariant: "GoogleRelease",
             cleanCache: false,
             project: "app-leanback").toString(),
-        "./gradlew :app-leanback:assembleGoogleRelease")
+        "./gradlew --parallel :app-leanback:assembleGoogleRelease")
     }
 
     func testAssembleCleanCacheReleaseLeanback() {
@@ -62,6 +62,6 @@ class AssembleCommand_Tests: XCTestCase {
             buildVariant: "GoogleRelease",
             cleanCache: true,
             project: "app-leanback").toString(),
-        "./gradlew clean cleanBuildCache :app-leanback:assembleGoogleRelease")
+        "./gradlew clean cleanBuildCache --parallel :app-leanback:assembleGoogleRelease")
     }
 }

@@ -13,6 +13,7 @@
 		2FB7FF0423E7BD200075530A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0323E7BD200075530A /* ViewController.swift */; };
 		2FB7FF0623E7BD210075530A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0523E7BD210075530A /* Assets.xcassets */; };
 		2FB7FF0923E7BD210075530A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0723E7BD210075530A /* Main.storyboard */; };
+		2FC2084223F634BD00732A9E /* AndroidHelperApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC2084123F634BD00732A9E /* AndroidHelperApi.swift */; };
 		2FFD0F9723EBB4CF0059BB4B /* Commands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0F9623EBB4CF0059BB4B /* Commands.swift */; };
 		2FFD0F9F23EBB5730059BB4B /* AssembleCommand_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0F9E23EBB5730059BB4B /* AssembleCommand_Tests.swift */; };
 		2FFD0FA723EBB98C0059BB4B /* InstallCommand_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0FA623EBB98C0059BB4B /* InstallCommand_Tests.swift */; };
@@ -44,6 +45,7 @@
 		2FB7FF0823E7BD210075530A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		2FB7FF0A23E7BD210075530A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2FB7FF0B23E7BD210075530A /* AndroidHelper_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AndroidHelper_macOS.entitlements; sourceTree = "<group>"; };
+		2FC2084123F634BD00732A9E /* AndroidHelperApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AndroidHelperApi.swift; sourceTree = "<group>"; };
 		2FFD0F9623EBB4CF0059BB4B /* Commands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Commands.swift; sourceTree = "<group>"; };
 		2FFD0F9C23EBB5730059BB4B /* AndroidHelper-macOS-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "AndroidHelper-macOS-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FFD0F9E23EBB5730059BB4B /* AssembleCommand_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssembleCommand_Tests.swift; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 				2FB7FF0123E7BD200075530A /* AppDelegate.swift */,
 				2FB7FF0323E7BD200075530A /* ViewController.swift */,
 				2F4A013623F2161B00F9E519 /* UIStateUpdateExtensions.swift */,
+				2FC2084123F634BD00732A9E /* AndroidHelperApi.swift */,
 				2FFD0F9623EBB4CF0059BB4B /* Commands.swift */,
 				2FFD0FB423EBC7AC0059BB4B /* Shell.swift */,
 				2FFD0FB223EBC4170059BB4B /* Array_SafeIndex.swift */,
@@ -231,6 +234,7 @@
 				2FFD0FB323EBC4170059BB4B /* Array_SafeIndex.swift in Sources */,
 				2FFD0FB523EBC7AC0059BB4B /* Shell.swift in Sources */,
 				2FFD0F9723EBB4CF0059BB4B /* Commands.swift in Sources */,
+				2FC2084223F634BD00732A9E /* AndroidHelperApi.swift in Sources */,
 				2FB7FF0223E7BD200075530A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -388,6 +392,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "AndroidHelper-macOS/AndroidHelper_macOS.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 6W4GZQ5Z99;
@@ -408,6 +413,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "AndroidHelper-macOS/AndroidHelper_macOS.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 6W4GZQ5Z99;

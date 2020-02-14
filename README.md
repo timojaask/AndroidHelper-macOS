@@ -2,7 +2,7 @@
 Running Android dev related commands from a GUI, just for fun? 🤷‍♀️🤷‍♂️
 
 ## Next tasks
-- Before heavily investing in writing unit tests, one of the next thing to do should probably be making commands more general purpose, preparing them to become standalone libraries. So this would include: module and variant selection.
+- Before heavily investing in writing unit tests, one of the next thing to do should probably be making commands more general purpose, preparing them to become standalone libraries. So this would include: module, variant, adb path, app package name, app activity
 - Add paralellize flag instead of having --parallel always on
 - Handle situations when things are not okay. For example when target not selected, but user is trying to install or start. Currently nothing is happenning, no error message.
 - The state update logic is important, so spend tome time making it readable

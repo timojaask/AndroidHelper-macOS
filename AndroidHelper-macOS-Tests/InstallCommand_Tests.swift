@@ -8,7 +8,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: false,
             project: "app-mobile",
             target: Target.device(serial: "111111", isOnline: true)).toString(),
-        "ANDROID_SERIAL=\"111111\" ./gradlew :app-mobile:installGoogleDebug")
+        "ANDROID_SERIAL=\"111111\" ./gradlew --parallel :app-mobile:installGoogleDebug")
     }
 
     func testInstallCleanCacheDebugMobileDevice() {
@@ -17,7 +17,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: true,
             project: "app-mobile",
             target: Target.device(serial: "222222", isOnline: false)).toString(),
-        "ANDROID_SERIAL=\"222222\" ./gradlew clean cleanBuildCache :app-mobile:installGoogleDebug")
+        "ANDROID_SERIAL=\"222222\" ./gradlew clean cleanBuildCache --parallel :app-mobile:installGoogleDebug")
     }
     
     func testInstallReleaseMobileDevice() {
@@ -26,7 +26,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: false,
             project: "app-mobile",
             target: Target.device(serial: "333333", isOnline: true)).toString(),
-        "ANDROID_SERIAL=\"333333\" ./gradlew :app-mobile:installGoogleRelease")
+        "ANDROID_SERIAL=\"333333\" ./gradlew --parallel :app-mobile:installGoogleRelease")
     }
 
     func testInstallCleanCacheReleaseMobileDevice() {
@@ -35,7 +35,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: true,
             project: "app-mobile",
             target: Target.device(serial: "444444", isOnline: false)).toString(),
-        "ANDROID_SERIAL=\"444444\" ./gradlew clean cleanBuildCache :app-mobile:installGoogleRelease")
+        "ANDROID_SERIAL=\"444444\" ./gradlew clean cleanBuildCache --parallel :app-mobile:installGoogleRelease")
     }
     func testInstallDebugLeanbackDevice() {
         XCTAssertEqual(Command.install(
@@ -43,7 +43,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: false,
             project: "app-leanback",
             target: Target.device(serial: "555555", isOnline: true)).toString(),
-        "ANDROID_SERIAL=\"555555\" ./gradlew :app-leanback:installGoogleDebug")
+        "ANDROID_SERIAL=\"555555\" ./gradlew --parallel :app-leanback:installGoogleDebug")
     }
 
     func testInstallCleanCacheDebugLeanbackDevice() {
@@ -52,7 +52,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: true,
             project: "app-leanback",
             target: Target.device(serial: "666666", isOnline: false)).toString(),
-        "ANDROID_SERIAL=\"666666\" ./gradlew clean cleanBuildCache :app-leanback:installGoogleDebug")
+        "ANDROID_SERIAL=\"666666\" ./gradlew clean cleanBuildCache --parallel :app-leanback:installGoogleDebug")
     }
     
     func testInstallReleaseLeanbackDevice() {
@@ -61,7 +61,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: false,
             project: "app-leanback",
             target: Target.device(serial: "777777", isOnline: true)).toString(),
-        "ANDROID_SERIAL=\"777777\" ./gradlew :app-leanback:installGoogleRelease")
+        "ANDROID_SERIAL=\"777777\" ./gradlew --parallel :app-leanback:installGoogleRelease")
     }
 
     func testInstallCleanCacheReleaseLeanbackDevice() {
@@ -70,7 +70,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: true,
             project: "app-leanback",
             target: Target.device(serial: "888888", isOnline: false)).toString(),
-        "ANDROID_SERIAL=\"888888\" ./gradlew clean cleanBuildCache :app-leanback:installGoogleRelease")
+        "ANDROID_SERIAL=\"888888\" ./gradlew clean cleanBuildCache --parallel :app-leanback:installGoogleRelease")
     }
     
     func testInstallDebugMobileEmulator() {
@@ -79,7 +79,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: false,
             project: "app-mobile",
             target: Target.emulator(port: 1111, isOnline: true)).toString(),
-        "ANDROID_SERIAL=\"emulator-1111\" ./gradlew :app-mobile:installGoogleDebug")
+        "ANDROID_SERIAL=\"emulator-1111\" ./gradlew --parallel :app-mobile:installGoogleDebug")
     }
 
     func testInstallCleanCacheDebugMobileEmulator() {
@@ -88,7 +88,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: true,
             project: "app-mobile",
             target: Target.emulator(port: 2222, isOnline: false)).toString(),
-        "ANDROID_SERIAL=\"emulator-2222\" ./gradlew clean cleanBuildCache :app-mobile:installGoogleDebug")
+        "ANDROID_SERIAL=\"emulator-2222\" ./gradlew clean cleanBuildCache --parallel :app-mobile:installGoogleDebug")
     }
     
     func testInstallReleaseMobileEmulator() {
@@ -97,7 +97,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: false,
             project: "app-mobile",
             target: Target.emulator(port: 3333, isOnline: true)).toString(),
-        "ANDROID_SERIAL=\"emulator-3333\" ./gradlew :app-mobile:installGoogleRelease")
+        "ANDROID_SERIAL=\"emulator-3333\" ./gradlew --parallel :app-mobile:installGoogleRelease")
     }
 
     func testInstallCleanCacheReleaseMobileEmulator() {
@@ -106,7 +106,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: true,
             project: "app-mobile",
             target: Target.emulator(port: 4444, isOnline: false)).toString(),
-        "ANDROID_SERIAL=\"emulator-4444\" ./gradlew clean cleanBuildCache :app-mobile:installGoogleRelease")
+        "ANDROID_SERIAL=\"emulator-4444\" ./gradlew clean cleanBuildCache --parallel :app-mobile:installGoogleRelease")
     }
     func testInstallDebugLeanbackEmulator() {
         XCTAssertEqual(Command.install(
@@ -114,7 +114,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: false,
             project: "app-leanback",
             target: Target.emulator(port: 5555, isOnline: true)).toString(),
-        "ANDROID_SERIAL=\"emulator-5555\" ./gradlew :app-leanback:installGoogleDebug")
+        "ANDROID_SERIAL=\"emulator-5555\" ./gradlew --parallel :app-leanback:installGoogleDebug")
     }
 
     func testInstallCleanCacheDebugLeanbackEmulator() {
@@ -123,7 +123,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: true,
             project: "app-leanback",
             target: Target.emulator(port: 6666, isOnline: false)).toString(),
-        "ANDROID_SERIAL=\"emulator-6666\" ./gradlew clean cleanBuildCache :app-leanback:installGoogleDebug")
+        "ANDROID_SERIAL=\"emulator-6666\" ./gradlew clean cleanBuildCache --parallel :app-leanback:installGoogleDebug")
     }
     
     func testInstallReleaseLeanbackEmulator() {
@@ -132,7 +132,7 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: false,
             project: "app-leanback",
             target: Target.emulator(port: 7777, isOnline: true)).toString(),
-        "ANDROID_SERIAL=\"emulator-7777\" ./gradlew :app-leanback:installGoogleRelease")
+        "ANDROID_SERIAL=\"emulator-7777\" ./gradlew --parallel :app-leanback:installGoogleRelease")
     }
 
     func testInstallCleanCacheReleaseLeanbackEmulator() {
@@ -141,6 +141,6 @@ class InstallCommand_Tests: XCTestCase {
             cleanCache: true,
             project: "app-leanback",
             target: Target.emulator(port: 8888, isOnline: false)).toString(),
-        "ANDROID_SERIAL=\"emulator-8888\" ./gradlew clean cleanBuildCache :app-leanback:installGoogleRelease")
+        "ANDROID_SERIAL=\"emulator-8888\" ./gradlew clean cleanBuildCache --parallel :app-leanback:installGoogleRelease")
     }
 }
