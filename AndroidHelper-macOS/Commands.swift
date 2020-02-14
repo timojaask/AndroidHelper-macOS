@@ -52,7 +52,7 @@ public enum GradleCommand {
     private func format(command: String, buildVariant: String, cleanCache: Bool, project: String) -> String {
         let gradlePath = "./gradlew"
         let cleanCacheFlag = cleanCache ? " clean cleanBuildCache" : ""
-        return "\(gradlePath)\(cleanCacheFlag) :\(project):\(command)\(buildVariant)"
+        return "\(gradlePath)\(cleanCacheFlag) --parallel :\(project):\(command)\(buildVariant)"
     }
 }
 
