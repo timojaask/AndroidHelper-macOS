@@ -16,7 +16,7 @@ class InstallCommand_Tests: XCTestCase {
             buildVariant: "GoogleDebug",
             cleanCache: true,
             project: "app-mobile",
-            target: Target.device(serial: "222222", isOnline: false))).toString(),
+            target: Target.device(serial: "222222", isOnline: false)).toString(),
         "ANDROID_SERIAL=\"222222\" ./gradlew clean cleanBuildCache :app-mobile:installGoogleDebug")
     }
     
@@ -25,7 +25,7 @@ class InstallCommand_Tests: XCTestCase {
             buildVariant: "GoogleRelease",
             cleanCache: false,
             project: "app-mobile",
-            target: Target.device(serial: "333333", isOnline: true))).toString(),
+            target: Target.device(serial: "333333", isOnline: true)).toString(),
         "ANDROID_SERIAL=\"333333\" ./gradlew :app-mobile:installGoogleRelease")
     }
 
@@ -42,7 +42,7 @@ class InstallCommand_Tests: XCTestCase {
             buildVariant: "GoogleDebug",
             cleanCache: false,
             project: "app-leanback",
-            target: Target.device(serial: "555555", isOnline: true))).toString(),
+            target: Target.device(serial: "555555", isOnline: true)).toString(),
         "ANDROID_SERIAL=\"555555\" ./gradlew :app-leanback:installGoogleDebug")
     }
 
@@ -60,7 +60,7 @@ class InstallCommand_Tests: XCTestCase {
             buildVariant: "GoogleRelease",
             cleanCache: false,
             project: "app-leanback",
-            target: Target.device(serial: "777777", isOnline: true))).toString(),
+            target: Target.device(serial: "777777", isOnline: true)).toString(),
         "ANDROID_SERIAL=\"777777\" ./gradlew :app-leanback:installGoogleRelease")
     }
 
@@ -78,7 +78,7 @@ class InstallCommand_Tests: XCTestCase {
             buildVariant: "GoogleDebug",
             cleanCache: false,
             project: "app-mobile",
-            target: Target.emulator(port: 1111, isOnline: true))).toString(),
+            target: Target.emulator(port: 1111, isOnline: true)).toString(),
         "ANDROID_SERIAL=\"emulator-1111\" ./gradlew :app-mobile:installGoogleDebug")
     }
 
@@ -96,7 +96,7 @@ class InstallCommand_Tests: XCTestCase {
             buildVariant: "GoogleRelease",
             cleanCache: false,
             project: "app-mobile",
-            target: Target.emulator(port: 3333, isOnline: true))).toString(),
+            target: Target.emulator(port: 3333, isOnline: true)).toString(),
         "ANDROID_SERIAL=\"emulator-3333\" ./gradlew :app-mobile:installGoogleRelease")
     }
 
@@ -113,7 +113,7 @@ class InstallCommand_Tests: XCTestCase {
             buildVariant: "GoogleDebug",
             cleanCache: false,
             project: "app-leanback",
-            target: Target.emulator(port: 5555, isOnline: true))).toString(),
+            target: Target.emulator(port: 5555, isOnline: true)).toString(),
         "ANDROID_SERIAL=\"emulator-5555\" ./gradlew :app-leanback:installGoogleDebug")
     }
 
@@ -131,7 +131,7 @@ class InstallCommand_Tests: XCTestCase {
             buildVariant: "GoogleRelease",
             cleanCache: false,
             project: "app-leanback",
-            target: Target.emulator(port: 7777, isOnline: true))).toString(),
+            target: Target.emulator(port: 7777, isOnline: true)).toString(),
         "ANDROID_SERIAL=\"emulator-7777\" ./gradlew :app-leanback:installGoogleRelease")
     }
 
