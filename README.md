@@ -2,6 +2,7 @@
 Running Android dev related commands from a GUI, just for fun? 🤷‍♀️🤷‍♂️
 
 ## Next tasks
+- Handle Process.run exception as per: https://stackoverflow.com/questions/60157321/how-can-i-handle-exceptions-that-process-run-throws/
 - Before heavily investing in writing unit tests, one of the next thing to do should probably be making commands more general purpose, preparing them to become standalone libraries. So this would include: module and variant selection.
 - Add paralellize flag instead of having --parallel always on
 - Handle situations when things are not okay. For example when target not selected, but user is trying to install or start. Currently nothing is happenning, no error message.
