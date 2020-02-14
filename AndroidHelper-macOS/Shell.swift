@@ -6,6 +6,7 @@ struct Shell {
     enum Error {
         case processLaunchingError(localizedDescription: String)
         case processTerminatedWithError(status: Int)
+        case noSuchFile(path: String?)
         
         func toString() -> String {
             switch self {
@@ -13,6 +14,9 @@ struct Shell {
                 return "Error launching process: \(localizedDescription)"
             case .processTerminatedWithError(let status):
                 return "Process terminated with error code: \(status)"
+            case .noSuchFile(let path):
+                let additionalInfo = path != nil ? ": \(path ?? "")" : ""
+                return "No such file or directory\(additionalInfo)"
             }
         }
     }
@@ -80,6 +84,9 @@ struct Shell {
         }
         do {
             try process.run()
+        } catch let error as CocoaError where error.code == .fileNoSuchFile {
+            let path = error.userInfo["NSFilePath"] as? String
+            progressHandler(.error(reason: .noSuchFile(path: path)))
         } catch {
             progressHandler(.error(reason: .processLaunchingError(localizedDescription: error.localizedDescription)))
         }
