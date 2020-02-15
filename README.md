@@ -17,6 +17,14 @@ Running Android dev related commands from a GUI, just for fun? 🤷‍♀️🤷
 - Add ability to easily open previously saved projects
 - Pick out relevant information from the log, such as build errors and warnings
 - Extract command running and parsing into some kind of AndroidHelperAPI module. For example, right now ViewController has some business logic in refreshTargets function.
+- See if I can make use of ADB `display-size` and `display-density` commands (https://developer.android.com/studio/command-line/adb)
+
+## Notes
+
+### Launching the app
+
+Tool: ADB (https://developer.android.com/studio/command-line/adb)
+Command: `adb -s "9AGAY1DGK8" shell am start -a android.intent.action.MAIN`
 
 ### AVD device error
 
