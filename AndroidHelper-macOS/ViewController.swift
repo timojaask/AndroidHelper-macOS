@@ -188,15 +188,6 @@ class ViewController: NSViewController {
     private func updateState(action: Action) {
         state = applyAction(state: state, action: action)
         updateUi(state: state)
-        
-        // DEBUG
-        switch action {
-        case .setSelectedModuleName(let newSelectedModuleName):
-            let buildVariants = state.modules.first(where: { $0.name == newSelectedModuleName })?.buildVariants ?? []
-            logln("Build variants for \(newSelectedModuleName ?? "nil"):\n\(buildVariants.joined(separator: "\n"))")
-        default:
-            break
-        }
     }
 
     private func updateUi(state: State) {
@@ -302,6 +293,24 @@ class ViewController: NSViewController {
         }
     }
     
+    private func findLatestApk(projectDirectory: String, module: String) -> String? {
+        let basePath = "\(projectDirectory)/\(module)/build/outputs/apk"
+        return FileManager.default.fildLastCreatedFile(directory: basePath, fileExtension: "apk")
+    }
+
+    @IBAction func findApkClicked(_ sender: NSButton) {
+        // search recursively for last created `*.apk` file under `[module]/build/output/apk/`
+        guard let module = state.selectedModuleName else {
+            logln("No module selected")
+            return
+        }
+        if let latestApk = findLatestApk(projectDirectory: state.projectDirectory, module: module) {
+            logln("Latest APK:\n\(latestApk)")
+        } else {
+            logln("Unable to find APK")
+        }
+    }
+
     @IBAction func setProjectDirectoryClicked(_ sender: Any) {
         updateState(action: .setProjectDirectory(newProjectDirectory: projectDirectoryTextField.stringValue))
     }

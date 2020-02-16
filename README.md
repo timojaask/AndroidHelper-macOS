@@ -17,14 +17,24 @@ Running Android dev related commands from a GUI, just for fun? 🤷‍♀️🤷
 - Add ability to easily open previously saved projects
 - Pick out relevant information from the log, such as build errors and warnings
 - Extract command running and parsing into some kind of AndroidHelperAPI module. For example, right now ViewController has some business logic in refreshTargets function.
+- Add install without building option (for cases where you want to install the same build on multiple devices). Maybe can use the latest built APK for a given module.
 - See if I can make use of ADB `display-size` and `display-density` commands (https://developer.android.com/studio/command-line/adb)
 
 ## Notes
 
 ### Launching the app
 
-Tool: ADB (https://developer.android.com/studio/command-line/adb)
-Command: `adb -s "9AGAY1DGK8" shell am start -a android.intent.action.MAIN`
+Tool: ADB ([documentation](https://developer.android.com/studio/command-line/adb))
+Command:
+
+You can't start your app using `adb -s "emulator-5554" shell am start -a android.intent.action.MAIN`, because the device wouldn't know what app to launch using this action. If you run this, Android will ask you to pick an app, and you can set that app as the default for this action, but this doesn't sound like a good idea.
+
+What's really needed is knowing the package and activity name. Package alone is not always enough, because if you have LeakCanary enabled, it's installed automatically together with the app and has the same package as the app. Thus trying to launch with just package name will likely launch the LeakCanary app instead of the actual app.
+
+#### Getting package and activity
+Both are defined in module's `AndroidManifest.xml`. We can find it under `[module-name]/src/main` and `[module-name]/src/[variant]` and probably some other places, and I think these get merged and they override each other in a certain way. Sounds complicated.
+
+We can get the final compiled version of `AndroidManifest.xml` from the app APK. The APK can be found under `[module]/build/outputs/apk/[productFlavor]/[buildType]/****.apk` or `[module]/build/outputs/apk/[buildType]` is there's no defined product flavors in this project. This makes it slightly problematic. Maybe the way to go here is to search recursively for last created `*.apk` file under `[module]/build/outputs/apk/`
 
 ### AVD device error
 
