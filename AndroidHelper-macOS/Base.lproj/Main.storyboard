@@ -706,245 +706,141 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="AndroidHelper_macOS" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="645" height="521"/>
+                        <rect key="frame" x="0.0" y="0.0" width="872" height="521"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SDR-hE-d1k">
-                                <rect key="frame" x="18" y="485" width="202" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Android Studio project directory:" id="Efc-D6-YBz">
+                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QMG-1d-U7A">
+                                <rect key="frame" x="20" y="478" width="140" height="23"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="140" id="cVd-Ov-htO"/>
+                                </constraints>
+                                <popUpButtonCell key="cell" type="roundTextured" title="Item 1" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" selectedItem="hiX-Ub-tKX" id="oMr-TY-qlF">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2xb-0o-d9e">
-                                <rect key="frame" x="20" y="457" width="548" height="20"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="oj6-wt-JGN">
-                                    <font key="font" size="13" name="Menlo-Regular"/>
-                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="12" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hzb-Ew-4DB">
-                                <rect key="frame" x="20" y="361" width="459" height="88"/>
-                                <subviews>
-                                    <stackView distribution="fillEqually" orientation="horizontal" alignment="top" spacing="33" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a8T-Lv-PB0">
-                                        <rect key="frame" x="0.0" y="66" width="459" height="22"/>
-                                        <subviews>
-                                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QMG-1d-U7A">
-                                                <rect key="frame" x="0.0" y="-1" width="90" height="23"/>
-                                                <popUpButtonCell key="cell" type="roundTextured" title="Item 1" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" selectedItem="hiX-Ub-tKX" id="oMr-TY-qlF">
-                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                    <menu key="menu" id="pXS-uD-0cK">
-                                                        <items>
-                                                            <menuItem title="Item 1" state="on" id="hiX-Ub-tKX"/>
-                                                            <menuItem title="Item 2" id="DDD-y9-pRI"/>
-                                                            <menuItem title="Item 3" id="Av0-K1-8mQ"/>
-                                                        </items>
-                                                    </menu>
-                                                </popUpButtonCell>
-                                                <connections>
-                                                    <action selector="modulesPopupButtonUpdated:" target="XfG-lQ-9wD" id="8fU-sb-zTM"/>
-                                                </connections>
-                                            </popUpButton>
-                                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YtG-nT-IzO">
-                                                <rect key="frame" x="123" y="-1" width="90" height="23"/>
-                                                <popUpButtonCell key="cell" type="roundTextured" title="Item 1" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="6mr-FW-pA1" id="OQ2-Ka-5Bw">
-                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                    <menu key="menu" id="1mN-BS-wKm">
-                                                        <items>
-                                                            <menuItem title="Item 1" state="on" id="6mr-FW-pA1"/>
-                                                            <menuItem title="Item 2" id="TA7-tJ-lGw"/>
-                                                            <menuItem title="Item 3" id="ivT-Ge-7ju"/>
-                                                        </items>
-                                                    </menu>
-                                                </popUpButtonCell>
-                                                <connections>
-                                                    <action selector="buildVariantsPopupButtonUpdated:" target="XfG-lQ-9wD" id="4Gh-g1-DFz"/>
-                                                </connections>
-                                            </popUpButton>
-                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0NZ-wf-vbT">
-                                                <rect key="frame" x="245.5" y="-1" width="91" height="23"/>
-                                                <buttonCell key="cell" type="roundTextured" title="Assemble" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jb1-Pw-3OS">
-                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                </buttonCell>
-                                                <connections>
-                                                    <action selector="assembleMobileClicked:" target="XfG-lQ-9wD" id="vL1-ac-NU7"/>
-                                                </connections>
-                                            </button>
-                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="atj-5u-1OL">
-                                                <rect key="frame" x="367" y="3" width="94" height="18"/>
-                                                <buttonCell key="cell" type="check" title="Clear cache" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="fei-HG-Kmb">
-                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                </buttonCell>
-                                                <connections>
-                                                    <action selector="clearCacheToggled:" target="XfG-lQ-9wD" id="RdV-a4-8nh"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                        <constraints>
-                                            <constraint firstItem="atj-5u-1OL" firstAttribute="top" secondItem="a8T-Lv-PB0" secondAttribute="top" constant="3" id="7F0-gM-8De"/>
-                                        </constraints>
-                                        <visibilityPriorities>
-                                            <integer value="1000"/>
-                                            <integer value="1000"/>
-                                            <integer value="1000"/>
-                                            <integer value="1000"/>
-                                        </visibilityPriorities>
-                                        <customSpacing>
-                                            <real value="3.4028234663852886e+38"/>
-                                            <real value="3.4028234663852886e+38"/>
-                                            <real value="3.4028234663852886e+38"/>
-                                            <real value="3.4028234663852886e+38"/>
-                                        </customSpacing>
-                                    </stackView>
-                                    <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="12" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZUZ-rg-eOn">
-                                        <rect key="frame" x="0.0" y="33" width="213" height="21"/>
-                                        <subviews>
-                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SDk-E6-vJL">
-                                                <rect key="frame" x="-2" y="5" width="86" height="16"/>
-                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Target device" id="im9-Lg-bN0">
-                                                    <font key="font" metaFont="system"/>
-                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                </textFieldCell>
-                                            </textField>
-                                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="v2W-hp-gX7">
-                                                <rect key="frame" x="92" y="-3" width="77" height="25"/>
-                                                <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="wkl-tE-9Wo" id="6FZ-fY-Eal">
-                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                    <menu key="menu" id="XHX-wb-Ec7">
-                                                        <items>
-                                                            <menuItem title="Item 1" state="on" id="wkl-tE-9Wo"/>
-                                                            <menuItem title="Item 2" id="SfB-o3-czn"/>
-                                                            <menuItem title="Item 3" id="M1k-hd-QWb"/>
-                                                        </items>
-                                                    </menu>
-                                                </popUpButtonCell>
-                                                <connections>
-                                                    <action selector="targetsPopupButtonChanged:" target="XfG-lQ-9wD" id="b6j-kw-Uom"/>
-                                                </connections>
-                                            </popUpButton>
-                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sCu-HX-oJG">
-                                                <rect key="frame" x="172" y="-7" width="47" height="32"/>
-                                                <buttonCell key="cell" type="push" bezelStyle="rounded" image="NSRefreshTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6eW-GP-xKT">
-                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                </buttonCell>
-                                                <connections>
-                                                    <action selector="refreshTargetsClicked:" target="XfG-lQ-9wD" id="O5y-0N-Mqo"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                        <visibilityPriorities>
-                                            <integer value="1000"/>
-                                            <integer value="1000"/>
-                                            <integer value="1000"/>
-                                        </visibilityPriorities>
-                                        <customSpacing>
-                                            <real value="3.4028234663852886e+38"/>
-                                            <real value="3.4028234663852886e+38"/>
-                                            <real value="3.4028234663852886e+38"/>
-                                        </customSpacing>
-                                    </stackView>
-                                    <stackView distribution="fillEqually" orientation="horizontal" alignment="top" spacing="12" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2yE-4z-6SZ">
-                                        <rect key="frame" x="0.0" y="0.0" width="429" height="21"/>
-                                        <subviews>
-                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SrT-sn-nCh">
-                                                <rect key="frame" x="-6" y="-7" width="147" height="32"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="135" id="W8b-gD-8mi"/>
-                                                </constraints>
-                                                <buttonCell key="cell" type="push" title="Install" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1EG-6a-lY2">
-                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                </buttonCell>
-                                                <connections>
-                                                    <action selector="installDeviceMobileClicked:" target="XfG-lQ-9wD" id="9wP-T7-ZWA"/>
-                                                </connections>
-                                            </button>
-                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Uj8-O7-V8k">
-                                                <rect key="frame" x="141" y="-7" width="147" height="32"/>
-                                                <buttonCell key="cell" type="push" title="Start" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="lVE-2h-AKv">
-                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                </buttonCell>
-                                                <connections>
-                                                    <action selector="startDeviceClicked:" target="XfG-lQ-9wD" id="mym-rb-XUQ"/>
-                                                </connections>
-                                            </button>
-                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8wY-Fc-Xib">
-                                                <rect key="frame" x="288" y="-7" width="147" height="32"/>
-                                                <buttonCell key="cell" type="push" title="Stop" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rds-KB-iIS">
-                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                </buttonCell>
-                                                <connections>
-                                                    <action selector="stopDeviceClicked:" target="XfG-lQ-9wD" id="nmv-0h-wlo"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                        <visibilityPriorities>
-                                            <integer value="1000"/>
-                                            <integer value="1000"/>
-                                            <integer value="1000"/>
-                                        </visibilityPriorities>
-                                        <customSpacing>
-                                            <real value="3.4028234663852886e+38"/>
-                                            <real value="3.4028234663852886e+38"/>
-                                            <real value="3.4028234663852886e+38"/>
-                                        </customSpacing>
-                                    </stackView>
-                                </subviews>
-                                <visibilityPriorities>
-                                    <integer value="1000"/>
-                                    <integer value="1000"/>
-                                    <integer value="1000"/>
-                                </visibilityPriorities>
-                                <customSpacing>
-                                    <real value="3.4028234663852886e+38"/>
-                                    <real value="3.4028234663852886e+38"/>
-                                    <real value="3.4028234663852886e+38"/>
-                                </customSpacing>
-                            </stackView>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="S7R-Z1-ptX">
-                                <rect key="frame" x="14" y="13" width="126" height="32"/>
-                                <buttonCell key="cell" type="push" title="List emulators" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zYx-Hc-Vz8">
+                                    <menu key="menu" id="pXS-uD-0cK">
+                                        <items>
+                                            <menuItem title="Item 1" state="on" id="hiX-Ub-tKX"/>
+                                            <menuItem title="Item 2" id="DDD-y9-pRI"/>
+                                            <menuItem title="Item 3" id="Av0-K1-8mQ"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="modulesPopupButtonUpdated:" target="XfG-lQ-9wD" id="8fU-sb-zTM"/>
+                                </connections>
+                            </popUpButton>
+                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YtG-nT-IzO">
+                                <rect key="frame" x="168" y="478" width="140" height="23"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="140" id="JLi-mh-VJe"/>
+                                </constraints>
+                                <popUpButtonCell key="cell" type="roundTextured" title="Item 1" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="6mr-FW-pA1" id="OQ2-Ka-5Bw">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <menu key="menu" id="1mN-BS-wKm">
+                                        <items>
+                                            <menuItem title="Item 1" state="on" id="6mr-FW-pA1"/>
+                                            <menuItem title="Item 2" id="TA7-tJ-lGw"/>
+                                            <menuItem title="Item 3" id="ivT-Ge-7ju"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="buildVariantsPopupButtonUpdated:" target="XfG-lQ-9wD" id="4Gh-g1-DFz"/>
+                                </connections>
+                            </popUpButton>
+                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="v2W-hp-gX7">
+                                <rect key="frame" x="316" y="478" width="140" height="23"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="140" id="5xQ-5Q-DPe"/>
+                                </constraints>
+                                <popUpButtonCell key="cell" type="roundTextured" title="Item 1" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="wkl-tE-9Wo" id="6FZ-fY-Eal">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <menu key="menu" id="XHX-wb-Ec7">
+                                        <items>
+                                            <menuItem title="Item 1" state="on" id="wkl-tE-9Wo"/>
+                                            <menuItem title="Item 2" id="SfB-o3-czn"/>
+                                            <menuItem title="Item 3" id="M1k-hd-QWb"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="targetsPopupButtonChanged:" target="XfG-lQ-9wD" id="b6j-kw-Uom"/>
+                                </connections>
+                            </popUpButton>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sCu-HX-oJG">
+                                <rect key="frame" x="463.5" y="478" width="21" height="23"/>
+                                <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSRefreshTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6eW-GP-xKT">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="listEmulatorsClicked:" target="XfG-lQ-9wD" id="e3h-qg-nxr"/>
+                                    <action selector="refreshTargetsClicked:" target="XfG-lQ-9wD" id="O5y-0N-Mqo"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oz8-Vs-Lhy">
-                                <rect key="frame" x="537" y="13" width="94" height="32"/>
-                                <buttonCell key="cell" type="push" title="Clear log" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SiB-dt-r3e">
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="atj-5u-1OL">
+                                <rect key="frame" x="344" y="446" width="90" height="19"/>
+                                <buttonCell key="cell" type="recessed" title="Clear cache" bezelStyle="recessed" imagePosition="left" state="on" borderStyle="border" inset="2" id="fei-HG-Kmb">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                    <font key="font" metaFont="systemBold" size="12"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="clearCacheToggled:" target="XfG-lQ-9wD" id="RdV-a4-8nh"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0NZ-wf-vbT">
+                                <rect key="frame" x="19.5" y="444" width="101" height="23"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="ciY-nn-AFP"/>
+                                </constraints>
+                                <buttonCell key="cell" type="roundTextured" title="Assemble" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jb1-Pw-3OS">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="clearLogClicked:" target="XfG-lQ-9wD" id="Nsv-Kz-vlV"/>
+                                    <action selector="assembleMobileClicked:" target="XfG-lQ-9wD" id="vL1-ac-NU7"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SrT-sn-nCh">
+                                <rect key="frame" x="127.5" y="444" width="101" height="23"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="zJw-cN-PuZ"/>
+                                </constraints>
+                                <buttonCell key="cell" type="roundTextured" title="Install" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1EG-6a-lY2">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="installDeviceMobileClicked:" target="XfG-lQ-9wD" id="9wP-T7-ZWA"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8wY-Fc-Xib">
+                                <rect key="frame" x="235.5" y="444" width="101" height="23"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="he5-Bu-0dr"/>
+                                </constraints>
+                                <buttonCell key="cell" type="roundTextured" title="Stop" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rds-KB-iIS">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="stopDeviceClicked:" target="XfG-lQ-9wD" id="nmv-0h-wlo"/>
                                 </connections>
                             </button>
                             <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eIK-PS-En5">
-                                <rect key="frame" x="20" y="61" width="605" height="280"/>
+                                <rect key="frame" x="20" y="58" width="832" height="367"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="ugD-Vw-D2V">
-                                    <rect key="frame" x="0.0" y="0.0" width="605" height="280"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="832" height="367"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="l3a-00-9HM">
-                                            <rect key="frame" x="0.0" y="0.0" width="605" height="280"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="832" height="367"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="minSize" width="605" height="280"/>
-                                            <size key="maxSize" width="614" height="10000000"/>
+                                            <size key="minSize" width="832" height="367"/>
+                                            <size key="maxSize" width="832" height="10000000"/>
                                             <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                         </textView>
                                     </subviews>
@@ -954,63 +850,91 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="Cso-C8-FOE">
-                                    <rect key="frame" x="589" y="0.0" width="16" height="280"/>
+                                    <rect key="frame" x="816" y="0.0" width="16" height="367"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fE2-Qz-Uye">
-                                <rect key="frame" x="570" y="450" width="61" height="32"/>
-                                <buttonCell key="cell" type="push" title="Set" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jGN-sB-Sqm">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="S7R-Z1-ptX">
+                                <rect key="frame" x="20" y="19" width="101" height="19"/>
+                                <buttonCell key="cell" type="recessed" title="List emulators" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zYx-Hc-Vz8">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                    <font key="font" metaFont="systemBold" size="12"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="setProjectDirectoryClicked:" target="XfG-lQ-9wD" id="xZN-yY-Ll9"/>
+                                    <action selector="listEmulatorsClicked:" target="XfG-lQ-9wD" id="e3h-qg-nxr"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Xe-0r-OEj">
-                                <rect key="frame" x="140" y="13" width="115" height="32"/>
-                                <buttonCell key="cell" type="push" title="List projects" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eP1-fu-5gr">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
+                                <rect key="frame" x="129" y="19" width="90" height="19"/>
+                                <buttonCell key="cell" type="recessed" title="List projects" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eP1-fu-5gr">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                    <font key="font" metaFont="systemBold" size="12"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="listModulesClicked:" target="XfG-lQ-9wD" id="Cxl-N8-tWu"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pj2-Ig-4gA">
-                                <rect key="frame" x="254" y="13" width="95" height="32"/>
-                                <buttonCell key="cell" type="push" title="Find APK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="l7P-h9-aUI">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
+                                <rect key="frame" x="227" y="19" width="69" height="19"/>
+                                <buttonCell key="cell" type="recessed" title="Find APK" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="l7P-h9-aUI">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                    <font key="font" metaFont="systemBold" size="12"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="findApkClicked:" target="XfG-lQ-9wD" id="IFZ-TH-say"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oz8-Vs-Lhy">
+                                <rect key="frame" x="787" y="19" width="65" height="19"/>
+                                <buttonCell key="cell" type="roundRect" title="Clear log" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SiB-dt-r3e">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="controlContent"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="clearLogClicked:" target="XfG-lQ-9wD" id="Nsv-Kz-vlV"/>
+                                </connections>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L7P-ci-pbk">
+                                <rect key="frame" x="645" y="480" width="209" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="android-project-name" id="Jng-fk-ZbO">
+                                    <font key="font" size="17" name="AppleBraille"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="SDR-hE-d1k" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="4Jg-Vk-Y0l"/>
+                            <constraint firstAttribute="trailing" secondItem="L7P-ci-pbk" secondAttribute="trailing" constant="20" id="0pE-QA-hnn"/>
+                            <constraint firstItem="YtG-nT-IzO" firstAttribute="centerY" secondItem="QMG-1d-U7A" secondAttribute="centerY" id="4ab-Lc-BOh"/>
+                            <constraint firstItem="8wY-Fc-Xib" firstAttribute="centerY" secondItem="SrT-sn-nCh" secondAttribute="centerY" id="6UW-TD-tIw"/>
                             <constraint firstItem="eIK-PS-En5" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="8UD-8H-Ktq"/>
-                            <constraint firstItem="pj2-Ig-4gA" firstAttribute="leading" secondItem="0Xe-0r-OEj" secondAttribute="trailing" constant="11" id="8vV-st-Sec"/>
+                            <constraint firstItem="pj2-Ig-4gA" firstAttribute="leading" secondItem="0Xe-0r-OEj" secondAttribute="trailing" constant="8" id="8vV-st-Sec"/>
                             <constraint firstAttribute="bottom" secondItem="S7R-Z1-ptX" secondAttribute="bottom" constant="20" id="A0M-Iw-RM2"/>
+                            <constraint firstItem="0NZ-wf-vbT" firstAttribute="top" secondItem="QMG-1d-U7A" secondAttribute="bottom" constant="12" id="BC3-xc-bcJ"/>
                             <constraint firstAttribute="trailing" secondItem="eIK-PS-En5" secondAttribute="trailing" constant="20" id="Cmt-X9-vCb"/>
-                            <constraint firstItem="l3a-00-9HM" firstAttribute="top" secondItem="Hzb-Ew-4DB" secondAttribute="bottom" constant="20" id="DJz-zK-xnh"/>
                             <constraint firstItem="S7R-Z1-ptX" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="DP6-sg-Yrn"/>
                             <constraint firstItem="pj2-Ig-4gA" firstAttribute="centerY" secondItem="0Xe-0r-OEj" secondAttribute="centerY" id="DsS-KF-FxT"/>
+                            <constraint firstItem="v2W-hp-gX7" firstAttribute="leading" secondItem="YtG-nT-IzO" secondAttribute="trailing" constant="8" id="EEA-bL-RCM"/>
                             <constraint firstItem="0Xe-0r-OEj" firstAttribute="centerY" secondItem="S7R-Z1-ptX" secondAttribute="centerY" id="F9g-Cx-ZvK"/>
-                            <constraint firstItem="2xb-0o-d9e" firstAttribute="top" secondItem="SDR-hE-d1k" secondAttribute="bottom" constant="8" id="RJe-W1-2IF"/>
-                            <constraint firstItem="0Xe-0r-OEj" firstAttribute="leading" secondItem="S7R-Z1-ptX" secondAttribute="trailing" constant="12" id="Rll-gc-RqP"/>
-                            <constraint firstItem="Hzb-Ew-4DB" firstAttribute="top" secondItem="2xb-0o-d9e" secondAttribute="bottom" constant="8" id="VFc-0a-WH1"/>
-                            <constraint firstAttribute="trailing" secondItem="fE2-Qz-Uye" secondAttribute="trailing" constant="20" id="Xv9-Xs-XSZ"/>
-                            <constraint firstItem="fE2-Qz-Uye" firstAttribute="centerY" secondItem="2xb-0o-d9e" secondAttribute="centerY" id="Z8O-ad-sAE"/>
-                            <constraint firstItem="fE2-Qz-Uye" firstAttribute="leading" secondItem="2xb-0o-d9e" secondAttribute="trailing" constant="8" id="Za5-vD-F9C"/>
-                            <constraint firstItem="SDR-hE-d1k" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="fJb-Cd-QVd"/>
+                            <constraint firstItem="eIK-PS-En5" firstAttribute="top" secondItem="0NZ-wf-vbT" secondAttribute="bottom" constant="20" id="GJk-FG-JsM"/>
+                            <constraint firstItem="L7P-ci-pbk" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="24" id="Hkl-7D-BGr"/>
+                            <constraint firstItem="0NZ-wf-vbT" firstAttribute="leading" secondItem="QMG-1d-U7A" secondAttribute="leading" id="MX7-fT-EKD"/>
+                            <constraint firstItem="atj-5u-1OL" firstAttribute="centerY" secondItem="8wY-Fc-Xib" secondAttribute="centerY" id="Nug-cS-MwE"/>
+                            <constraint firstItem="QMG-1d-U7A" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="Q2Q-MX-HPX"/>
+                            <constraint firstItem="v2W-hp-gX7" firstAttribute="centerY" secondItem="YtG-nT-IzO" secondAttribute="centerY" id="RK9-UW-jyD"/>
+                            <constraint firstItem="0Xe-0r-OEj" firstAttribute="leading" secondItem="S7R-Z1-ptX" secondAttribute="trailing" constant="8" id="Rll-gc-RqP"/>
+                            <constraint firstItem="L7P-ci-pbk" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="sCu-HX-oJG" secondAttribute="trailing" constant="20" id="YUg-kp-qFf"/>
+                            <constraint firstItem="atj-5u-1OL" firstAttribute="leading" secondItem="8wY-Fc-Xib" secondAttribute="trailing" constant="8" id="Yea-oy-dK7"/>
+                            <constraint firstItem="sCu-HX-oJG" firstAttribute="leading" secondItem="v2W-hp-gX7" secondAttribute="trailing" constant="8" id="dXN-t8-DiA"/>
+                            <constraint firstItem="QMG-1d-U7A" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="gFN-nA-ahu"/>
                             <constraint firstAttribute="trailing" secondItem="oz8-Vs-Lhy" secondAttribute="trailing" constant="20" id="iuS-f2-GrV"/>
-                            <constraint firstItem="Hzb-Ew-4DB" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="k9y-Cy-CHZ"/>
-                            <constraint firstItem="2xb-0o-d9e" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="l5a-Ce-yfr"/>
+                            <constraint firstItem="SrT-sn-nCh" firstAttribute="centerY" secondItem="0NZ-wf-vbT" secondAttribute="centerY" id="jXD-FW-UDP"/>
+                            <constraint firstItem="8wY-Fc-Xib" firstAttribute="leading" secondItem="SrT-sn-nCh" secondAttribute="trailing" constant="8" id="kDq-Sd-KsW"/>
                             <constraint firstItem="S7R-Z1-ptX" firstAttribute="top" secondItem="eIK-PS-En5" secondAttribute="bottom" constant="20" id="p8a-dL-reI"/>
+                            <constraint firstItem="sCu-HX-oJG" firstAttribute="centerY" secondItem="v2W-hp-gX7" secondAttribute="centerY" id="pXo-mn-PRs"/>
+                            <constraint firstItem="SrT-sn-nCh" firstAttribute="leading" secondItem="0NZ-wf-vbT" secondAttribute="trailing" constant="8" id="r3Z-na-Jb6"/>
                             <constraint firstAttribute="bottom" secondItem="oz8-Vs-Lhy" secondAttribute="bottom" constant="20" id="xVI-d3-1et"/>
+                            <constraint firstItem="YtG-nT-IzO" firstAttribute="leading" secondItem="QMG-1d-U7A" secondAttribute="trailing" constant="8" id="ym3-39-WB5"/>
                         </constraints>
                     </view>
                     <connections>
@@ -1019,13 +943,13 @@
                         <outlet property="logScrollView" destination="eIK-PS-En5" id="qPJ-cu-Zrf"/>
                         <outlet property="logTextView" destination="l3a-00-9HM" id="e8S-ZE-44g"/>
                         <outlet property="modulesPopupButton" destination="QMG-1d-U7A" id="rPe-zR-kxQ"/>
-                        <outlet property="projectDirectoryTextField" destination="2xb-0o-d9e" id="sfS-Ix-icw"/>
+                        <outlet property="projectTitle" destination="L7P-ci-pbk" id="ZiR-eg-TAj"/>
                         <outlet property="targetsPopupButton" destination="v2W-hp-gX7" id="Alh-ST-yLy"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="157.5" y="705.5"/>
+            <point key="canvasLocation" x="263" y="870.5"/>
         </scene>
     </scenes>
     <resources>

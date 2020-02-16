@@ -173,9 +173,14 @@ func parseTargets(fromString string: String) -> [Target] {
         .compactMap { parseTarget(targetString: String($0)) }
 }
 
+func projectNameFromPath(path: String) -> String {
+    guard let shortName = path.split(separator: "/").last else { return path }
+    return String(shortName)
+}
+
 class ViewController: NSViewController {
     
-    @IBOutlet weak var projectDirectoryTextField: NSTextField!
+    @IBOutlet weak var projectTitle: NSTextField!
     @IBOutlet weak var logScrollView: NSScrollView!
     @IBOutlet var logTextView: NSTextView!
     @IBOutlet weak var clearCacheCheckbox: NSButton!
@@ -195,8 +200,8 @@ class ViewController: NSViewController {
             guard let module = modules.first(where: { $0.name == moduleName }) else { return [] }
             return module.buildVariants
         }
-        
-        projectDirectoryTextField.updateState(text: state.projectDirectory)
+
+        projectTitle.stringValue = projectNameFromPath(path: state.projectDirectory)
 
         targetsPopupButton.updateState(
             items: state.targets.map { $0.serialNumber() },
@@ -309,10 +314,6 @@ class ViewController: NSViewController {
         } else {
             logln("Unable to find APK")
         }
-    }
-
-    @IBAction func setProjectDirectoryClicked(_ sender: Any) {
-        updateState(action: .setProjectDirectory(newProjectDirectory: projectDirectoryTextField.stringValue))
     }
     
     @IBAction func clearLogClicked(_ sender: NSButton) {
