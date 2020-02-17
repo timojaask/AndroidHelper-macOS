@@ -709,6 +709,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="872" height="521"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L7P-ci-pbk">
+                                <rect key="frame" x="645" y="480" width="209" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="android-project-name" id="Jng-fk-ZbO">
+                                    <font key="font" size="17" name="AppleBraille"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QMG-1d-U7A">
                                 <rect key="frame" x="20" y="478" width="140" height="23"/>
                                 <constraints>
@@ -888,23 +896,26 @@
                                 <rect key="frame" x="787" y="19" width="65" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Clear log" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SiB-dt-r3e">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="controlContent"/>
+                                    <font key="font" metaFont="label" size="12"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="clearLogClicked:" target="XfG-lQ-9wD" id="Nsv-Kz-vlV"/>
                                 </connections>
                             </button>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L7P-ci-pbk">
-                                <rect key="frame" x="645" y="480" width="209" height="17"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="android-project-name" id="Jng-fk-ZbO">
-                                    <font key="font" size="17" name="AppleBraille"/>
-                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="87l-ln-vDc">
+                                <rect key="frame" x="298" y="12" width="97" height="32"/>
+                                <buttonCell key="cell" type="push" title="Test XML" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GHw-eT-MqB">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="textXmlClicked:" target="XfG-lQ-9wD" id="MdK-pw-8EC"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="L7P-ci-pbk" secondAttribute="trailing" constant="20" id="0pE-QA-hnn"/>
+                            <constraint firstItem="87l-ln-vDc" firstAttribute="leading" secondItem="pj2-Ig-4gA" secondAttribute="trailing" constant="8" id="3RY-kH-ta3"/>
                             <constraint firstItem="YtG-nT-IzO" firstAttribute="centerY" secondItem="QMG-1d-U7A" secondAttribute="centerY" id="4ab-Lc-BOh"/>
                             <constraint firstItem="8wY-Fc-Xib" firstAttribute="centerY" secondItem="SrT-sn-nCh" secondAttribute="centerY" id="6UW-TD-tIw"/>
                             <constraint firstItem="eIK-PS-En5" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="8UD-8H-Ktq"/>
@@ -914,6 +925,7 @@
                             <constraint firstAttribute="trailing" secondItem="eIK-PS-En5" secondAttribute="trailing" constant="20" id="Cmt-X9-vCb"/>
                             <constraint firstItem="S7R-Z1-ptX" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="DP6-sg-Yrn"/>
                             <constraint firstItem="pj2-Ig-4gA" firstAttribute="centerY" secondItem="0Xe-0r-OEj" secondAttribute="centerY" id="DsS-KF-FxT"/>
+                            <constraint firstItem="87l-ln-vDc" firstAttribute="centerY" secondItem="pj2-Ig-4gA" secondAttribute="centerY" id="E5R-Yy-8ds"/>
                             <constraint firstItem="v2W-hp-gX7" firstAttribute="leading" secondItem="YtG-nT-IzO" secondAttribute="trailing" constant="8" id="EEA-bL-RCM"/>
                             <constraint firstItem="0Xe-0r-OEj" firstAttribute="centerY" secondItem="S7R-Z1-ptX" secondAttribute="centerY" id="F9g-Cx-ZvK"/>
                             <constraint firstItem="eIK-PS-En5" firstAttribute="top" secondItem="0NZ-wf-vbT" secondAttribute="bottom" constant="20" id="GJk-FG-JsM"/>

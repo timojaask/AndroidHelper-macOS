@@ -10,6 +10,6 @@ extension FileManager {
             .compactMap { $0 as? URL }
             .filter { $0.pathExtension == fileExtension }
             .reduce(nil, URL.pickLastCreated)?
-            .absoluteString
+            .path
     }
 }

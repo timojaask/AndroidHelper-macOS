@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F342DB123F9912B000E384F /* AndroidManifestParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F342DB023F9912B000E384F /* AndroidManifestParser.swift */; };
 		2F4A013523F1F03D00F9E519 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 2F4A013423F1F03D00F9E519 /* README.md */; };
 		2F4A013723F2161B00F9E519 /* UIStateUpdateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4A013623F2161B00F9E519 /* UIStateUpdateExtensions.swift */; };
 		2F4A013923F856FC00F9E519 /* UrlExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4A013823F856FC00F9E519 /* UrlExt.swift */; };
@@ -40,6 +41,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2F342DB023F9912B000E384F /* AndroidManifestParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AndroidManifestParser.swift; sourceTree = "<group>"; };
 		2F4A013423F1F03D00F9E519 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		2F4A013623F2161B00F9E519 /* UIStateUpdateExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStateUpdateExtensions.swift; sourceTree = "<group>"; };
 		2F4A013823F856FC00F9E519 /* UrlExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlExt.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 				2FFD0FB223EBC4170059BB4B /* ArrayExt.swift */,
 				2F4A013823F856FC00F9E519 /* UrlExt.swift */,
 				2F4A013C23F8C44D00F9E519 /* FileManagerExt.swift */,
+				2F342DB023F9912B000E384F /* AndroidManifestParser.swift */,
 				2FB7FF0523E7BD210075530A /* Assets.xcassets */,
 				2FB7FF0723E7BD210075530A /* Main.storyboard */,
 				2FB7FF0A23E7BD210075530A /* Info.plist */,
@@ -250,6 +253,7 @@
 				2FC2084223F634BD00732A9E /* AndroidHelperApi.swift in Sources */,
 				2F4A013D23F8C44D00F9E519 /* FileManagerExt.swift in Sources */,
 				2FB7FF0223E7BD200075530A /* AppDelegate.swift in Sources */,
+				2F342DB123F9912B000E384F /* AndroidManifestParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

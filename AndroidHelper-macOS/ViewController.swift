@@ -178,7 +178,7 @@ func projectNameFromPath(path: String) -> String {
     return String(shortName)
 }
 
-class ViewController: NSViewController {
+class ViewController: NSViewController, XMLParserDelegate {
     
     @IBOutlet weak var projectTitle: NSTextField!
     @IBOutlet weak var logScrollView: NSScrollView!
@@ -247,10 +247,34 @@ class ViewController: NSViewController {
             case .error(let terminationStatus):
                 strongSelf.logln("Terminated with error status: \(terminationStatus)")
             case .success:
-                strongSelf.logln("Terminated with success")
-                strongSelf.startDeviceClicked(sender)
+                strongSelf.logln("Installed with succcess")
+                guard let latestApk = strongSelf.findLatestApk(projectDirectory: strongSelf.state.projectDirectory, module: moduleName) else {
+                    strongSelf.logln("Failed to start the application: Unable to locate APK")
+                    return
+                }
+                let printManifestCommand = "~/Library/Android/sdk/tools/bin/apkanalyzer manifest print \(latestApk)"
+                var xmlString = ""
+                Shell.debug_runRowCommand(rawCommand: printManifestCommand, directory: strongSelf.state.projectDirectory) { [weak self] progress in
+                    guard let strongSelf = self else { return }
+                    switch progress {
+                        case .output(let string):
+                            xmlString.append(string)
+                            print("Appending: \(string)")
+                            print("xmlString is now: \(xmlString)")
+                        case .error(let terminationStatus):
+                            strongSelf.logln("Terminated with error status: \(terminationStatus)")
+                        case .success:
+                            parseManifest(xmlString: xmlString) { result in
+                                print("Finished parsing XML: \(String(describing: result))")
+                        }
+                    }
+                }
             }
         }
+    }
+    
+    @IBAction func textXmlClicked(_ sender: NSButton) {
+        testParse()
     }
     
     @IBAction func startDeviceClicked(_ sender: Any) {
