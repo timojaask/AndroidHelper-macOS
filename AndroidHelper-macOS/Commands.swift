@@ -25,19 +25,25 @@ public struct GradleCommands {
 }
 
 public struct AdbCommands {
-    public static func start(adbPath: String, targetSerial: String, package: String, activity: String) -> String {
-        return shellCommand(adbPath: adbPath, command: "start", targetSerial: targetSerial, arguments: "-n \(package)/\(activity)")
+    public static func start(platformToolsPath: String, targetSerial: String, package: String, activity: String) -> String {
+        return shellCommand(platformToolsPath: platformToolsPath, command: "start", targetSerial: targetSerial, arguments: "-n \(package)/\(activity)")
     }
     
-    public static func stop(adbPath: String, targetSerial: String, package: String) -> String {
-        return shellCommand(adbPath: adbPath, command: "force-stop", targetSerial: targetSerial, arguments: "\(package)")
+    public static func stop(platformToolsPath: String, targetSerial: String, package: String) -> String {
+        return shellCommand(platformToolsPath: platformToolsPath, command: "force-stop", targetSerial: targetSerial, arguments: "\(package)")
     }
     
-    public static func listDevices(adbPath: String) -> String {
-        return "\(adbPath) devices"
+    public static func listDevices(platformToolsPath: String) -> String {
+        return "\(platformToolsPath)/adb devices"
     }
     
-    private static func shellCommand(adbPath: String, command: String, targetSerial: String, arguments: String) -> String {
-        return "\(adbPath) -s \"\(targetSerial)\" shell am \(command) \(arguments)"
+    private static func shellCommand(platformToolsPath: String, command: String, targetSerial: String, arguments: String) -> String {
+        return "\(platformToolsPath)/adb -s \"\(targetSerial)\" shell am \(command) \(arguments)"
+    }
+}
+
+public struct ApkAnalyzerCommands {
+    public static func getAndroidManifest(toolsPath: String, apkPath: String) -> String {
+        return "\(toolsPath)/apkanalyzer manifest print \(apkPath)"
     }
 }

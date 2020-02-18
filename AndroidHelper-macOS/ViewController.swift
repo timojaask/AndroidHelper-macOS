@@ -256,9 +256,8 @@ class ViewController: NSViewController, XMLParserDelegate {
                     strongSelf.logln("Failed to start the application: Unable to locate APK")
                     return
                 }
-                let printManifestCommand = "~/Library/Android/sdk/tools/bin/apkanalyzer manifest print \(latestApk)"
                 var xmlString = ""
-                Shell.debug_runRowCommand(rawCommand: printManifestCommand, directory: strongSelf.state.projectDirectory) { [weak self] progress in
+                Shell.runAsync(command: Command.getAndroidManifest(apkPath: latestApk), directory: strongSelf.state.projectDirectory) { [weak self] progress in
                     guard let strongSelf = self else { return }
                     switch progress {
                     case .output(let string):

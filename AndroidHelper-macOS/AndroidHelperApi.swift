@@ -7,8 +7,10 @@ public enum Command {
     case listTargets
     case start(target: Target, package: String, activity: String)
     case stop(target: Target, package: String)
+    case getAndroidManifest(apkPath: String)
     
-    private static let adbPath = "~/Library/Android/sdk/platform-tools/adb"
+    private static let platformToolsPath = "~/Library/Android/sdk/platform-tools"
+    private static let toolsPath = "~/Library/Android/sdk/tools/bin"
     
     public func toString() -> String {
         switch self {
@@ -19,11 +21,13 @@ public enum Command {
         case .projects:
             return GradleCommands.listTasks()
         case .listTargets:
-            return AdbCommands.listDevices(adbPath: Command.adbPath)
+            return AdbCommands.listDevices(platformToolsPath: Command.platformToolsPath)
         case .start(let target, let package, let activity):
-            return AdbCommands.start(adbPath: Command.adbPath, targetSerial: target.serialNumber(), package: package, activity: activity)
+            return AdbCommands.start(platformToolsPath: Command.platformToolsPath, targetSerial: target.serialNumber(), package: package, activity: activity)
         case .stop(let target, let package):
-            return AdbCommands.stop(adbPath: Command.adbPath, targetSerial: target.serialNumber(), package: package)
+            return AdbCommands.stop(platformToolsPath: Command.platformToolsPath, targetSerial: target.serialNumber(), package: package)
+        case .getAndroidManifest(let apkPath):
+            return ApkAnalyzerCommands.getAndroidManifest(toolsPath: Command.toolsPath, apkPath: apkPath)
         }
     }
 }
