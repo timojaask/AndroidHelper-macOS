@@ -1,13 +1,5 @@
 import Foundation
 
-
-/*
- TODO:
- - parser should just return a data object of whatever manifest elements we support
- - another code should take this output and pick what it needs, such as going through a list of activities and seeing which one should be the launcher
- - LeakCanary activity has LAUNCHER category, but not DEFAULT.
- */
-
 struct AndroidManifest {
 
     struct IntentFilter {
@@ -56,26 +48,14 @@ func findLauncherActivity(manifest: AndroidManifest) -> AndroidManifest.Activity
     }
 }
 
-func testParse() {
+
+
+func getLauncherActivityNameFromAndroidManifestXml(xmlString: String, completion: @escaping (String?, String?) -> ()) {
     parseManifest(xmlString: testXml2) { manifest in
-
-        manifest.activities.forEach { activity in
-            print(activity.name)
-            activity.intentFilters.forEach { intentFilter in
-                print(" * intent-filter:")
-                intentFilter.actions.forEach { action in
-                    print("    - action: \(action)")
-                }
-                intentFilter.categories.forEach { category in
-                    print("    - category: \(category)")
-                }
-            }
-        }
-
         if let launcherActivity = findLauncherActivity(manifest: manifest) {
-            print("Launcher activity: \(launcherActivity.name)")
+            completion(launcherActivity.name, manifest.package)
         } else {
-            print("Could not find launcher activity")
+            completion(nil, nil)
         }
     }
 }

@@ -22,6 +22,7 @@ struct State {
     var modules: [Module] = []
     var selectedModuleName: String? = nil
     var selectedBuildVariant: String? = nil
+    var lastBuiltManifest: AndroidManifest? = nil
 }
 
 enum Action {
@@ -32,6 +33,7 @@ enum Action {
     case setModules(newModules: [Module])
     case setSelectedModuleName(newSelectedModuleName: String?)
     case setSelectedBuildVariant(newSelectedBuildVariant: String?)
+    case setLastBuiltManifest(newLastBuiltManifest: AndroidManifest?)
 }
 
 func applyAction(state: State, action: Action) -> State {
@@ -97,6 +99,8 @@ func applyAction(state: State, action: Action) -> State {
         } else {
             newState.selectedBuildVariant = defaultBuildVariant(modules: newState.modules, moduleName: newState.selectedModuleName)
         }
+    case .setLastBuiltManifest(let newLastBuiltManifest):
+        newState.lastBuiltManifest = newLastBuiltManifest
     }
     return newState
 }
@@ -257,15 +261,21 @@ class ViewController: NSViewController, XMLParserDelegate {
                 Shell.debug_runRowCommand(rawCommand: printManifestCommand, directory: strongSelf.state.projectDirectory) { [weak self] progress in
                     guard let strongSelf = self else { return }
                     switch progress {
-                        case .output(let string):
-                            xmlString.append(string)
-                            print("Appending: \(string)")
-                            print("xmlString is now: \(xmlString)")
-                        case .error(let terminationStatus):
-                            strongSelf.logln("Terminated with error status: \(terminationStatus)")
-                        case .success:
-                            parseManifest(xmlString: xmlString) { result in
-                                print("Finished parsing XML: \(String(describing: result))")
+                    case .output(let string):
+                        xmlString.append(string)
+                        print("Appending: \(string)")
+                        print("xmlString is now: \(xmlString)")
+                    case .error(let terminationStatus):
+                        strongSelf.logln("Terminated with error status: \(terminationStatus)")
+                    case .success:
+                        getLauncherActivityNameFromAndroidManifestXml(xmlString: xmlString) { [weak self] launcherActivity, package in
+                            guard let strongSelf = self else { return }
+                            guard let activity = launcherActivity, let package = package else { print("ERROR: Couldn't parse launcher activity"); return }
+                            // TODO:
+                            // - Set last built manifest
+                            // - Then start app function should read that from the state
+                            strongSelf.updateState(action: .setLastBuiltManifest(newLastBuiltManifest:  /* manifest here */ ))
+                            strongSelf.startApp(package: package, activity: activity)
                         }
                     }
                 }
@@ -274,7 +284,16 @@ class ViewController: NSViewController, XMLParserDelegate {
     }
     
     @IBAction func textXmlClicked(_ sender: NSButton) {
-        testParse()
+
+    }
+
+    func startApp() {
+        guard let target = state.selectedTarget else { return }
+        let command = Command.start(target: target)
+        logln(command.toString())
+        Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
+            self?.progressHandler(progress)
+        }
     }
     
     @IBAction func startDeviceClicked(_ sender: Any) {
