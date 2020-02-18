@@ -5,11 +5,9 @@ public enum Command {
     case install(buildVariant: String, cleanCache: Bool, project: String, target: Target)
     case projects
     case listTargets
-    case start(target: Target)
-    case stop(target: Target)
+    case start(target: Target, package: String, activity: String)
+    case stop(target: Target, package: String)
     
-    private static let appPackageName = "tv.pluto.android.debug"
-    private static let appStartActivity = "tv.pluto.android.EntryPoint"
     private static let adbPath = "~/Library/Android/sdk/platform-tools/adb"
     
     public func toString() -> String {
@@ -22,10 +20,10 @@ public enum Command {
             return GradleCommands.listTasks()
         case .listTargets:
             return AdbCommands.listDevices(adbPath: Command.adbPath)
-        case .start(let target):
-            return AdbCommands.start(adbPath: Command.adbPath, targetSerial: target.serialNumber(), package: Command.appPackageName, activity: Command.appStartActivity)
-        case .stop(let target):
-            return AdbCommands.stop(adbPath: Command.adbPath, targetSerial: target.serialNumber(), package: Command.appPackageName)
+        case .start(let target, let package, let activity):
+            return AdbCommands.start(adbPath: Command.adbPath, targetSerial: target.serialNumber(), package: package, activity: activity)
+        case .stop(let target, let package):
+            return AdbCommands.stop(adbPath: Command.adbPath, targetSerial: target.serialNumber(), package: package)
         }
     }
 }

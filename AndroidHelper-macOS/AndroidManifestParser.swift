@@ -1,7 +1,6 @@
 import Foundation
 
 struct AndroidManifest {
-
     struct IntentFilter {
         enum Category {
             case `default`
@@ -45,18 +44,6 @@ func findLauncherActivity(manifest: AndroidManifest) -> AndroidManifest.Activity
     default:
         let defaultLauncherActivity = mainLauncherActivities.first { $0.contains(category: .default) }
         return defaultLauncherActivity
-    }
-}
-
-
-
-func getLauncherActivityNameFromAndroidManifestXml(xmlString: String, completion: @escaping (String?, String?) -> ()) {
-    parseManifest(xmlString: testXml2) { manifest in
-        if let launcherActivity = findLauncherActivity(manifest: manifest) {
-            completion(launcherActivity.name, manifest.package)
-        } else {
-            completion(nil, nil)
-        }
     }
 }
 
@@ -154,65 +141,8 @@ private class XMLParserDelegateWrapper: NSObject, XMLParserDelegate {
         }
     }
 
-    func parser(_ parser: XMLParser, foundCharacters string: String) {
-//        print("foundCharacters: \(string)")
-    }
-
-    func parser(_ parser: XMLParser, foundAttributeDeclarationWithName attributeName: String, forElement elementName: String, type: String?, defaultValue: String?) {
-//        print("foundAttributeDeclarationWithName: \(attributeName) forElement: \(elementName) defaultValue: \(String(describing: defaultValue))")
-    }
-
-    func parser(_ parser: XMLParser, validationErrorOccurred validationError: Error) {
-//        print("validationErrorOccurred: \(validationError)")
-    }
-
-    func parser(_ parser: XMLParser, foundComment comment: String) {
-//        print("foundComment: \(comment)")
-    }
-
-    func parser(_ parser: XMLParser, foundCDATA CDATABlock: Data) {
-//        print("foundCDATA: \(CDATABlock.base64EncodedString())")
-    }
-
-    func parser(_ parser: XMLParser, didEndMappingPrefix prefix: String) {
-//        print("didEndMappingPrefix: \(prefix)")
-    }
-
-    func parser(_ parser: XMLParser, didStartMappingPrefix prefix: String, toURI namespaceURI: String) {
-//        print("didStartMappingPrefix: \(prefix)")
-    }
-
-    func parser(_ parser: XMLParser, foundElementDeclarationWithName elementName: String, model: String) {
-//        print("foundElementDeclarationWithName: \(elementName)")
-    }
-
-    func parser(_ parser: XMLParser, foundProcessingInstructionWithTarget target: String, data: String?) {
-//        print("foundProcessingInstructionWithTarget: \(target)")
-    }
-
-    func parser(_ parser: XMLParser, foundInternalEntityDeclarationWithName name: String, value: String?) {
-//        print("foundInternalEntityDeclarationWithName: \(name)")
-    }
-
-    func parser(_ parser: XMLParser, foundNotationDeclarationWithName name: String, publicID: String?, systemID: String?) {
-//        print("foundNotationDeclarationWithName: \(name)")
-    }
-
-    func parser(_ parser: XMLParser, foundExternalEntityDeclarationWithName name: String, publicID: String?, systemID: String?) {
-//        print("foundExternalEntityDeclarationWithName: \(name)")
-    }
-
-    func parser(_ parser: XMLParser, foundUnparsedEntityDeclarationWithName name: String, publicID: String?, systemID: String?, notationName: String?) {
-//        print("foundUnparsedEntityDeclarationWithName: \(name)")
-    }
-
     func parserDidEndDocument(_ parser: XMLParser) {
         finished(manifest)
-    }
-
-
-    func parserDidStartDocument(_ parser: XMLParser) {
-//        print("parserDidStartDocument")
     }
 
     func parser(_ parser: XMLParser, parseErrorOccurred parseError: Error) {

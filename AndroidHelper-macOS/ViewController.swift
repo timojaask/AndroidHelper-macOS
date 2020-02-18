@@ -268,14 +268,10 @@ class ViewController: NSViewController, XMLParserDelegate {
                     case .error(let terminationStatus):
                         strongSelf.logln("Terminated with error status: \(terminationStatus)")
                     case .success:
-                        getLauncherActivityNameFromAndroidManifestXml(xmlString: xmlString) { [weak self] launcherActivity, package in
+                        parseManifest(xmlString: xmlString) { [weak self] manifest in
                             guard let strongSelf = self else { return }
-                            guard let activity = launcherActivity, let package = package else { print("ERROR: Couldn't parse launcher activity"); return }
-                            // TODO:
-                            // - Set last built manifest
-                            // - Then start app function should read that from the state
-                            strongSelf.updateState(action: .setLastBuiltManifest(newLastBuiltManifest:  /* manifest here */ ))
-                            strongSelf.startApp(package: package, activity: activity)
+                            strongSelf.updateState(action: .setLastBuiltManifest(newLastBuiltManifest:  manifest))
+                            strongSelf.startApp()
                         }
                     }
                 }
@@ -288,26 +284,26 @@ class ViewController: NSViewController, XMLParserDelegate {
     }
 
     func startApp() {
+        guard let manifest = state.lastBuiltManifest else { return }
+        guard let launcherActivity = findLauncherActivity(manifest: manifest) else { return }
         guard let target = state.selectedTarget else { return }
-        let command = Command.start(target: target)
+        guard let package = manifest.package else { return }
+        let command = Command.start(target: target, package: package, activity: launcherActivity.name)
         logln(command.toString())
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
         }
     }
     
-    @IBAction func startDeviceClicked(_ sender: Any) {
-        guard let target = state.selectedTarget else { return }
-        let command = Command.start(target: target)
-        logln(command.toString())
-        Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
-            self?.progressHandler(progress)
-        }
+    @IBAction func startClicked(_ sender: Any) {
+        startApp()
     }
     
-    @IBAction func stopDeviceClicked(_ sender: Any) {
+    @IBAction func stopClicked(_ sender: Any) {
         guard let target = state.selectedTarget else { return }
-        let command = Command.stop(target: target)
+        guard let manifest = state.lastBuiltManifest else { return }
+        guard let package = manifest.package else { return }
+        let command = Command.stop(target: target, package: package)
         logln(command.toString())
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)

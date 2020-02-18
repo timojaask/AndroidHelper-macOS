@@ -788,7 +788,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="atj-5u-1OL">
-                                <rect key="frame" x="344" y="446" width="90" height="19"/>
+                                <rect key="frame" x="452" y="446" width="90" height="19"/>
                                 <buttonCell key="cell" type="recessed" title="Clear cache" bezelStyle="recessed" imagePosition="left" state="on" borderStyle="border" inset="2" id="fei-HG-Kmb">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                     <font key="font" metaFont="systemBold" size="12"/>
@@ -823,8 +823,21 @@
                                     <action selector="installDeviceMobileClicked:" target="XfG-lQ-9wD" id="9wP-T7-ZWA"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8wY-Fc-Xib">
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Dqc-71-yAa">
                                 <rect key="frame" x="235.5" y="444" width="101" height="23"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="DZX-77-IQt"/>
+                                </constraints>
+                                <buttonCell key="cell" type="roundTextured" title="Start" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PgH-bJ-Fgm">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="startClicked:" target="XfG-lQ-9wD" id="2na-uV-yms"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8wY-Fc-Xib">
+                                <rect key="frame" x="343.5" y="444" width="101" height="23"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="he5-Bu-0dr"/>
                                 </constraints>
@@ -833,7 +846,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="stopDeviceClicked:" target="XfG-lQ-9wD" id="nmv-0h-wlo"/>
+                                    <action selector="stopClicked:" target="XfG-lQ-9wD" id="nmv-0h-wlo"/>
                                 </connections>
                             </button>
                             <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eIK-PS-En5">
@@ -917,11 +930,11 @@
                             <constraint firstAttribute="trailing" secondItem="L7P-ci-pbk" secondAttribute="trailing" constant="20" id="0pE-QA-hnn"/>
                             <constraint firstItem="87l-ln-vDc" firstAttribute="leading" secondItem="pj2-Ig-4gA" secondAttribute="trailing" constant="8" id="3RY-kH-ta3"/>
                             <constraint firstItem="YtG-nT-IzO" firstAttribute="centerY" secondItem="QMG-1d-U7A" secondAttribute="centerY" id="4ab-Lc-BOh"/>
-                            <constraint firstItem="8wY-Fc-Xib" firstAttribute="centerY" secondItem="SrT-sn-nCh" secondAttribute="centerY" id="6UW-TD-tIw"/>
                             <constraint firstItem="eIK-PS-En5" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="8UD-8H-Ktq"/>
                             <constraint firstItem="pj2-Ig-4gA" firstAttribute="leading" secondItem="0Xe-0r-OEj" secondAttribute="trailing" constant="8" id="8vV-st-Sec"/>
                             <constraint firstAttribute="bottom" secondItem="S7R-Z1-ptX" secondAttribute="bottom" constant="20" id="A0M-Iw-RM2"/>
                             <constraint firstItem="0NZ-wf-vbT" firstAttribute="top" secondItem="QMG-1d-U7A" secondAttribute="bottom" constant="12" id="BC3-xc-bcJ"/>
+                            <constraint firstItem="8wY-Fc-Xib" firstAttribute="centerY" secondItem="Dqc-71-yAa" secondAttribute="centerY" id="CVq-Yv-H0Q"/>
                             <constraint firstAttribute="trailing" secondItem="eIK-PS-En5" secondAttribute="trailing" constant="20" id="Cmt-X9-vCb"/>
                             <constraint firstItem="S7R-Z1-ptX" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="DP6-sg-Yrn"/>
                             <constraint firstItem="pj2-Ig-4gA" firstAttribute="centerY" secondItem="0Xe-0r-OEj" secondAttribute="centerY" id="DsS-KF-FxT"/>
@@ -935,13 +948,15 @@
                             <constraint firstItem="QMG-1d-U7A" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="Q2Q-MX-HPX"/>
                             <constraint firstItem="v2W-hp-gX7" firstAttribute="centerY" secondItem="YtG-nT-IzO" secondAttribute="centerY" id="RK9-UW-jyD"/>
                             <constraint firstItem="0Xe-0r-OEj" firstAttribute="leading" secondItem="S7R-Z1-ptX" secondAttribute="trailing" constant="8" id="Rll-gc-RqP"/>
+                            <constraint firstItem="8wY-Fc-Xib" firstAttribute="leading" secondItem="Dqc-71-yAa" secondAttribute="trailing" constant="8" id="Vbc-wd-jXu"/>
                             <constraint firstItem="L7P-ci-pbk" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="sCu-HX-oJG" secondAttribute="trailing" constant="20" id="YUg-kp-qFf"/>
                             <constraint firstItem="atj-5u-1OL" firstAttribute="leading" secondItem="8wY-Fc-Xib" secondAttribute="trailing" constant="8" id="Yea-oy-dK7"/>
+                            <constraint firstItem="Dqc-71-yAa" firstAttribute="centerY" secondItem="SrT-sn-nCh" secondAttribute="centerY" id="aW7-pB-bpr"/>
                             <constraint firstItem="sCu-HX-oJG" firstAttribute="leading" secondItem="v2W-hp-gX7" secondAttribute="trailing" constant="8" id="dXN-t8-DiA"/>
                             <constraint firstItem="QMG-1d-U7A" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="gFN-nA-ahu"/>
+                            <constraint firstItem="Dqc-71-yAa" firstAttribute="leading" secondItem="SrT-sn-nCh" secondAttribute="trailing" constant="8" id="i9e-Jg-uEg"/>
                             <constraint firstAttribute="trailing" secondItem="oz8-Vs-Lhy" secondAttribute="trailing" constant="20" id="iuS-f2-GrV"/>
                             <constraint firstItem="SrT-sn-nCh" firstAttribute="centerY" secondItem="0NZ-wf-vbT" secondAttribute="centerY" id="jXD-FW-UDP"/>
-                            <constraint firstItem="8wY-Fc-Xib" firstAttribute="leading" secondItem="SrT-sn-nCh" secondAttribute="trailing" constant="8" id="kDq-Sd-KsW"/>
                             <constraint firstItem="S7R-Z1-ptX" firstAttribute="top" secondItem="eIK-PS-En5" secondAttribute="bottom" constant="20" id="p8a-dL-reI"/>
                             <constraint firstItem="sCu-HX-oJG" firstAttribute="centerY" secondItem="v2W-hp-gX7" secondAttribute="centerY" id="pXo-mn-PRs"/>
                             <constraint firstItem="SrT-sn-nCh" firstAttribute="leading" secondItem="0NZ-wf-vbT" secondAttribute="trailing" constant="8" id="r3Z-na-Jb6"/>
