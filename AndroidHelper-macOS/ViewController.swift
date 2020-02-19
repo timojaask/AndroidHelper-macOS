@@ -8,7 +8,7 @@ struct State {
     var modules: [Module] = []
     var selectedModuleName: String? = nil
     var selectedBuildVariant: String? = nil
-    var lastBuiltManifest: AndroidManifest? = nil
+    var latestAndroidManifestForSelectedModule: AndroidManifest? = nil
 }
 
 enum Action {
@@ -19,7 +19,7 @@ enum Action {
     case setModules(newModules: [Module])
     case setSelectedModuleName(newSelectedModuleName: String?)
     case setSelectedBuildVariant(newSelectedBuildVariant: String?)
-    case setLastBuiltManifest(newLastBuiltManifest: AndroidManifest?)
+    case setLatestAndroidManifestForSelectedModule(newLatestAndroidManifestForSelectedModule: AndroidManifest?)
 }
 
 func applyAction(state: State, action: Action) -> State {
@@ -85,8 +85,8 @@ func applyAction(state: State, action: Action) -> State {
         } else {
             newState.selectedBuildVariant = defaultBuildVariant(modules: newState.modules, moduleName: newState.selectedModuleName)
         }
-    case .setLastBuiltManifest(let newLastBuiltManifest):
-        newState.lastBuiltManifest = newLastBuiltManifest
+    case .setLatestAndroidManifestForSelectedModule(let newLatestAndroidManifestForSelectedModule):
+        newState.latestAndroidManifestForSelectedModule = newLatestAndroidManifestForSelectedModule
     }
     return newState
 }
@@ -140,6 +140,7 @@ class ViewController: NSViewController, XMLParserDelegate {
         super.viewDidLoad()
         updateState(action: .setProjectDirectory(newProjectDirectory: "/Users/timojaask/projects/work/pluto-tv/pluto-tv-android"))
         refreshTargets()
+        refreshProject()
     }
     
     @IBAction func assembleMobileClicked(_ sender: Any) {
@@ -166,32 +167,73 @@ class ViewController: NSViewController, XMLParserDelegate {
                 strongSelf.logln("Terminated with error status: \(terminationStatus)")
             case .success:
                 strongSelf.logln("Installed with succcess")
-                guard let latestApk = findLatestApk(projectDirectory: strongSelf.state.projectDirectory, module: moduleName) else {
-                    strongSelf.logln("Failed to start the application: Unable to locate APK")
-                    return
-                }
-                Shell.runAsyncWithOutput(command: Commands.getAndroidManifest(apkPath: latestApk), directory: strongSelf.state.projectDirectory) { [weak self] result in
-                    guard let strongSelf = self else { return }
-                    switch result {
-                    case .success(let output):
-                        parseManifest(xmlString: output) { [weak self] manifest in
-                            guard let strongSelf = self else { return }
-                            strongSelf.updateState(action: .setLastBuiltManifest(newLastBuiltManifest:  manifest))
-                            strongSelf.startApp()
-                        }
-                    case .error(let reason):
-                        strongSelf.logln(reason.toString())
-                    }
+                strongSelf.updateAndroidManifest { [weak self] success in
+                    if (success) { self?.startApp() }
                 }
             }
         }
     }
 
+    func updateAndroidManifest(completion: ((_ success: Bool) -> ())? = nil) {
+        logln("Updating manifest...")
+        guard let module = state.selectedModuleName else {
+            logln("Error updating manifest: no module selected")
+            return
+        }
+        guard let latestApk = findLatestApk(projectDirectory: state.projectDirectory, module: module) else {
+            logln("Error updating manifest: unable to find APK for module \"\(module)\"")
+            return
+        }
+        Shell.runAsyncWithOutput(command: Commands.getAndroidManifest(apkPath: latestApk), directory: state.projectDirectory) { [weak self] result in
+            guard let strongSelf = self else { return }
+            switch result {
+            case .success(let output):
+                parseManifest(xmlString: output) { [weak self] manifest in
+                    guard let strongSelf = self else { return }
+                    strongSelf.updateState(action: .setLatestAndroidManifestForSelectedModule(newLatestAndroidManifestForSelectedModule: manifest))
+                    strongSelf.logln("Manifest updated successfully")
+                    completion?(true)
+                }
+            case .error(let reason):
+                strongSelf.logln("Error updating manifest. Reason: \(reason.toString())")
+                completion?(false)
+            }
+        }
+    }
+
+    func refreshProject() {
+        logln("Refreshing project...")
+        Shell.runAsyncWithOutput(command: Commands.listGradleTasks(), directory: state.projectDirectory) { [weak self] result in
+            guard let strongSelf = self else { return }
+            switch result {
+            case .success(let output):
+                let modules = parseInstallableModules(fromString: output)
+                strongSelf.updateState(action: .setModules(newModules: modules))
+                strongSelf.updateAndroidManifest()
+                strongSelf.logln("Project refreshed successfully")
+            case .error(let reason):
+                strongSelf.logln("Error refreshing project. Reason: \(reason.toString())")
+            }
+        }
+    }
+
     func startApp() {
-        guard let manifest = state.lastBuiltManifest else { return }
-        guard let launcherActivity = findLauncherActivity(manifest: manifest) else { return }
-        guard let target = state.selectedTarget else { return }
-        guard let package = manifest.package else { return }
+        guard let manifest = state.latestAndroidManifestForSelectedModule else {
+            logln("Error starting app: no manifest found")
+            return
+        }
+        guard let launcherActivity = findLauncherActivity(manifest: manifest) else {
+            logln("Error starting app: no launcher activity found")
+            return
+        }
+        guard let target = state.selectedTarget else {
+            logln("Error starting app: no target selected")
+            return
+        }
+        guard let package = manifest.package else {
+            logln("Error starting app: no package found")
+            return
+        }
         let command = Commands.start(target: target, package: package, activity: launcherActivity.name)
         logln(command)
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
@@ -205,7 +247,7 @@ class ViewController: NSViewController, XMLParserDelegate {
     
     @IBAction func stopClicked(_ sender: Any) {
         guard let target = state.selectedTarget else { return }
-        guard let manifest = state.lastBuiltManifest else { return }
+        guard let manifest = state.latestAndroidManifestForSelectedModule else { return }
         guard let package = manifest.package else { return }
         let command = Commands.stop(target: target, package: package)
         logln(command)
@@ -224,17 +266,7 @@ class ViewController: NSViewController, XMLParserDelegate {
     }
     
     @IBAction func listModulesClicked(_ sender: NSButton) {
-        Shell.runAsyncWithOutput(command: Commands.listGradleTasks(), directory: state.projectDirectory) { [weak self] result in
-            guard let strongSelf = self else { return }
-            switch result {
-            case .success(let output):
-                let modules = parseInstallableModules(fromString: output)
-                strongSelf.logln("Number of modules found: \(modules.count)")
-                strongSelf.updateState(action: .setModules(newModules: modules))
-            case .error(let reason):
-                strongSelf.logln(reason.toString())
-            }
-        }
+        refreshProject()
     }
     
     @IBAction func clearLogClicked(_ sender: NSButton) {
@@ -242,7 +274,12 @@ class ViewController: NSViewController, XMLParserDelegate {
     }
     
     @IBAction func modulesPopupButtonUpdated(_ sender: NSPopUpButton) {
-        updateState(action: .setSelectedModuleName(newSelectedModuleName: sender.selectedItem?.title))
+        let oldValue = state.selectedModuleName
+        let newValue = sender.selectedItem?.title
+        updateState(action: .setSelectedModuleName(newSelectedModuleName: newValue))
+        if oldValue != newValue {
+            updateAndroidManifest()
+        }
     }
     @IBAction func buildVariantsPopupButtonUpdated(_ sender: NSPopUpButton) {
         updateState(action: .setSelectedBuildVariant(newSelectedBuildVariant: sender.selectedItem?.title))
