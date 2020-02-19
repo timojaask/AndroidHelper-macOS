@@ -2,6 +2,7 @@
 Running Android dev related commands from a GUI, just for fun? 🤷‍♀️🤷‍♂️
 
 ## Next tasks
+- Show compilation errors: For some reason the current output of "Install" action doesn't have any details of what actually caused a failure in the log.
 - Have more of the code unit tested
 - Auto-refresh list of active targets
 - Add ability to cancel currently running task (e.g. clicked assemble by accident, don't want to wait until it finishes)
