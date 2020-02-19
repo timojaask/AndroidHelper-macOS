@@ -1,34 +1,35 @@
 import Foundation
 
-public enum Command {
-    case assemble(buildVariant: String, cleanCache: Bool, project: String)
-    case install(buildVariant: String, cleanCache: Bool, project: String, target: Target)
-    case projects
-    case listTargets
-    case start(target: Target, package: String, activity: String)
-    case stop(target: Target, package: String)
-    case getAndroidManifest(apkPath: String)
-    
+public struct Commands {
     private static let platformToolsPath = "~/Library/Android/sdk/platform-tools"
     private static let toolsPath = "~/Library/Android/sdk/tools/bin"
-    
-    public func toString() -> String {
-        switch self {
-        case .assemble(let buildVariant, let cleanCache, let project):
-            return GradleCommands.assemble(project: project, task: buildVariant, cleanCache: cleanCache, parallel: true)
-        case .install(let buildVariant, let cleanCache, let project, let target):
-            return GradleCommands.install(project: project, task: buildVariant, cleanCache: cleanCache, parallel: true, targetSerial: target.serialNumber())
-        case .projects:
-            return GradleCommands.listTasks()
-        case .listTargets:
-            return AdbCommands.listDevices(platformToolsPath: Command.platformToolsPath)
-        case .start(let target, let package, let activity):
-            return AdbCommands.start(platformToolsPath: Command.platformToolsPath, targetSerial: target.serialNumber(), package: package, activity: activity)
-        case .stop(let target, let package):
-            return AdbCommands.stop(platformToolsPath: Command.platformToolsPath, targetSerial: target.serialNumber(), package: package)
-        case .getAndroidManifest(let apkPath):
-            return ApkAnalyzerCommands.getAndroidManifest(toolsPath: Command.toolsPath, apkPath: apkPath)
-        }
+
+    public static func build(buildVariant: String, cleanCache: Bool, project: String) -> String {
+        return GradleCommands.assemble(project: project, task: buildVariant, cleanCache: cleanCache, parallel: true)
+    }
+
+    public static func buildAndInstall(buildVariant: String, cleanCache: Bool, project: String, target: Target) -> String {
+        return GradleCommands.install(project: project, task: buildVariant, cleanCache: cleanCache, parallel: true, targetSerial: target.serialNumber())
+    }
+
+    public static func listGradleTasks() -> String {
+        return GradleCommands.listTasks()
+    }
+
+    public static func listTargets() -> String {
+        return AdbCommands.listDevices(platformToolsPath: platformToolsPath)
+    }
+
+    public static func start(target: Target, package: String, activity: String) -> String {
+        return AdbCommands.start(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), package: package, activity: activity)
+    }
+
+    public static func stop(target: Target, package: String) -> String {
+        return AdbCommands.stop(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), package: package)
+    }
+
+    public static func getAndroidManifest(apkPath: String) -> String {
+        return ApkAnalyzerCommands.getAndroidManifest(toolsPath: toolsPath, apkPath: apkPath)
     }
 }
 

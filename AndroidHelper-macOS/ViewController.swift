@@ -18,7 +18,7 @@ struct State {
     var projectDirectory = "/"
     var targets: [Target] = []
     var selectedTarget: Target? = nil
-    var clearCacheEnabled: Bool = false
+    var cleanCacheEnabled: Bool = false
     var modules: [Module] = []
     var selectedModuleName: String? = nil
     var selectedBuildVariant: String? = nil
@@ -74,7 +74,7 @@ func applyAction(state: State, action: Action) -> State {
             newState.selectedTarget = newState.targets.first
         }
     case .setClearCacheEnabled(let newClearCacheEnabledValue):
-        newState.clearCacheEnabled = newClearCacheEnabledValue
+        newState.cleanCacheEnabled = newClearCacheEnabledValue
     case .setModules(let newModules):
         // TODO: This case is getting complicated. Make it more human readable
         newState.modules = newModules
@@ -211,7 +211,7 @@ class ViewController: NSViewController, XMLParserDelegate {
             items: state.targets.map { $0.serialNumber() },
             selectedItemTitle: state.selectedTarget?.serialNumber())
 
-        clearCacheCheckbox.updateCheckedState(isChecked: state.clearCacheEnabled)
+        clearCacheCheckbox.updateCheckedState(isChecked: state.cleanCacheEnabled)
         
         modulesPopupButton.updateState(
             items: state.modules.map { $0.name },
@@ -230,8 +230,8 @@ class ViewController: NSViewController, XMLParserDelegate {
     
     @IBAction func assembleMobileClicked(_ sender: Any) {
         guard let moduleName = state.selectedModuleName, let buildVariant = state.selectedBuildVariant else { return }
-        let command = Command.assemble(buildVariant: buildVariant, cleanCache: state.clearCacheEnabled, project: moduleName)
-        logln(command.toString())
+        let command = Commands.build(buildVariant: buildVariant, cleanCache: state.cleanCacheEnabled, project: moduleName)
+        logln(command)
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
         }
@@ -241,8 +241,8 @@ class ViewController: NSViewController, XMLParserDelegate {
         guard let moduleName = state.selectedModuleName,
             let buildVariant = state.selectedBuildVariant,
             let target = state.selectedTarget else { return }
-        let command = Command.install(buildVariant: buildVariant, cleanCache: state.clearCacheEnabled, project: moduleName, target: target)
-        logln(command.toString())
+        let command = Commands.buildAndInstall(buildVariant: buildVariant, cleanCache: state.cleanCacheEnabled, project: moduleName, target: target)
+        logln(command)
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             guard let strongSelf = self else { return }
             switch progress {
@@ -257,7 +257,7 @@ class ViewController: NSViewController, XMLParserDelegate {
                     return
                 }
                 var xmlString = ""
-                Shell.runAsync(command: Command.getAndroidManifest(apkPath: latestApk), directory: strongSelf.state.projectDirectory) { [weak self] progress in
+                Shell.runAsync(command: Commands.getAndroidManifest(apkPath: latestApk), directory: strongSelf.state.projectDirectory) { [weak self] progress in
                     guard let strongSelf = self else { return }
                     switch progress {
                     case .output(let string):
@@ -287,8 +287,8 @@ class ViewController: NSViewController, XMLParserDelegate {
         guard let launcherActivity = findLauncherActivity(manifest: manifest) else { return }
         guard let target = state.selectedTarget else { return }
         guard let package = manifest.package else { return }
-        let command = Command.start(target: target, package: package, activity: launcherActivity.name)
-        logln(command.toString())
+        let command = Commands.start(target: target, package: package, activity: launcherActivity.name)
+        logln(command)
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
         }
@@ -302,8 +302,8 @@ class ViewController: NSViewController, XMLParserDelegate {
         guard let target = state.selectedTarget else { return }
         guard let manifest = state.lastBuiltManifest else { return }
         guard let package = manifest.package else { return }
-        let command = Command.stop(target: target, package: package)
-        logln(command.toString())
+        let command = Commands.stop(target: target, package: package)
+        logln(command)
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
         }
@@ -321,7 +321,7 @@ class ViewController: NSViewController, XMLParserDelegate {
     @IBAction func listModulesClicked(_ sender: NSButton) {
         var commandOutput = ""
         logln("Discovering projects...")
-        Shell.runAsync(command: Command.projects, directory: state.projectDirectory) { [weak self] progress in
+        Shell.runAsync(command: Commands.listGradleTasks(), directory: state.projectDirectory) { [weak self] progress in
             guard let strongSelf = self else { return }
             switch progress {
             case .output(let string):
@@ -386,8 +386,8 @@ class ViewController: NSViewController, XMLParserDelegate {
     
     private func refreshTargets() {
         var commandOutput = ""
-        let command = Command.listTargets
-        logln(command.toString())
+        let command = Commands.listTargets()
+        logln(command)
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
             guard let strongSelf = self else { return }
             switch progress {

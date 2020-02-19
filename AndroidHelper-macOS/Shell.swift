@@ -32,8 +32,8 @@ struct Shell {
         runProcessAsync(process: process, progressHandler: progressHandler)
     }
 
-    static func runAsync(command: Command, directory: String, progressHandler: @escaping ShellCommandProgressHandler) {
-        let process = createProcess(command: command.toString(), directory: directory)
+    static func runAsync(command: String, directory: String, progressHandler: @escaping ShellCommandProgressHandler) {
+        let process = createProcess(command: command, directory: directory)
         runProcessAsync(process: process, progressHandler: progressHandler)
     }
 

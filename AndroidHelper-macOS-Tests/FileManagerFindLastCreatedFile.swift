@@ -28,19 +28,19 @@ class FileManagerFindLastCreatedFile: XCTestCase {
      */
     func normalizeVarFolderPath(path: String?) -> String? {
         guard let path = path else { return nil }
-        guard path.hasPrefix("file:///private/var") else { return path }
-        return path.replacingOccurrences(of: "file:///private/var", with: "file:///var")
+        guard path.hasPrefix("/private/var") else { return path }
+        return path.replacingOccurrences(of: "/private/var", with: "/var")
     }
 
     func testOne() {
         let result = FileManager.default.fildLastCreatedFile(directory: FileManagerFindLastCreatedFile.directory, fileExtension: "ex1")
         let expected = FileManagerFindLastCreatedFile.files[2]
-        XCTAssertEqual(normalizeVarFolderPath(path: result), expected.absoluteString)
+        XCTAssertEqual(normalizeVarFolderPath(path: result), expected.path)
     }
 
     func testTwo() {
         let result = FileManager.default.fildLastCreatedFile(directory: FileManagerFindLastCreatedFile.directory, fileExtension: "ex2")
         let expected = FileManagerFindLastCreatedFile.files[4]
-        XCTAssertEqual(normalizeVarFolderPath(path: result), expected.absoluteString)
+        XCTAssertEqual(normalizeVarFolderPath(path: result), expected.path)
     }
 }
