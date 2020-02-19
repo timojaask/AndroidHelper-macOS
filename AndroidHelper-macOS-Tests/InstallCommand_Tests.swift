@@ -1,5 +1,6 @@
 import XCTest
 import AndroidHelper_macOS
+@testable import AndroidHelper_macOS
 
 class InstallCommand_Tests: XCTestCase {
     func testInstallDebugMobileDevice() {

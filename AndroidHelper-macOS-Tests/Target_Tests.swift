@@ -1,5 +1,6 @@
 import XCTest
 import AndroidHelper_macOS
+@testable import AndroidHelper_macOS
 
 class Target_Tests: XCTestCase {
     func testTargetDevice1() {
@@ -33,5 +34,24 @@ class Target_Tests: XCTestCase {
     func testTargetEmulatorFromString2() {
         XCTAssertEqual(Target.fromSerialNumber(serialNumber: "emulator-2222", isOnline: false),
         Target.emulator(port: 2222, isOnline: false))
+    }
+    func testParseTargets() {
+        let input = """
+        List of devices attached
+        emulator-5554\tdevice
+        Q6D9TFGE97EC\tdevice
+        emulator-5556\toffline
+        emulator-5558\tdevice
+        QWERTY123\toffline
+        """
+        let result = parseTargets(fromString: input)
+        let expected:[Target] = [
+            .emulator(port: 5554, isOnline: true),
+            .device(serial: "Q6D9TFGE97EC", isOnline: true),
+            .emulator(port: 5556, isOnline: false),
+            .emulator(port: 5558, isOnline: true),
+            .device(serial: "QWERTY123", isOnline: false)
+        ]
+        XCTAssertEqual(result, expected)
     }
 }

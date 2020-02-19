@@ -6,7 +6,7 @@ extension URL {
      * If one of the URLs is `nil` or is missing the `creationDateKey` attribute, the other URL will be returned.
      * If both URLs are `nil` or both are missing the `creationDateKey` attribute, `nil` will be returned.
     */
-    public static func pickLastCreated(urlA: URL?, urlB: URL?) -> URL? {
+    static func pickLastCreated(urlA: URL?, urlB: URL?) -> URL? {
         func getCreationDate(url: URL?) -> Date? {
             let attributes = try? url?.resourceValues(forKeys: [.creationDateKey])
             return attributes?.creationDate

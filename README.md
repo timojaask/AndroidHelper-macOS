@@ -2,7 +2,6 @@
 Running Android dev related commands from a GUI, just for fun? 🤷‍♀️🤷‍♂️
 
 ## Next tasks
-- Before heavily investing in writing unit tests, one of the next thing to do should probably be making commands more general purpose, preparing them to become standalone libraries. So this would include: adb path, app package name, app activity (done: module, variant )
 - Design the user interface. Make it simple but functional. "Less, but better"
 - Handle situations when things are not okay. For example when target not selected, but user is trying to install or start. Currently nothing is happenning, no error message.
 - Add ability to cancel currently running task (e.g. clicked assemble by accident, don't want to wait until it finishes)

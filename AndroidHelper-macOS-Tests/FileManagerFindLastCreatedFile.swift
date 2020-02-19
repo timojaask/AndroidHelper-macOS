@@ -1,5 +1,6 @@
 import XCTest
 import AndroidHelper_macOS
+@testable import AndroidHelper_macOS
 
 class FileManagerFindLastCreatedFile: XCTestCase {
     static let directory = NSTemporaryDirectory()

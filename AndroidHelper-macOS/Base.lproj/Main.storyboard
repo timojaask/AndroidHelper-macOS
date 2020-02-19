@@ -788,10 +788,10 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="atj-5u-1OL">
-                                <rect key="frame" x="452" y="446" width="90" height="19"/>
-                                <buttonCell key="cell" type="recessed" title="Clear cache" bezelStyle="recessed" imagePosition="left" state="on" borderStyle="border" inset="2" id="fei-HG-Kmb">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                    <font key="font" metaFont="systemBold" size="12"/>
+                                <rect key="frame" x="450" y="447" width="94" height="18"/>
+                                <buttonCell key="cell" type="check" title="Clear cache" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="fei-HG-Kmb">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="clearCacheToggled:" target="XfG-lQ-9wD" id="RdV-a4-8nh"/>
@@ -885,26 +885,6 @@
                                     <action selector="listEmulatorsClicked:" target="XfG-lQ-9wD" id="e3h-qg-nxr"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Xe-0r-OEj">
-                                <rect key="frame" x="129" y="19" width="90" height="19"/>
-                                <buttonCell key="cell" type="recessed" title="List projects" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eP1-fu-5gr">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                    <font key="font" metaFont="systemBold" size="12"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="listModulesClicked:" target="XfG-lQ-9wD" id="Cxl-N8-tWu"/>
-                                </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pj2-Ig-4gA">
-                                <rect key="frame" x="227" y="19" width="69" height="19"/>
-                                <buttonCell key="cell" type="recessed" title="Find APK" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="l7P-h9-aUI">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                    <font key="font" metaFont="systemBold" size="12"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="findApkClicked:" target="XfG-lQ-9wD" id="IFZ-TH-say"/>
-                                </connections>
-                            </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oz8-Vs-Lhy">
                                 <rect key="frame" x="787" y="19" width="65" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Clear log" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SiB-dt-r3e">
@@ -915,45 +895,41 @@
                                     <action selector="clearLogClicked:" target="XfG-lQ-9wD" id="Nsv-Kz-vlV"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="87l-ln-vDc">
-                                <rect key="frame" x="298" y="12" width="97" height="32"/>
-                                <buttonCell key="cell" type="push" title="Test XML" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GHw-eT-MqB">
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Xe-0r-OEj">
+                                <rect key="frame" x="618.5" y="477" width="21" height="23"/>
+                                <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSRefreshTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" inset="2" id="eP1-fu-5gr">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="textXmlClicked:" target="XfG-lQ-9wD" id="MdK-pw-8EC"/>
+                                    <action selector="listModulesClicked:" target="XfG-lQ-9wD" id="Cxl-N8-tWu"/>
                                 </connections>
                             </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="L7P-ci-pbk" secondAttribute="trailing" constant="20" id="0pE-QA-hnn"/>
-                            <constraint firstItem="87l-ln-vDc" firstAttribute="leading" secondItem="pj2-Ig-4gA" secondAttribute="trailing" constant="8" id="3RY-kH-ta3"/>
                             <constraint firstItem="YtG-nT-IzO" firstAttribute="centerY" secondItem="QMG-1d-U7A" secondAttribute="centerY" id="4ab-Lc-BOh"/>
                             <constraint firstItem="eIK-PS-En5" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="8UD-8H-Ktq"/>
-                            <constraint firstItem="pj2-Ig-4gA" firstAttribute="leading" secondItem="0Xe-0r-OEj" secondAttribute="trailing" constant="8" id="8vV-st-Sec"/>
                             <constraint firstAttribute="bottom" secondItem="S7R-Z1-ptX" secondAttribute="bottom" constant="20" id="A0M-Iw-RM2"/>
                             <constraint firstItem="0NZ-wf-vbT" firstAttribute="top" secondItem="QMG-1d-U7A" secondAttribute="bottom" constant="12" id="BC3-xc-bcJ"/>
                             <constraint firstItem="8wY-Fc-Xib" firstAttribute="centerY" secondItem="Dqc-71-yAa" secondAttribute="centerY" id="CVq-Yv-H0Q"/>
                             <constraint firstAttribute="trailing" secondItem="eIK-PS-En5" secondAttribute="trailing" constant="20" id="Cmt-X9-vCb"/>
                             <constraint firstItem="S7R-Z1-ptX" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="DP6-sg-Yrn"/>
-                            <constraint firstItem="pj2-Ig-4gA" firstAttribute="centerY" secondItem="0Xe-0r-OEj" secondAttribute="centerY" id="DsS-KF-FxT"/>
-                            <constraint firstItem="87l-ln-vDc" firstAttribute="centerY" secondItem="pj2-Ig-4gA" secondAttribute="centerY" id="E5R-Yy-8ds"/>
                             <constraint firstItem="v2W-hp-gX7" firstAttribute="leading" secondItem="YtG-nT-IzO" secondAttribute="trailing" constant="8" id="EEA-bL-RCM"/>
-                            <constraint firstItem="0Xe-0r-OEj" firstAttribute="centerY" secondItem="S7R-Z1-ptX" secondAttribute="centerY" id="F9g-Cx-ZvK"/>
                             <constraint firstItem="eIK-PS-En5" firstAttribute="top" secondItem="0NZ-wf-vbT" secondAttribute="bottom" constant="20" id="GJk-FG-JsM"/>
                             <constraint firstItem="L7P-ci-pbk" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="24" id="Hkl-7D-BGr"/>
                             <constraint firstItem="0NZ-wf-vbT" firstAttribute="leading" secondItem="QMG-1d-U7A" secondAttribute="leading" id="MX7-fT-EKD"/>
                             <constraint firstItem="atj-5u-1OL" firstAttribute="centerY" secondItem="8wY-Fc-Xib" secondAttribute="centerY" id="Nug-cS-MwE"/>
                             <constraint firstItem="QMG-1d-U7A" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="Q2Q-MX-HPX"/>
                             <constraint firstItem="v2W-hp-gX7" firstAttribute="centerY" secondItem="YtG-nT-IzO" secondAttribute="centerY" id="RK9-UW-jyD"/>
-                            <constraint firstItem="0Xe-0r-OEj" firstAttribute="leading" secondItem="S7R-Z1-ptX" secondAttribute="trailing" constant="8" id="Rll-gc-RqP"/>
                             <constraint firstItem="8wY-Fc-Xib" firstAttribute="leading" secondItem="Dqc-71-yAa" secondAttribute="trailing" constant="8" id="Vbc-wd-jXu"/>
                             <constraint firstItem="L7P-ci-pbk" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="sCu-HX-oJG" secondAttribute="trailing" constant="20" id="YUg-kp-qFf"/>
                             <constraint firstItem="atj-5u-1OL" firstAttribute="leading" secondItem="8wY-Fc-Xib" secondAttribute="trailing" constant="8" id="Yea-oy-dK7"/>
                             <constraint firstItem="Dqc-71-yAa" firstAttribute="centerY" secondItem="SrT-sn-nCh" secondAttribute="centerY" id="aW7-pB-bpr"/>
+                            <constraint firstItem="L7P-ci-pbk" firstAttribute="leading" secondItem="0Xe-0r-OEj" secondAttribute="trailing" constant="8" id="aeX-bb-3SQ"/>
                             <constraint firstItem="sCu-HX-oJG" firstAttribute="leading" secondItem="v2W-hp-gX7" secondAttribute="trailing" constant="8" id="dXN-t8-DiA"/>
                             <constraint firstItem="QMG-1d-U7A" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="gFN-nA-ahu"/>
+                            <constraint firstItem="0Xe-0r-OEj" firstAttribute="centerY" secondItem="L7P-ci-pbk" secondAttribute="centerY" id="gRX-Fv-4eN"/>
                             <constraint firstItem="Dqc-71-yAa" firstAttribute="leading" secondItem="SrT-sn-nCh" secondAttribute="trailing" constant="8" id="i9e-Jg-uEg"/>
                             <constraint firstAttribute="trailing" secondItem="oz8-Vs-Lhy" secondAttribute="trailing" constant="20" id="iuS-f2-GrV"/>
                             <constraint firstItem="SrT-sn-nCh" firstAttribute="centerY" secondItem="0NZ-wf-vbT" secondAttribute="centerY" id="jXD-FW-UDP"/>

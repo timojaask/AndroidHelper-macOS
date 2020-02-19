@@ -1,46 +1,46 @@
 import Foundation
 
-public struct Commands {
+struct Commands {
     private static let platformToolsPath = "~/Library/Android/sdk/platform-tools"
     private static let toolsPath = "~/Library/Android/sdk/tools/bin"
 
-    public static func build(buildVariant: String, cleanCache: Bool, project: String) -> String {
+    static func build(buildVariant: String, cleanCache: Bool, project: String) -> String {
         return GradleCommands.assemble(project: project, task: buildVariant, cleanCache: cleanCache, parallel: true)
     }
 
-    public static func buildAndInstall(buildVariant: String, cleanCache: Bool, project: String, target: Target) -> String {
+    static func buildAndInstall(buildVariant: String, cleanCache: Bool, project: String, target: Target) -> String {
         return GradleCommands.install(project: project, task: buildVariant, cleanCache: cleanCache, parallel: true, targetSerial: target.serialNumber())
     }
 
-    public static func listGradleTasks() -> String {
+    static func listGradleTasks() -> String {
         return GradleCommands.listTasks()
     }
 
-    public static func listTargets() -> String {
+    static func listTargets() -> String {
         return AdbCommands.listDevices(platformToolsPath: platformToolsPath)
     }
 
-    public static func start(target: Target, package: String, activity: String) -> String {
+    static func start(target: Target, package: String, activity: String) -> String {
         return AdbCommands.start(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), package: package, activity: activity)
     }
 
-    public static func stop(target: Target, package: String) -> String {
+    static func stop(target: Target, package: String) -> String {
         return AdbCommands.stop(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), package: package)
     }
 
-    public static func getAndroidManifest(apkPath: String) -> String {
+    static func getAndroidManifest(apkPath: String) -> String {
         return ApkAnalyzerCommands.getAndroidManifest(toolsPath: toolsPath, apkPath: apkPath)
     }
 }
 
-public enum Target {
+enum Target {
     case device(serial: String, isOnline: Bool?)
     case emulator(port: Int, isOnline: Bool?)
     
     private static let emulatorPortSeparator = "-"
     private static let emulatorPrefix = "emulator"
     
-    public static func fromSerialNumber<S: StringProtocol>(serialNumber: S, isOnline: Bool?) -> Target? {
+    static func fromSerialNumber<S: StringProtocol>(serialNumber: S, isOnline: Bool?) -> Target? {
         if serialNumber.starts(with: emulatorPrefix) {
             guard let port = parseEmulatorPortNumber(emulatorName: serialNumber) else {
                 return nil
@@ -51,7 +51,7 @@ public enum Target {
         }
     }
     
-    public func serialNumber() -> String {
+    func serialNumber() -> String {
         switch self {
         case .device(let serial, _):
             return serial
@@ -65,6 +65,20 @@ public enum Target {
             return nil
         }
         return Int(portString)
+    }
+}
+
+struct Module {
+    let name: String
+    let buildVariants: [String]
+}
+
+extension Module: Equatable {
+    /**
+     Does shallow comparison by matching by comparing just the module `name` fields.
+     */
+    public static func == (lhs: Module, rhs: Module) -> Bool {
+        return lhs.name == rhs.name
     }
 }
 
@@ -87,4 +101,67 @@ extension Target: Equatable {
             }
         }
     }
+}
+
+/**
+Parse currently available target devices or emulators from `adb devices` command output
+*/
+func parseTargets(fromString string: String) -> [Target] {
+    func parseTarget(targetString: String) -> Target? {
+        let parts = targetString.split(separator: "\t")
+        guard parts.count == 2 else { return nil }
+        let name = parts[0]
+        let statusString = parts[1]
+        let isOnline = statusString != "offline"
+        return Target.fromSerialNumber(serialNumber: name, isOnline: isOnline)
+    }
+
+    return string
+        .split(separator: "\n")
+        .dropFirst()
+        .compactMap { parseTarget(targetString: String($0)) }
+}
+
+/**
+ Parse project specific Gradle tasks from raw `gradle tasks --all` command output. Returns a list of modules that can be installed, along with installable build variants
+ */
+func parseInstallableModules(fromString string: String) -> [Module] {
+    guard let rangeOfAndroidTasksTitle = string.range(of: "Android tasks") else { return [] }
+    func parseModuleAndTask(from string: Substring) -> (Substring, Substring)? {
+        guard string.contains(":") else { return nil }
+        let splitByColon = string.split(separator: ":")
+        let module = splitByColon[0]
+        var task: Substring = ""
+        if splitByColon[1].contains(" - ") {
+            let splitByDash = splitByColon[1].split(separator: "-")
+            // Drop the last character because it's a space. `trimmingCharacters` won't work because it converts to a String.
+            task = splitByDash[0].dropLast()
+        } else {
+            task = splitByColon[1]
+        }
+        return (module, task)
+    }
+    func parseInstallTask(from line: Substring) -> (Substring, Substring)? {
+        guard let (module, task) = parseModuleAndTask(from: line) else { return nil }
+        guard task.hasPrefix("install") && !task.hasSuffix("AndroidTest") else { return nil }
+        return (module, task)
+    }
+    func groupToInstallableModule(from grouped: (Substring, [(Substring, Substring)])) -> Module? {
+        let (moduleName, tupleModuleAndTasks) = grouped
+        let buildVariants = tupleModuleAndTasks
+            .map { String($0.1.dropPrefix(prefix: "install")) }
+            .sorted { $0 < $1 }
+
+        return buildVariants.count > 0 ? Module(name: String(moduleName), buildVariants: buildVariants) : nil
+    }
+    func groupByModuleName(modulesAndTasks: [(Substring, Substring)]) -> [Substring: [(Substring, Substring)]] {
+        return Dictionary(grouping: modulesAndTasks) { $0.0 }
+    }
+
+    let dataSubstring = string.suffix(from: rangeOfAndroidTasksTitle.upperBound)
+    let lines = dataSubstring.split(separator: "\n")
+    let installableModulesAndTasks = lines.compactMap(parseInstallTask(from:))
+    return groupByModuleName(modulesAndTasks: installableModulesAndTasks)
+        .compactMap(groupToInstallableModule(from:))
+        .sorted(by: { $0.name < $1.name })
 }

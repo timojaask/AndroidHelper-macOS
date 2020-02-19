@@ -14,6 +14,8 @@
 		2F4A013B23F8582F00F9E519 /* UrlPickLastCreated_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4A013A23F8582F00F9E519 /* UrlPickLastCreated_Tests.swift */; };
 		2F4A013D23F8C44D00F9E519 /* FileManagerExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4A013C23F8C44D00F9E519 /* FileManagerExt.swift */; };
 		2F4A013F23F8C56A00F9E519 /* FileManagerFindLastCreatedFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4A013E23F8C56A00F9E519 /* FileManagerFindLastCreatedFile.swift */; };
+		2FB2AE7A23FCD072006A9C1D /* GradleTasksSampleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB2AE7923FCD072006A9C1D /* GradleTasksSampleOutput.swift */; };
+		2FB2AE7C23FCD0B9006A9C1D /* ParseModules_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB2AE7B23FCD0B9006A9C1D /* ParseModules_Tests.swift */; };
 		2FB7FF0223E7BD200075530A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0123E7BD200075530A /* AppDelegate.swift */; };
 		2FB7FF0423E7BD200075530A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0323E7BD200075530A /* ViewController.swift */; };
 		2FB7FF0623E7BD210075530A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0523E7BD210075530A /* Assets.xcassets */; };
@@ -48,6 +50,8 @@
 		2F4A013A23F8582F00F9E519 /* UrlPickLastCreated_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlPickLastCreated_Tests.swift; sourceTree = "<group>"; };
 		2F4A013C23F8C44D00F9E519 /* FileManagerExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerExt.swift; sourceTree = "<group>"; };
 		2F4A013E23F8C56A00F9E519 /* FileManagerFindLastCreatedFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerFindLastCreatedFile.swift; sourceTree = "<group>"; };
+		2FB2AE7923FCD072006A9C1D /* GradleTasksSampleOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradleTasksSampleOutput.swift; sourceTree = "<group>"; };
+		2FB2AE7B23FCD0B9006A9C1D /* ParseModules_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseModules_Tests.swift; sourceTree = "<group>"; };
 		2FB7FEFE23E7BD200075530A /* AndroidHelper-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AndroidHelper-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FB7FF0123E7BD200075530A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2FB7FF0323E7BD200075530A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -139,6 +143,8 @@
 				2F4A013A23F8582F00F9E519 /* UrlPickLastCreated_Tests.swift */,
 				2F4A013E23F8C56A00F9E519 /* FileManagerFindLastCreatedFile.swift */,
 				2FFD0FA023EBB5730059BB4B /* Info.plist */,
+				2FB2AE7B23FCD0B9006A9C1D /* ParseModules_Tests.swift */,
+				2FB2AE7923FCD072006A9C1D /* GradleTasksSampleOutput.swift */,
 			);
 			path = "AndroidHelper-macOS-Tests";
 			sourceTree = "<group>";
@@ -263,10 +269,12 @@
 			files = (
 				2FFD0F9F23EBB5730059BB4B /* AssembleCommand_Tests.swift in Sources */,
 				2FFD0FB123EBC1F50059BB4B /* AdbCommand_Tests.swift in Sources */,
+				2FB2AE7A23FCD072006A9C1D /* GradleTasksSampleOutput.swift in Sources */,
 				2FFD0FAB23EBBF9A0059BB4B /* StartCommand_Tests.swift in Sources */,
 				2FFD0FA723EBB98C0059BB4B /* InstallCommand_Tests.swift in Sources */,
 				2FFD0FAF23EBC1980059BB4B /* StopCommand_Tests.swift in Sources */,
 				2FFD0FA923EBBBE90059BB4B /* Target_Tests.swift in Sources */,
+				2FB2AE7C23FCD0B9006A9C1D /* ParseModules_Tests.swift in Sources */,
 				2F4A013B23F8582F00F9E519 /* UrlPickLastCreated_Tests.swift in Sources */,
 				2F4A013F23F8C56A00F9E519 /* FileManagerFindLastCreatedFile.swift in Sources */,
 			);
