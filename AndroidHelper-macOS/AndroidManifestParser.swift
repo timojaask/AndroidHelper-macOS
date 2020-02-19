@@ -5,6 +5,7 @@ struct AndroidManifest {
         enum Category {
             case `default`
             case launcher
+            case leanbackLauncher
             case browsable
         }
 
@@ -35,7 +36,11 @@ struct AndroidManifest {
 }
 
 func findLauncherActivity(manifest: AndroidManifest) -> AndroidManifest.Activity? {
-    let mainLauncherActivities = manifest.activities.filter { $0.contains(category: .launcher) && $0.contains(action: .main) }
+    let mainLauncherActivities = manifest.activities.filter {
+        ($0.contains(category: .launcher) || $0.contains(category: .leanbackLauncher)) &&
+        $0.contains(action: .main)
+
+    }
     switch mainLauncherActivities.count {
     case 0:
         return nil
@@ -77,6 +82,8 @@ private class XMLParserDelegateWrapper: NSObject, XMLParserDelegate {
         switch string {
         case "android.intent.category.LAUNCHER":
             return .launcher
+        case "android.intent.category.LEANBACK_LAUNCHER":
+            return .leanbackLauncher
         case "android.intent.category.DEFAULT":
             return .default
         case "android.intent.category.BROWSABLE":
