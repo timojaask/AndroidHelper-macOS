@@ -91,19 +91,6 @@ func applyAction(state: State, action: Action) -> State {
     return newState
 }
 
-
-extension Substring {
-    func dropPrefix(prefix: Substring) -> Substring {
-        guard hasPrefix(prefix) else { return self }
-        return dropFirst(prefix.count)
-    }
-}
-
-func projectNameFromPath(path: String) -> String {
-    guard let shortName = path.split(separator: "/").last else { return path }
-    return String(shortName)
-}
-
 class ViewController: NSViewController, XMLParserDelegate {
     
     @IBOutlet weak var projectTitle: NSTextField!
@@ -125,6 +112,11 @@ class ViewController: NSViewController, XMLParserDelegate {
         func variantsForModule(modules: [Module], moduleName: String?) -> [String] {
             guard let module = modules.first(where: { $0.name == moduleName }) else { return [] }
             return module.buildVariants
+        }
+
+        func projectNameFromPath(path: String) -> String {
+            guard let shortName = path.split(separator: "/").last else { return path }
+            return String(shortName)
         }
 
         projectTitle.stringValue = projectNameFromPath(path: state.projectDirectory)
@@ -174,26 +166,21 @@ class ViewController: NSViewController, XMLParserDelegate {
                 strongSelf.logln("Terminated with error status: \(terminationStatus)")
             case .success:
                 strongSelf.logln("Installed with succcess")
-                guard let latestApk = strongSelf.findLatestApk(projectDirectory: strongSelf.state.projectDirectory, module: moduleName) else {
+                guard let latestApk = findLatestApk(projectDirectory: strongSelf.state.projectDirectory, module: moduleName) else {
                     strongSelf.logln("Failed to start the application: Unable to locate APK")
                     return
                 }
-                var xmlString = ""
-                Shell.runAsync(command: Commands.getAndroidManifest(apkPath: latestApk), directory: strongSelf.state.projectDirectory) { [weak self] progress in
+                Shell.runAsyncWithOutput(command: Commands.getAndroidManifest(apkPath: latestApk), directory: strongSelf.state.projectDirectory) { [weak self] result in
                     guard let strongSelf = self else { return }
-                    switch progress {
-                    case .output(let string):
-                        xmlString.append(string)
-                        print("Appending: \(string)")
-                        print("xmlString is now: \(xmlString)")
-                    case .error(let terminationStatus):
-                        strongSelf.logln("Terminated with error status: \(terminationStatus)")
-                    case .success:
-                        parseManifest(xmlString: xmlString) { [weak self] manifest in
+                    switch result {
+                    case .success(let output):
+                        parseManifest(xmlString: output) { [weak self] manifest in
                             guard let strongSelf = self else { return }
                             strongSelf.updateState(action: .setLastBuiltManifest(newLastBuiltManifest:  manifest))
                             strongSelf.startApp()
                         }
+                    case .error(let reason):
+                        strongSelf.logln(reason.toString())
                     }
                 }
             }
@@ -237,38 +224,16 @@ class ViewController: NSViewController, XMLParserDelegate {
     }
     
     @IBAction func listModulesClicked(_ sender: NSButton) {
-        var commandOutput = ""
-        logln("Discovering projects...")
-        Shell.runAsync(command: Commands.listGradleTasks(), directory: state.projectDirectory) { [weak self] progress in
+        Shell.runAsyncWithOutput(command: Commands.listGradleTasks(), directory: state.projectDirectory) { [weak self] result in
             guard let strongSelf = self else { return }
-            switch progress {
-            case .output(let string):
-                commandOutput.append(string)
-            case .error(let reason):
-                strongSelf.logln(reason.toString())
-            case .success:
-                let modules = parseInstallableModules(fromString: commandOutput)
+            switch result {
+            case .success(let output):
+                let modules = parseInstallableModules(fromString: output)
                 strongSelf.logln("Number of modules found: \(modules.count)")
                 strongSelf.updateState(action: .setModules(newModules: modules))
+            case .error(let reason):
+                strongSelf.logln(reason.toString())
             }
-        }
-    }
-    
-    private func findLatestApk(projectDirectory: String, module: String) -> String? {
-        let basePath = "\(projectDirectory)/\(module)/build/outputs/apk"
-        return FileManager.default.fildLastCreatedFile(directory: basePath, fileExtension: "apk")
-    }
-
-    @IBAction func findApkClicked(_ sender: NSButton) {
-        // search recursively for last created `*.apk` file under `[module]/build/output/apk/`
-        guard let module = state.selectedModuleName else {
-            logln("No module selected")
-            return
-        }
-        if let latestApk = findLatestApk(projectDirectory: state.projectDirectory, module: module) {
-            logln("Latest APK:\n\(latestApk)")
-        } else {
-            logln("Unable to find APK")
         }
     }
     
@@ -303,16 +268,13 @@ class ViewController: NSViewController, XMLParserDelegate {
     }
     
     private func refreshTargets() {
-        var commandOutput = ""
         let command = Commands.listTargets()
         logln(command)
-        Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
+        Shell.runAsyncWithOutput(command: command, directory: state.projectDirectory) { [weak self] result in
             guard let strongSelf = self else { return }
-            switch progress {
-            case .output(let string):
-                commandOutput.append(string)
-            case .success:
-                let newTargets = parseTargets(fromString: commandOutput)
+            switch result {
+            case .success(let output):
+                let newTargets = parseTargets(fromString: output)
                 strongSelf.updateState(action: .setTargets(newTargets: newTargets))
                 strongSelf.logln("Available targets: \(strongSelf.state.targets.map { String($0.serialNumber()) })")
             case .error(let reason):

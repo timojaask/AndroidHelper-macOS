@@ -165,3 +165,18 @@ func parseInstallableModules(fromString string: String) -> [Module] {
         .compactMap(groupToInstallableModule(from:))
         .sorted(by: { $0.name < $1.name })
 }
+
+extension Substring {
+    func dropPrefix(prefix: Substring) -> Substring {
+        guard hasPrefix(prefix) else { return self }
+        return dropFirst(prefix.count)
+    }
+}
+
+/**
+ Returns path to APK with latest creation date for a given project directory and module
+ */
+func findLatestApk(projectDirectory: String, module: String) -> String? {
+    let basePath = "\(projectDirectory)/\(module)/build/outputs/apk"
+    return FileManager.default.fildLastCreatedFile(directory: basePath, fileExtension: "apk")
+}

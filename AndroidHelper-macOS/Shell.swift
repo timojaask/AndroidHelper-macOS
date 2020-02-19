@@ -2,6 +2,7 @@ import Foundation
 
 struct Shell {
     typealias ShellCommandProgressHandler = (_ progress: Progress) -> ()
+    typealias ShellCommandWithOutputCompletionHandler = (_ result: CommandWithOutputResult) -> ()
 
     enum Error {
         case processLaunchingError(localizedDescription: String)
@@ -27,9 +28,28 @@ struct Shell {
         case error(reason: Error)
     }
 
+    enum CommandWithOutputResult {
+        case success(output: String)
+        case error(reason: Error)
+    }
+
     static func debug_runRowCommand(rawCommand: String, directory: String, progressHandler: @escaping ShellCommandProgressHandler) {
         let process = createProcess(command: rawCommand, directory: directory)
         runProcessAsync(process: process, progressHandler: progressHandler)
+    }
+
+    static func runAsyncWithOutput(command: String, directory: String, completion: @escaping ShellCommandWithOutputCompletionHandler) {
+        var output = ""
+        runAsync(command: command, directory: directory) { progress in
+            switch progress {
+            case .output(let string):
+                output.append(string)
+            case .error(let reason):
+                completion(.error(reason: reason))
+            case .success:
+                completion(.success(output: output))
+            }
+        }
     }
 
     static func runAsync(command: String, directory: String, progressHandler: @escaping ShellCommandProgressHandler) {
