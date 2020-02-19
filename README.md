@@ -2,16 +2,16 @@
 Running Android dev related commands from a GUI, just for fun? 🤷‍♀️🤷‍♂️
 
 ## Next tasks
+- Have more of the code unit tested
+- Auto-refresh list of active targets
+- Add ability to cancel currently running task (e.g. clicked assemble by accident, don't want to wait until it finishes)
+- Add ability to start and stop emulators.
+- Display human readable device names instead of serial numbers
+- Pick out relevant information from the log, such as build errors and warnings
 - Design the user interface. Make it simple but functional. "Less, but better"
 - Handle situations when things are not okay. For example when target not selected, but user is trying to install or start. Currently nothing is happenning, no error message.
-- Add ability to cancel currently running task (e.g. clicked assemble by accident, don't want to wait until it finishes)
-- Display human readable device names instead of serial numbers
-- Add ability to start and stop emulators.
-- Auto-refresh list of active targets
 - Save project preferences inside the project directory, and cache parsed modules and variants. Or save somewhere else?
 - Add ability to easily open previously saved projects
-- Pick out relevant information from the log, such as build errors and warnings
-- Extract command running and parsing into some kind of AndroidHelperAPI module. For example, right now ViewController has some business logic in refreshTargets function.
 - See if I can make use of ADB `display-size` and `display-density` commands (https://developer.android.com/studio/command-line/adb)
 - Provide solutions for various setup issues: Installing and finding Android tools paths, things like apkanalyzer failing because either $JAVA_HOME is not set or using incompatible java
 - Add paralellize flag instead of having --parallel always on version.
