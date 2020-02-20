@@ -66,9 +66,9 @@ func applyAction(state: State, action: Action) -> State {
         newState.modules = newModules
         if !moduleExists(modules: newModules, moduleName: newState.selectedModuleName) {
             newState.selectedModuleName = newModules.first?.name
-            if !buildVariantExists(modules: newModules, moduleName: newState.selectedModuleName, buildVariantName: newState.selectedBuildVariant) {
-                newState.selectedBuildVariant = defaultBuildVariant(modules: newModules, moduleName: newState.selectedModuleName)
-            }
+        }
+        if !buildVariantExists(modules: newModules, moduleName: newState.selectedModuleName, buildVariantName: newState.selectedBuildVariant) {
+            newState.selectedBuildVariant = defaultBuildVariant(modules: newModules, moduleName: newState.selectedModuleName)
         }
     case .setSelectedModuleName(let newSelectedModuleName):
         if moduleExists(modules: newState.modules, moduleName: newSelectedModuleName) {
@@ -92,8 +92,8 @@ func applyAction(state: State, action: Action) -> State {
 }
 
 class ViewController: NSViewController, XMLParserDelegate {
-    
-    @IBOutlet weak var projectTitle: NSTextField!
+
+    @IBOutlet weak var currentProjectButton: NSButton!
     @IBOutlet weak var logScrollView: NSScrollView!
     @IBOutlet var logTextView: NSTextView!
     @IBOutlet weak var clearCacheCheckbox: NSButton!
@@ -119,7 +119,7 @@ class ViewController: NSViewController, XMLParserDelegate {
             return String(shortName)
         }
 
-        projectTitle.stringValue = projectNameFromPath(path: state.projectDirectory)
+        currentProjectButton.title = projectNameFromPath(path: state.projectDirectory)
 
         targetsPopupButton.updateState(
             items: state.targets.map { $0.serialNumber() },
@@ -281,6 +281,7 @@ class ViewController: NSViewController, XMLParserDelegate {
             updateAndroidManifest()
         }
     }
+
     @IBAction func buildVariantsPopupButtonUpdated(_ sender: NSPopUpButton) {
         updateState(action: .setSelectedBuildVariant(newSelectedBuildVariant: sender.selectedItem?.title))
     }
@@ -303,7 +304,26 @@ class ViewController: NSViewController, XMLParserDelegate {
         let clearCacheEnabled = sender.state == .on
         updateState(action: .setClearCacheEnabled(newClearCacheEnabledValue: clearCacheEnabled))
     }
-    
+
+    @IBAction func currentProjectButtonClicked(_ sender: NSButton) {
+        func pickDirectory() -> String? {
+            let dialog = NSOpenPanel();
+            dialog.title = "Select Android project folder"
+            dialog.showsResizeIndicator = true
+            dialog.showsHiddenFiles = false
+            dialog.canChooseDirectories = true
+            dialog.canChooseFiles = false
+            dialog.canCreateDirectories = false
+            dialog.allowsMultipleSelection = false
+            dialog.runModal()
+            return dialog.url?.path
+        }
+        guard let newProjectDirectory = pickDirectory() else { return }
+        updateState(action: .setProjectDirectory(newProjectDirectory: newProjectDirectory))
+        // TODO: This logic should really happen whenever project directory changes, not from here.
+        refreshProject()
+    }
+
     private func refreshTargets() {
         let command = Commands.listTargets()
         logln(command)

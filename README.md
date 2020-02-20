@@ -2,8 +2,7 @@
 Running Android dev related commands from a GUI, just for fun? 🤷‍♀️🤷‍♂️
 
 ## Next tasks
-- Show compilation errors: For some reason the current output of "Install" action doesn't have any details of what actually caused a failure in the log.
-- Utilize `Add --fastdeploy option to adb install, for incremental updates to APKs while developing.` that was added to `adb` in Platform Tools 29.0.5 (see https://developer.android.com/studio/releases/platform-tools)
+- Use Gradle Tooling API instead of command line tool: https://docs.gradle.org/current/userguide/third_party_integration.html#embedding
 - Have more of the code unit tested
 - Auto-refresh list of active targets
 - Add ability to cancel currently running task (e.g. clicked assemble by accident, don't want to wait until it finishes)
