@@ -2,7 +2,8 @@
 Running Android dev related commands from a GUI, just for fun? 🤷‍♀️🤷‍♂️
 
 ## Next tasks
-- Use Gradle Tooling API instead of command line tool: https://docs.gradle.org/current/userguide/third_party_integration.html#embedding
+- Bug: when subscribing to both standardOutput and standardError in Process, for some reason the sometimes the output would never be received when running the same command multiple times. Eithout standardError, this problem does not occur
+- Show compilation errors: For some reason the current output of "Install" action doesn't have any details of what actually caused a failure in the log.
 - Have more of the code unit tested
 - Auto-refresh list of active targets
 - Add ability to cancel currently running task (e.g. clicked assemble by accident, don't want to wait until it finishes)
@@ -16,6 +17,7 @@ Running Android dev related commands from a GUI, just for fun? 🤷‍♀️🤷
 - See if I can make use of ADB `display-size` and `display-density` commands (https://developer.android.com/studio/command-line/adb)
 - Provide solutions for various setup issues: Installing and finding Android tools paths, things like apkanalyzer failing because either $JAVA_HOME is not set or using incompatible java
 - Add paralellize flag instead of having --parallel always on version.
+- Explore possibility of using Gradle Tooling API instead of command line tool: https://docs.gradle.org/current/userguide/third_party_integration.html#embedding The API is for Groovy and Kotlin, so this would require some tinkering to be usable in a Swift project probably. But it's definitely a better way forward than parsing command line tool output.
 
 ## Notes
 
