@@ -24,13 +24,14 @@ struct Shell {
     
     enum Progress {
         case output(string: String)
+        case errorOutput(string: String)
         case success
         case error(reason: Error)
     }
 
     enum CommandWithOutputResult {
         case success(output: String)
-        case error(reason: Error)
+        case error(reason: Error, errorOutput: String)
     }
 
     static func debug_runRowCommand(rawCommand: String, directory: String, progressHandler: @escaping ShellCommandProgressHandler) {
@@ -40,14 +41,17 @@ struct Shell {
 
     static func runAsyncWithOutput(command: String, directory: String, completion: @escaping ShellCommandWithOutputCompletionHandler) {
         var output = ""
+        var errorOutput = ""
         runAsync(command: command, directory: directory) { progress in
             switch progress {
             case .output(let string):
                 output.append(string)
             case .error(let reason):
-                completion(.error(reason: reason))
+                completion(.error(reason: reason, errorOutput: errorOutput))
             case .success:
                 completion(.success(output: output))
+            case .errorOutput(let string):
+                errorOutput.append(string)
             }
         }
     }
@@ -71,35 +75,42 @@ struct Shell {
     }
 
     private static func runProcessAsync(process: Process, progressHandler: @escaping ShellCommandProgressHandler) {
-        let queue = DispatchQueue(label: "com.timojaask.AndroidHelper-macOS",
-                                  qos: .default,
-                                  attributes: [],
-                                  autoreleaseFrequency: .inherit)
-        
-        let outputPipe = Pipe()
-        process.standardOutput = outputPipe
-        outputPipe.fileHandleForReading.readabilityHandler = { handler in
-            queue.async {
-                let data = handler.availableData
-                if data.count > 0 {
-                    DispatchQueue.main.async {
-                        let string = String(data: data, encoding: .utf8) ?? "nil"
-                        progressHandler(.output(string: string))
-                    }
+        let group = DispatchGroup()
+        let standardOutputPipe = Pipe()
+        let standardErrorPipe = Pipe()
+        process.standardOutput = standardOutputPipe
+        process.standardError = standardErrorPipe
+        group.enter()
+        standardOutputPipe.fileHandleForReading.readabilityHandler = { handler in
+            let data = handler.availableData
+            if data.isEmpty {
+                standardOutputPipe.fileHandleForReading.readabilityHandler = nil
+                group.leave()
+            } else {
+                DispatchQueue.main.async {
+                    let string = String(data: data, encoding: .utf8) ?? "nil"
+                    progressHandler(.output(string: string))
+                }
+            }
+        }
+        group.enter()
+        standardErrorPipe.fileHandleForReading.readabilityHandler = { handler in
+            let data = handler.availableData
+            if data.isEmpty {
+                standardErrorPipe.fileHandleForReading.readabilityHandler = nil
+                group.leave()
+            } else {
+                DispatchQueue.main.async {
+                    let string = String(data: data, encoding: .utf8) ?? "nil"
+                    progressHandler(.errorOutput(string: string))
                 }
             }
         }
         process.terminationHandler = { process in
-            queue.async {
-                if process.terminationStatus != 0 {
-                    DispatchQueue.main.async {
-                        progressHandler(.error(reason: .processTerminatedWithError(status: Int(process.terminationStatus))))
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        progressHandler(.success)
-                    }
-                }
+            group.wait()
+            let result: Progress = process.terminationStatus == 0 ? .success : .error(reason: .processTerminatedWithError(status: Int(process.terminationStatus)))
+            DispatchQueue.main.async {
+                progressHandler(result)
             }
         }
         do {

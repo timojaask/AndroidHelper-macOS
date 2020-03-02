@@ -170,6 +170,8 @@ class ViewController: NSViewController, XMLParserDelegate {
                 strongSelf.updateAndroidManifest { [weak self] success in
                     if (success) { self?.startApp() }
                 }
+            case .errorOutput(let string):
+                strongSelf.log(string)
             }
         }
     }
@@ -194,7 +196,7 @@ class ViewController: NSViewController, XMLParserDelegate {
                     strongSelf.logln("Manifest updated successfully")
                     completion?(true)
                 }
-            case .error(let reason):
+            case .error(let reason, _):
                 strongSelf.logln("Error updating manifest. Reason: \(reason.toString())")
                 completion?(false)
             }
@@ -211,7 +213,7 @@ class ViewController: NSViewController, XMLParserDelegate {
                 strongSelf.updateState(action: .setModules(newModules: modules))
                 strongSelf.updateAndroidManifest()
                 strongSelf.logln("Project refreshed successfully")
-            case .error(let reason):
+            case .error(let reason, _):
                 strongSelf.logln("Error refreshing project. Reason: \(reason.toString())")
             }
         }
@@ -334,7 +336,7 @@ class ViewController: NSViewController, XMLParserDelegate {
                 let newTargets = parseTargets(fromString: output)
                 strongSelf.updateState(action: .setTargets(newTargets: newTargets))
                 strongSelf.logln("Available targets: \(strongSelf.state.targets.map { String($0.serialNumber()) })")
-            case .error(let reason):
+            case .error(let reason, _):
                 strongSelf.logln(reason.toString())
             }
         }
@@ -348,6 +350,8 @@ class ViewController: NSViewController, XMLParserDelegate {
             logln("Terminated with error status: \(terminationStatus)")
         case .success:
             logln("Terminated with success")
+        case .errorOutput(let string):
+            log(string)
         }
     }
     
