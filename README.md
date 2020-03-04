@@ -2,9 +2,7 @@
 Running Android dev related commands from a GUI, just for fun? 🤷‍♀️🤷‍♂️
 
 ## Next tasks
-- Bug: when subscribing to both standardOutput and standardError in Process, for some reason the sometimes the output would never be received when running the same command multiple times. Eithout standardError, this problem does not occur
-- Show compilation errors: For some reason the current output of "Install" action doesn't have any details of what actually caused a failure in the log.
-- Have more of the code unit tested
+- Add unit tests for AndroidManifestParser
 - Auto-refresh list of active targets
 - Add ability to cancel currently running task (e.g. clicked assemble by accident, don't want to wait until it finishes)
 - Add ability to start and stop emulators.

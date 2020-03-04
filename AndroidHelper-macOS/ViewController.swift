@@ -148,7 +148,38 @@ class ViewController: NSViewController, XMLParserDelegate {
         let command = Commands.build(buildVariant: buildVariant, cleanCache: state.cleanCacheEnabled, project: moduleName)
         logln(command)
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
-            self?.progressHandler(progress)
+            guard let strongSelf = self else { return }
+            switch progress {
+            case .output(let string):
+                strongSelf.log(string)
+            case .error(let errorReason):
+                switch errorReason {
+                case .processLaunchingError(let localizedDescription):
+                    strongSelf.logln("Unable to execute command: \(localizedDescription)")
+                case .processTerminatedWithError(let status, let standardError):
+                    let buildErrors = BuildErrorParser.parseBuildErrors(fromString: standardError)
+                    if buildErrors.count > 0 {
+                        strongSelf.logln("Build failed with errors:")
+                        buildErrors.forEach { buildError in
+                            strongSelf.logln("  File: \(buildError.filePath)")
+                            strongSelf.logln("    Line: \(buildError.lineNumber != nil ? String(buildError.lineNumber!) : "N/A")")
+                            strongSelf.logln("    Column: \(buildError.columnNumber != nil ? String(buildError.columnNumber!) : "N/A")")
+                            strongSelf.logln("    Message: \(buildError.errorMessage)")
+                        }
+                    } else {
+                        strongSelf.logln("Command failed with status (\(status)) and row error output: \(standardError)")
+                    }
+                case .noSuchFile(let path):
+                    strongSelf.logln("File not found: \(String(describing: path))")
+                }
+            case .success:
+                strongSelf.logln("Installed with succcess")
+                strongSelf.updateAndroidManifest { [weak self] success in
+                    if (success) { self?.startApp() }
+                }
+            case .errorOutput(let string):
+                strongSelf.log(string)
+            }
         }
     }
     

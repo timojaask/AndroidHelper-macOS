@@ -21,6 +21,8 @@
 		2FB7FF0623E7BD210075530A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0523E7BD210075530A /* Assets.xcassets */; };
 		2FB7FF0923E7BD210075530A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0723E7BD210075530A /* Main.storyboard */; };
 		2FC2084223F634BD00732A9E /* AndroidHelperApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC2084123F634BD00732A9E /* AndroidHelperApi.swift */; };
+		2FF1DCDA23FE4B4C009D2AF7 /* ParseBuildError_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF1DCD923FE4B4C009D2AF7 /* ParseBuildError_Tests.swift */; };
+		2FF1DCDC23FE4DC9009D2AF7 /* BuildErrorParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF1DCDB23FE4DC9009D2AF7 /* BuildErrorParser.swift */; };
 		2FFD0F9723EBB4CF0059BB4B /* Commands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0F9623EBB4CF0059BB4B /* Commands.swift */; };
 		2FFD0F9F23EBB5730059BB4B /* AssembleCommand_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0F9E23EBB5730059BB4B /* AssembleCommand_Tests.swift */; };
 		2FFD0FA723EBB98C0059BB4B /* InstallCommand_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFD0FA623EBB98C0059BB4B /* InstallCommand_Tests.swift */; };
@@ -60,6 +62,8 @@
 		2FB7FF0A23E7BD210075530A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2FB7FF0B23E7BD210075530A /* AndroidHelper_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AndroidHelper_macOS.entitlements; sourceTree = "<group>"; };
 		2FC2084123F634BD00732A9E /* AndroidHelperApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AndroidHelperApi.swift; sourceTree = "<group>"; };
+		2FF1DCD923FE4B4C009D2AF7 /* ParseBuildError_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseBuildError_Tests.swift; sourceTree = "<group>"; };
+		2FF1DCDB23FE4DC9009D2AF7 /* BuildErrorParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildErrorParser.swift; sourceTree = "<group>"; };
 		2FFD0F9623EBB4CF0059BB4B /* Commands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Commands.swift; sourceTree = "<group>"; };
 		2FFD0F9C23EBB5730059BB4B /* AndroidHelper-macOS-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "AndroidHelper-macOS-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FFD0F9E23EBB5730059BB4B /* AssembleCommand_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssembleCommand_Tests.swift; sourceTree = "<group>"; };
@@ -123,6 +127,7 @@
 				2F4A013823F856FC00F9E519 /* UrlExt.swift */,
 				2F4A013C23F8C44D00F9E519 /* FileManagerExt.swift */,
 				2F342DB023F9912B000E384F /* AndroidManifestParser.swift */,
+				2FF1DCDB23FE4DC9009D2AF7 /* BuildErrorParser.swift */,
 				2FB7FF0523E7BD210075530A /* Assets.xcassets */,
 				2FB7FF0723E7BD210075530A /* Main.storyboard */,
 				2FB7FF0A23E7BD210075530A /* Info.plist */,
@@ -145,6 +150,7 @@
 				2FFD0FA023EBB5730059BB4B /* Info.plist */,
 				2FB2AE7B23FCD0B9006A9C1D /* ParseModules_Tests.swift */,
 				2FB2AE7923FCD072006A9C1D /* GradleTasksSampleOutput.swift */,
+				2FF1DCD923FE4B4C009D2AF7 /* ParseBuildError_Tests.swift */,
 			);
 			path = "AndroidHelper-macOS-Tests";
 			sourceTree = "<group>";
@@ -260,6 +266,7 @@
 				2F4A013D23F8C44D00F9E519 /* FileManagerExt.swift in Sources */,
 				2FB7FF0223E7BD200075530A /* AppDelegate.swift in Sources */,
 				2F342DB123F9912B000E384F /* AndroidManifestParser.swift in Sources */,
+				2FF1DCDC23FE4DC9009D2AF7 /* BuildErrorParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,6 +274,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2FF1DCDA23FE4B4C009D2AF7 /* ParseBuildError_Tests.swift in Sources */,
 				2FFD0F9F23EBB5730059BB4B /* AssembleCommand_Tests.swift in Sources */,
 				2FFD0FB123EBC1F50059BB4B /* AdbCommand_Tests.swift in Sources */,
 				2FB2AE7A23FCD072006A9C1D /* GradleTasksSampleOutput.swift in Sources */,

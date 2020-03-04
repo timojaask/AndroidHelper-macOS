@@ -6,7 +6,7 @@ struct Shell {
 
     enum Error {
         case processLaunchingError(localizedDescription: String)
-        case processTerminatedWithError(status: Int)
+        case processTerminatedWithError(status: Int, standardError: String)
         case noSuchFile(path: String?)
         
         func toString() -> String {
@@ -25,7 +25,7 @@ struct Shell {
     enum Progress {
         case output(string: String)
         case errorOutput(string: String)
-        case success
+        case success(standardOutput: String)
         case error(reason: Error)
     }
 
@@ -76,6 +76,8 @@ struct Shell {
 
     private static func runProcessAsync(process: Process, progressHandler: @escaping ShellCommandProgressHandler) {
         let group = DispatchGroup()
+        var standardOutput = ""
+        var standardError = ""
         let standardOutputPipe = Pipe()
         let standardErrorPipe = Pipe()
         process.standardOutput = standardOutputPipe
@@ -89,6 +91,7 @@ struct Shell {
             } else {
                 DispatchQueue.main.async {
                     let string = String(data: data, encoding: .utf8) ?? "nil"
+                    standardOutput.append(string)
                     progressHandler(.output(string: string))
                 }
             }
@@ -102,13 +105,18 @@ struct Shell {
             } else {
                 DispatchQueue.main.async {
                     let string = String(data: data, encoding: .utf8) ?? "nil"
+                    standardError.append(string)
                     progressHandler(.errorOutput(string: string))
                 }
             }
         }
         process.terminationHandler = { process in
             group.wait()
-            let result: Progress = process.terminationStatus == 0 ? .success : .error(reason: .processTerminatedWithError(status: Int(process.terminationStatus)))
+            let result: Progress = process.terminationStatus == 0 ?
+                .success(standardOutput: standardOutput) :
+                .error(reason: .processTerminatedWithError(
+                    status: Int(process.terminationStatus),
+                    standardError: standardError))
             DispatchQueue.main.async {
                 progressHandler(result)
             }

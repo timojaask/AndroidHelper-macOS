@@ -20,7 +20,7 @@ public struct GradleCommands {
     private static func buildCommand(command: String, project: String, task: String, cleanCache: Bool, parallel: Bool) -> String {
         let cleanCacheFlag = cleanCache ? " clean cleanBuildCache" : ""
         let parallelFlag = parallel ? " --parallel" : ""
-        return "\(gradlePath)\(cleanCacheFlag)\(parallelFlag) :\(project):\(command)\(task)"
+        return "\(gradlePath)\(cleanCacheFlag)\(parallelFlag) --console=plain :\(project):\(command)\(task)"
     }
 }
 
