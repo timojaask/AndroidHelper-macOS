@@ -28,6 +28,61 @@ struct Commands {
         return AdbCommands.stop(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), package: package)
     }
 
+    static func setScreenBrightness(target: Target, brightness: UInt8) -> String {
+        return AdbCommands.setScreenBrightness(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), brightness: brightness)
+    }
+
+    static func deviceLock(target: Target) -> String {
+        return AdbCommands.lockScreen(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    }
+
+    static func deviceUnlock(target: Target) -> String {
+        return AdbCommands.unlockScreen(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    }
+
+    /**
+     Value range [0 - 25]
+     */
+    static func setVolume(target: Target, value: Int) -> String {
+        return AdbCommands.setVolume(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), volume: value)
+    }
+
+    static func setFontSize(target: Target, size: AdbCommands.AccessibilityFontSize) -> String {
+        return AdbCommands.setAccessibilityFontSize(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), size: size)
+    }
+
+    static func setTalkbackEnabled(target: Target, enabled: Bool) -> String {
+        return AdbCommands.setAccessibilityTalkbackEnabled(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), enabled: enabled)
+    }
+
+    static func openLanguageSettings(target: Target) -> String {
+        return AdbCommands.openLanguageSettings(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    }
+
+    static func getScreenDensity(target: Target) -> String {
+        return AdbCommands.getScreenDensity(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    }
+
+    static func setScreenDensity(target: Target, density: Int) -> String {
+        return AdbCommands.setScreenDensity(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), density: density)
+    }
+
+    static func resetScreenDensity(target: Target) -> String {
+        return AdbCommands.resetScreenDensity(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    }
+
+    static func getScreenResolution(target: Target) -> String {
+        return AdbCommands.getScreenResolution(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    }
+
+    static func setScreenResolution(target: Target, width: Int, height: Int) -> String {
+        return AdbCommands.setScreenResolution(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), width: width, height: height)
+    }
+
+    static func resetScreenResolution(target: Target) -> String {
+        return AdbCommands.resetScreenResolution(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    }
+
     static func getAndroidManifest(apkPath: String) -> String {
         return ApkAnalyzerCommands.getAndroidManifest(toolsPath: toolsPath, apkPath: apkPath)
     }

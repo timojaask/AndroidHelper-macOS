@@ -100,7 +100,10 @@ class ViewController: NSViewController, XMLParserDelegate {
     @IBOutlet weak var targetsPopupButton: NSPopUpButton!
     @IBOutlet weak var modulesPopupButton: NSPopUpButton!
     @IBOutlet weak var buildVariantsPopupButton: NSPopUpButton!
-    
+    @IBOutlet weak var widthTextField: NSTextField!
+    @IBOutlet weak var heightTextField: NSTextField!
+    @IBOutlet weak var densityTextField: NSTextField!
+
     private var state = State()
 
     private func updateState(action: Action) {
@@ -186,7 +189,7 @@ class ViewController: NSViewController, XMLParserDelegate {
     @IBAction func installDeviceMobileClicked(_ sender: Any) {
         guard let moduleName = state.selectedModuleName,
             let buildVariant = state.selectedBuildVariant,
-            let target = state.selectedTarget else { return }
+            let target = getSelectedTarget() else { return }
         let command = Commands.buildAndInstall(buildVariant: buildVariant, cleanCache: state.cleanCacheEnabled, project: moduleName, target: target)
         logln(command)
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
@@ -259,10 +262,7 @@ class ViewController: NSViewController, XMLParserDelegate {
             logln("Error starting app: no launcher activity found")
             return
         }
-        guard let target = state.selectedTarget else {
-            logln("Error starting app: no target selected")
-            return
-        }
+        guard let target = getSelectedTarget() else { return }
         guard let package = manifest.package else {
             logln("Error starting app: no package found")
             return
@@ -279,21 +279,12 @@ class ViewController: NSViewController, XMLParserDelegate {
     }
     
     @IBAction func stopClicked(_ sender: Any) {
-        guard let target = state.selectedTarget else { return }
+        guard let target = getSelectedTarget() else { return }
         guard let manifest = state.latestAndroidManifestForSelectedModule else { return }
         guard let package = manifest.package else { return }
         let command = Commands.stop(target: target, package: package)
         logln(command)
         Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
-            self?.progressHandler(progress)
-        }
-    }
-    
-    @IBAction func listEmulatorsClicked(_ sender: Any) {
-        let emulatorPath = "~/Library/Android/sdk/emulator/emulator"
-        let emulatorFlagListEmulators = "-list-avds"
-        let rawCommand = "\(emulatorPath) \(emulatorFlagListEmulators)"
-        Shell.debug_runRowCommand(rawCommand: rawCommand, directory: state.projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
         }
     }
@@ -355,6 +346,147 @@ class ViewController: NSViewController, XMLParserDelegate {
         updateState(action: .setProjectDirectory(newProjectDirectory: newProjectDirectory))
         // TODO: This logic should really happen whenever project directory changes, not from here.
         refreshProject()
+    }
+
+    @IBAction func lockDeviceClicked(_ sender: Any) {
+        lockDevice()
+    }
+
+    @IBAction func unlockDeviceClicked(_ sender: Any) {
+        unlockDevice()
+    }
+
+    @IBAction func smallFontClicked(_ sender: Any) {
+        setFontSize(.small)
+    }
+
+    @IBAction func defaultFontClicked(_ sender: Any) {
+        setFontSize(.default)
+    }
+
+    @IBAction func largeFontClicked(_ sender: Any) {
+        setFontSize(.large)
+    }
+
+    @IBAction func largestFontClicked(_ sender: Any) {
+        setFontSize(.largest)
+    }
+
+    @IBAction func talkbackOnClicked(_ sender: Any) {
+        setTalkbackEnabled(true)
+    }
+
+    @IBAction func talkbackOffClicked(_ sender: Any) {
+        setTalkbackEnabled(false)
+    }
+
+    @IBAction func setResolutionClicked(_ sender: Any) {
+        guard let width = Int(widthTextField.stringValue) else {
+            logln("Error: Please enter correct width")
+            return
+        }
+        guard let height = Int(heightTextField.stringValue) else {
+            logln("Error: Please enter correct height")
+            return
+        }
+        setScreenResolution(width: width, height: height)
+    }
+
+    @IBAction func setDensityClicked(_ sender: Any) {
+        guard let density = Int(densityTextField.stringValue) else {
+            logln("Error: Please enter correct density")
+            return
+        }
+        setScreenDensity(density: density)
+    }
+
+    @IBAction func resetResolutionClicked(_ sender: Any) {
+        resetScreenResolution()
+    }
+
+    @IBAction func resetDensityClicked(_ sender: Any) {
+        resetScreenDensity()
+    }
+
+    @IBAction func openLanguagesClicked(_ sender: Any) {
+        openLanguageSettings()
+    }
+
+    @IBAction func maxBrightnessClicked(_ sender: Any) {
+        setBrightness(255)
+    }
+
+    @IBAction func muteClicked(_ sender: Any) {
+        setVolume(0)
+    }
+
+    private func lockDevice() {
+        guard let target = getSelectedTarget() else { return }
+        Shell.runAsync(command: Commands.deviceLock(target: target), directory: state.projectDirectory, progressHandler: nil)
+    }
+
+    private func unlockDevice() {
+        guard let target = getSelectedTarget() else { return }
+        Shell.runAsync(command: Commands.deviceUnlock(target: target), directory: state.projectDirectory, progressHandler: nil)
+    }
+
+    private func setFontSize(_ size: AdbCommands.AccessibilityFontSize) {
+        guard let target = getSelectedTarget() else { return }
+        Shell.runAsync(command: Commands.setFontSize(target: target, size: size), directory: state.projectDirectory, progressHandler: nil)
+    }
+
+    private func setTalkbackEnabled(_ enabled: Bool) {
+        guard let target = getSelectedTarget() else { return }
+        Shell.runAsync(command: Commands.setTalkbackEnabled(target: target, enabled: enabled), directory: state.projectDirectory, progressHandler: nil)
+    }
+
+    private func setScreenResolution(width: Int, height: Int) {
+        guard let target = getSelectedTarget() else { return }
+        Shell.runAsync(command: Commands.setScreenResolution(target: target, width: width, height: height), directory: state.projectDirectory, progressHandler: nil)
+    }
+
+    private func setScreenDensity(density: Int) {
+        guard let target = getSelectedTarget() else { return }
+        Shell.runAsync(command: Commands.setScreenDensity(target: target, density: density), directory: state.projectDirectory, progressHandler: nil)
+    }
+
+    private func resetScreenResolution() {
+        guard let target = getSelectedTarget() else { return }
+        Shell.runAsync(command: Commands.resetScreenResolution(target: target), directory: state.projectDirectory, progressHandler: nil)
+    }
+
+    private func resetScreenDensity() {
+        guard let target = getSelectedTarget() else { return }
+        Shell.runAsync(command: Commands.resetScreenDensity(target: target), directory: state.projectDirectory, progressHandler: nil)
+    }
+
+    private func openLanguageSettings() {
+        guard let target = getSelectedTarget() else { return }
+        Shell.runAsync(command: Commands.openLanguageSettings(target: target), directory: state.projectDirectory, progressHandler: nil)
+    }
+
+    private func setBrightness(_ brightness: UInt8) {
+        guard let target = getSelectedTarget() else { return }
+        Shell.runAsync(command: Commands.setScreenBrightness(target: target, brightness: brightness), directory: state.projectDirectory, progressHandler: nil)
+    }
+
+    /**
+     Valid value range [0 - 25]
+     */
+    private func setVolume(_ value: Int) {
+        guard let target = getSelectedTarget() else { return }
+        Shell.runAsync(command: Commands.setVolume(target: target, value: value), directory: state.projectDirectory, progressHandler: nil)
+    }
+
+    /**
+     Use this function instead of accessing state.selectedTarget in order to log errors when they occur, and reduce boilerplate logging all over the code
+     */
+    private func getSelectedTarget() -> Target? {
+        guard let target = state.selectedTarget else {
+            logln("Error: no target selected")
+            return nil
+        }
+        return target
     }
 
     private func refreshTargets() {

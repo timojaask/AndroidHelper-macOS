@@ -56,7 +56,7 @@ struct Shell {
         }
     }
 
-    static func runAsync(command: String, directory: String, progressHandler: @escaping ShellCommandProgressHandler) {
+    static func runAsync(command: String, directory: String, progressHandler: ShellCommandProgressHandler?) {
         let process = createProcess(command: command, directory: directory)
         runProcessAsync(process: process, progressHandler: progressHandler)
     }
@@ -74,7 +74,7 @@ struct Shell {
         return process
     }
 
-    private static func runProcessAsync(process: Process, progressHandler: @escaping ShellCommandProgressHandler) {
+    private static func runProcessAsync(process: Process, progressHandler: ShellCommandProgressHandler?) {
         let group = DispatchGroup()
         var standardOutput = ""
         var standardError = ""
@@ -92,7 +92,7 @@ struct Shell {
                 DispatchQueue.main.async {
                     let string = String(data: data, encoding: .utf8) ?? "nil"
                     standardOutput.append(string)
-                    progressHandler(.output(string: string))
+                    progressHandler?(.output(string: string))
                 }
             }
         }
@@ -106,7 +106,7 @@ struct Shell {
                 DispatchQueue.main.async {
                     let string = String(data: data, encoding: .utf8) ?? "nil"
                     standardError.append(string)
-                    progressHandler(.errorOutput(string: string))
+                    progressHandler?(.errorOutput(string: string))
                 }
             }
         }
@@ -118,16 +118,16 @@ struct Shell {
                     status: Int(process.terminationStatus),
                     standardError: standardError))
             DispatchQueue.main.async {
-                progressHandler(result)
+                progressHandler?(result)
             }
         }
         do {
             try process.run()
         } catch let error as CocoaError where error.code == .fileNoSuchFile {
             let path = error.userInfo["NSFilePath"] as? String
-            progressHandler(.error(reason: .noSuchFile(path: path)))
+            progressHandler?(.error(reason: .noSuchFile(path: path)))
         } catch {
-            progressHandler(.error(reason: .processLaunchingError(localizedDescription: error.localizedDescription)))
+            progressHandler?(.error(reason: .processLaunchingError(localizedDescription: error.localizedDescription)))
         }
     }
 }
