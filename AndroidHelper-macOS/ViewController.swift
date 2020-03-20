@@ -146,7 +146,7 @@ class ViewController: NSViewController, XMLParserDelegate {
         refreshProject()
     }
     
-    @IBAction func assembleMobileClicked(_ sender: Any) {
+    @IBAction func buildClicked(_ sender: Any) {
         guard let moduleName = state.selectedModuleName, let buildVariant = state.selectedBuildVariant else { return }
         let command = Commands.build(buildVariant: buildVariant, cleanCache: state.cleanCacheEnabled, project: moduleName)
         logln(command)
@@ -186,7 +186,7 @@ class ViewController: NSViewController, XMLParserDelegate {
         }
     }
     
-    @IBAction func installDeviceMobileClicked(_ sender: Any) {
+    @IBAction func buildAndRunClicked(_ sender: Any) {
         guard let moduleName = state.selectedModuleName,
             let buildVariant = state.selectedBuildVariant,
             let target = getSelectedTarget() else { return }
@@ -349,38 +349,47 @@ class ViewController: NSViewController, XMLParserDelegate {
     }
 
     @IBAction func lockDeviceClicked(_ sender: Any) {
-        lockDevice()
+        guard let target = getSelectedTarget() else { return }
+        AndroidHelperApi.lockDevice(target: target, projectDirectory: state.projectDirectory)
     }
 
     @IBAction func unlockDeviceClicked(_ sender: Any) {
-        unlockDevice()
+        guard let target = getSelectedTarget() else { return }
+        AndroidHelperApi.unlockDevice(target: target, projectDirectory: state.projectDirectory)
     }
 
     @IBAction func smallFontClicked(_ sender: Any) {
-        setFontSize(.small)
+        guard let target = getSelectedTarget() else { return }
+        AndroidHelperApi.setFontSize(target: target, projectDirectory: state.projectDirectory, size: .small)
     }
 
     @IBAction func defaultFontClicked(_ sender: Any) {
-        setFontSize(.default)
+        guard let target = getSelectedTarget() else { return }
+        AndroidHelperApi.setFontSize(target: target, projectDirectory: state.projectDirectory, size: .default)
     }
 
     @IBAction func largeFontClicked(_ sender: Any) {
-        setFontSize(.large)
+        guard let target = getSelectedTarget() else { return }
+        AndroidHelperApi.setFontSize(target: target, projectDirectory: state.projectDirectory, size: .large)
     }
 
     @IBAction func largestFontClicked(_ sender: Any) {
-        setFontSize(.largest)
+        guard let target = getSelectedTarget() else { return }
+        AndroidHelperApi.setFontSize(target: target, projectDirectory: state.projectDirectory, size: .largest)
     }
 
     @IBAction func talkbackOnClicked(_ sender: Any) {
-        setTalkbackEnabled(true)
+        guard let target = getSelectedTarget() else { return }
+        AndroidHelperApi.setTalkbackEnabled(target: target, projectDirectory: state.projectDirectory, enabled: true)
     }
 
     @IBAction func talkbackOffClicked(_ sender: Any) {
-        setTalkbackEnabled(false)
+        guard let target = getSelectedTarget() else { return }
+        AndroidHelperApi.setTalkbackEnabled(target: target, projectDirectory: state.projectDirectory, enabled: false)
     }
 
     @IBAction func setResolutionClicked(_ sender: Any) {
+        guard let target = getSelectedTarget() else { return }
         guard let width = Int(widthTextField.stringValue) else {
             logln("Error: Please enter correct width")
             return
@@ -389,93 +398,41 @@ class ViewController: NSViewController, XMLParserDelegate {
             logln("Error: Please enter correct height")
             return
         }
-        setScreenResolution(width: width, height: height)
+        AndroidHelperApi.setScreenResolution(target: target, projectDirectory: state.projectDirectory, width: width, height: height)
     }
 
     @IBAction func setDensityClicked(_ sender: Any) {
+        guard let target = getSelectedTarget() else { return }
         guard let density = Int(densityTextField.stringValue) else {
             logln("Error: Please enter correct density")
             return
         }
-        setScreenDensity(density: density)
+        AndroidHelperApi.setScreenDensity(target: target, projectDirectory: state.projectDirectory, density: density)
     }
 
     @IBAction func resetResolutionClicked(_ sender: Any) {
-        resetScreenResolution()
+        guard let target = getSelectedTarget() else { return }
+        AndroidHelperApi.resetScreenResolution(target: target, projectDirectory: state.projectDirectory)
     }
 
     @IBAction func resetDensityClicked(_ sender: Any) {
-        resetScreenDensity()
+        guard let target = getSelectedTarget() else { return }
+        AndroidHelperApi.resetScreenDensity(target: target, projectDirectory: state.projectDirectory)
     }
 
     @IBAction func openLanguagesClicked(_ sender: Any) {
-        openLanguageSettings()
+        guard let target = getSelectedTarget() else { return }
+        AndroidHelperApi.openLanguageSettings(target: target, projectDirectory: state.projectDirectory)
     }
 
     @IBAction func maxBrightnessClicked(_ sender: Any) {
-        setBrightness(255)
+        guard let target = getSelectedTarget() else { return }
+        AndroidHelperApi.setBrightness(target: target, projectDirectory: state.projectDirectory, brightness: 255)
     }
 
     @IBAction func muteClicked(_ sender: Any) {
-        setVolume(0)
-    }
-
-    private func lockDevice() {
         guard let target = getSelectedTarget() else { return }
-        Shell.runAsync(command: Commands.deviceLock(target: target), directory: state.projectDirectory, progressHandler: nil)
-    }
-
-    private func unlockDevice() {
-        guard let target = getSelectedTarget() else { return }
-        Shell.runAsync(command: Commands.deviceUnlock(target: target), directory: state.projectDirectory, progressHandler: nil)
-    }
-
-    private func setFontSize(_ size: AdbCommands.AccessibilityFontSize) {
-        guard let target = getSelectedTarget() else { return }
-        Shell.runAsync(command: Commands.setFontSize(target: target, size: size), directory: state.projectDirectory, progressHandler: nil)
-    }
-
-    private func setTalkbackEnabled(_ enabled: Bool) {
-        guard let target = getSelectedTarget() else { return }
-        Shell.runAsync(command: Commands.setTalkbackEnabled(target: target, enabled: enabled), directory: state.projectDirectory, progressHandler: nil)
-    }
-
-    private func setScreenResolution(width: Int, height: Int) {
-        guard let target = getSelectedTarget() else { return }
-        Shell.runAsync(command: Commands.setScreenResolution(target: target, width: width, height: height), directory: state.projectDirectory, progressHandler: nil)
-    }
-
-    private func setScreenDensity(density: Int) {
-        guard let target = getSelectedTarget() else { return }
-        Shell.runAsync(command: Commands.setScreenDensity(target: target, density: density), directory: state.projectDirectory, progressHandler: nil)
-    }
-
-    private func resetScreenResolution() {
-        guard let target = getSelectedTarget() else { return }
-        Shell.runAsync(command: Commands.resetScreenResolution(target: target), directory: state.projectDirectory, progressHandler: nil)
-    }
-
-    private func resetScreenDensity() {
-        guard let target = getSelectedTarget() else { return }
-        Shell.runAsync(command: Commands.resetScreenDensity(target: target), directory: state.projectDirectory, progressHandler: nil)
-    }
-
-    private func openLanguageSettings() {
-        guard let target = getSelectedTarget() else { return }
-        Shell.runAsync(command: Commands.openLanguageSettings(target: target), directory: state.projectDirectory, progressHandler: nil)
-    }
-
-    private func setBrightness(_ brightness: UInt8) {
-        guard let target = getSelectedTarget() else { return }
-        Shell.runAsync(command: Commands.setScreenBrightness(target: target, brightness: brightness), directory: state.projectDirectory, progressHandler: nil)
-    }
-
-    /**
-     Valid value range [0 - 25]
-     */
-    private func setVolume(_ value: Int) {
-        guard let target = getSelectedTarget() else { return }
-        Shell.runAsync(command: Commands.setVolume(target: target, value: value), directory: state.projectDirectory, progressHandler: nil)
+        AndroidHelperApi.setVolume(target: target, projectDirectory: state.projectDirectory, volume: 0)
     }
 
     /**

@@ -1,5 +1,55 @@
 import Foundation
 
+struct AndroidHelperApi {
+
+    static func lockDevice(target: Target, projectDirectory: String) {
+        Shell.runAsync(command: Commands.deviceLock(target: target), directory: projectDirectory, progressHandler: nil)
+    }
+
+    static func unlockDevice(target: Target, projectDirectory: String) {
+        Shell.runAsync(command: Commands.deviceUnlock(target: target), directory: projectDirectory, progressHandler: nil)
+    }
+
+    static func setFontSize(target: Target, projectDirectory: String, size: AdbCommands.AccessibilityFontSize) {
+        Shell.runAsync(command: Commands.setFontSize(target: target, size: size), directory: projectDirectory, progressHandler: nil)
+    }
+
+    static func setTalkbackEnabled(target: Target, projectDirectory: String, enabled: Bool) {
+        Shell.runAsync(command: Commands.setTalkbackEnabled(target: target, enabled: enabled), directory: projectDirectory, progressHandler: nil)
+    }
+
+    static func setScreenResolution(target: Target, projectDirectory: String, width: Int, height: Int) {
+        Shell.runAsync(command: Commands.setScreenResolution(target: target, width: width, height: height), directory: projectDirectory, progressHandler: nil)
+    }
+
+    static func setScreenDensity(target: Target, projectDirectory: String, density: Int) {
+        Shell.runAsync(command: Commands.setScreenDensity(target: target, density: density), directory: projectDirectory, progressHandler: nil)
+    }
+
+    static func resetScreenResolution(target: Target, projectDirectory: String) {
+        Shell.runAsync(command: Commands.resetScreenResolution(target: target), directory: projectDirectory, progressHandler: nil)
+    }
+
+    static func resetScreenDensity(target: Target, projectDirectory: String) {
+        Shell.runAsync(command: Commands.resetScreenDensity(target: target), directory: projectDirectory, progressHandler: nil)
+    }
+
+    static func openLanguageSettings(target: Target, projectDirectory: String) {
+        Shell.runAsync(command: Commands.openLanguageSettings(target: target), directory: projectDirectory, progressHandler: nil)
+    }
+
+    static func setBrightness(target: Target, projectDirectory: String, brightness: UInt8) {
+        Shell.runAsync(command: Commands.setScreenBrightness(target: target, brightness: brightness), directory: projectDirectory, progressHandler: nil)
+    }
+
+    /**
+     Valid value range [0 - 25]
+     */
+    static func setVolume(target: Target, projectDirectory: String, volume: Int) {
+        Shell.runAsync(command: Commands.setVolume(target: target, volume: volume), directory: projectDirectory, progressHandler: nil)
+    }
+}
+
 struct Commands {
     private static let platformToolsPath = "~/Library/Android/sdk/platform-tools"
     private static let toolsPath = "~/Library/Android/sdk/tools/bin"
@@ -43,8 +93,8 @@ struct Commands {
     /**
      Value range [0 - 25]
      */
-    static func setVolume(target: Target, value: Int) -> String {
-        return AdbCommands.setVolume(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), volume: value)
+    static func setVolume(target: Target, volume: Int) -> String {
+        return AdbCommands.setVolume(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), volume: volume)
     }
 
     static func setFontSize(target: Target, size: AdbCommands.AccessibilityFontSize) -> String {

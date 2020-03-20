@@ -794,12 +794,12 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="ciY-nn-AFP"/>
                                 </constraints>
-                                <buttonCell key="cell" type="roundTextured" title="Assemble" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jb1-Pw-3OS">
+                                <buttonCell key="cell" type="roundTextured" title="Build" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jb1-Pw-3OS">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="assembleMobileClicked:" target="XfG-lQ-9wD" id="vL1-ac-NU7"/>
+                                    <action selector="buildClicked:" target="XfG-lQ-9wD" id="vL1-ac-NU7"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SrT-sn-nCh">
@@ -812,7 +812,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="installDeviceMobileClicked:" target="XfG-lQ-9wD" id="9wP-T7-ZWA"/>
+                                    <action selector="buildAndRunClicked:" target="XfG-lQ-9wD" id="9wP-T7-ZWA"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Dqc-71-yAa">
