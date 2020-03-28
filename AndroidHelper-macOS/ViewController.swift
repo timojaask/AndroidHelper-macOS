@@ -1,96 +1,5 @@
 import Cocoa
 
-struct State {
-    var projectDirectory = "/"
-    var targets: [Target] = []
-    var selectedTarget: Target? = nil
-    var cleanCacheEnabled: Bool = false
-    var modules: [Module] = []
-    var selectedModuleName: String? = nil
-    var selectedBuildVariant: String? = nil
-    var latestAndroidManifestForSelectedModule: AndroidManifest? = nil
-}
-
-enum Action {
-    case setProjectDirectory(newProjectDirectory: String)
-    case setTargets(newTargets: [Target])
-    case setSelectedTarget(newSelectedTarget: Target?)
-    case setClearCacheEnabled(newClearCacheEnabledValue: Bool)
-    case setModules(newModules: [Module])
-    case setSelectedModuleName(newSelectedModuleName: String?)
-    case setSelectedBuildVariant(newSelectedBuildVariant: String?)
-    case setLatestAndroidManifestForSelectedModule(newLatestAndroidManifestForSelectedModule: AndroidManifest?)
-}
-
-func applyAction(state: State, action: Action) -> State {
-    func targetExists(targets: [Target], target: Target?) -> Bool {
-        guard let target = target else { return false }
-        return targets.contains(target)
-    }
-
-    func moduleExists(modules: [Module], moduleName: String?) -> Bool {
-        guard let moduleName = moduleName else { return false }
-        return modules.contains(where: { $0.name == moduleName })
-    }
-    
-    func buildVariantExists(modules: [Module], moduleName: String?, buildVariantName: String?) -> Bool {
-        guard let moduleName = moduleName, let buildVariantName = buildVariantName else { return false }
-        guard let module = modules.first(where: { $0.name == moduleName }) else { return false }
-        return module.buildVariants.contains(buildVariantName)
-    }
-    
-    func defaultBuildVariant(modules: [Module], moduleName: String?) -> String? {
-        guard let module = modules.first(where: { $0.name == moduleName }) else { return nil }
-        return module.buildVariants.first
-    }
-    
-    var newState = state
-    switch action {
-    case .setProjectDirectory(let newProjectDirectory):
-        newState.projectDirectory = newProjectDirectory
-    case .setTargets(let newTargets):
-        newState.targets = newTargets
-        if !targetExists(targets: newTargets, target: newState.selectedTarget) {
-            newState.selectedTarget = newTargets.first
-        }
-    case .setSelectedTarget(let newSelectedTarget):
-        if targetExists(targets: newState.targets, target: newSelectedTarget) {
-            newState.selectedTarget = newSelectedTarget
-        } else {
-            newState.selectedTarget = newState.targets.first
-        }
-    case .setClearCacheEnabled(let newClearCacheEnabledValue):
-        newState.cleanCacheEnabled = newClearCacheEnabledValue
-    case .setModules(let newModules):
-        // TODO: This case is getting complicated. Make it more human readable
-        newState.modules = newModules
-        if !moduleExists(modules: newModules, moduleName: newState.selectedModuleName) {
-            newState.selectedModuleName = newModules.first?.name
-        }
-        if !buildVariantExists(modules: newModules, moduleName: newState.selectedModuleName, buildVariantName: newState.selectedBuildVariant) {
-            newState.selectedBuildVariant = defaultBuildVariant(modules: newModules, moduleName: newState.selectedModuleName)
-        }
-    case .setSelectedModuleName(let newSelectedModuleName):
-        if moduleExists(modules: newState.modules, moduleName: newSelectedModuleName) {
-            newState.selectedModuleName = newSelectedModuleName
-        } else {
-            newState.selectedModuleName = newState.modules.first?.name
-        }
-        if !buildVariantExists(modules: newState.modules, moduleName: newState.selectedModuleName, buildVariantName: newState.selectedBuildVariant) {
-            newState.selectedBuildVariant = defaultBuildVariant(modules: newState.modules, moduleName: newState.selectedModuleName)
-        }
-    case .setSelectedBuildVariant(let newSelectedBuildVariant):
-        if buildVariantExists(modules: newState.modules, moduleName: newState.selectedModuleName, buildVariantName: newSelectedBuildVariant) {
-            newState.selectedBuildVariant = newSelectedBuildVariant
-        } else {
-            newState.selectedBuildVariant = defaultBuildVariant(modules: newState.modules, moduleName: newState.selectedModuleName)
-        }
-    case .setLatestAndroidManifestForSelectedModule(let newLatestAndroidManifestForSelectedModule):
-        newState.latestAndroidManifestForSelectedModule = newLatestAndroidManifestForSelectedModule
-    }
-    return newState
-}
-
 class ViewController: NSViewController, XMLParserDelegate {
 
     @IBOutlet weak var currentProjectButton: NSButton!
@@ -103,12 +12,18 @@ class ViewController: NSViewController, XMLParserDelegate {
     @IBOutlet weak var widthTextField: NSTextField!
     @IBOutlet weak var heightTextField: NSTextField!
     @IBOutlet weak var densityTextField: NSTextField!
+    @IBOutlet weak var buildProgressLabel: NSTextField!
+    @IBOutlet weak var buildProgressIndicator: NSProgressIndicator!
 
-    private var state = State()
-
-    private func updateState(action: Action) {
-        state = applyAction(state: state, action: action)
-        updateUi(state: state)
+    private var businessLogic = BusinessLogic()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        businessLogic.onLogLine = logln(_:)
+        businessLogic.onStateChanged = updateUi(state:)
+        businessLogic.applyAction(action: .setProjectDirectory(newProjectDirectory: "/Users/timojaask/projects/work/pluto-tv/pluto-tv-android"))
+        refreshTargets()
+        refreshProject()
     }
 
     private func updateUi(state: State) {
@@ -122,6 +37,39 @@ class ViewController: NSViewController, XMLParserDelegate {
             return String(shortName)
         }
 
+        func buildProgressToString(progress: BuildProgress) -> String {
+            switch progress {
+            case .notRunning:
+                return ""
+            case .running:
+                return "Building"
+            case .successful:
+                return "Build successful  ✅"
+            case .failed(let error):
+                var reason = ""
+                switch error {
+                case .noModuleSelected:
+                    reason = "Please refresh project and select module to build."
+                case .noBuildVariantSelected:
+                    reason = "Please refresh project and select build variant to build."
+                case .otherError:
+                    reason = "Command execution or compilation error occurred. See log for more info."
+                }
+                return "Build failed  🚫 (\(reason))"
+            }
+        }
+
+        func buildProgressToProgressIndicatorVisible(progress: BuildProgress) -> Bool {
+            switch progress {
+            case .running:
+                return true
+            case .notRunning,
+                 .successful,
+                 .failed(_):
+                return false
+            }
+        }
+
         currentProjectButton.title = projectNameFromPath(path: state.projectDirectory)
 
         targetsPopupButton.updateState(
@@ -129,70 +77,31 @@ class ViewController: NSViewController, XMLParserDelegate {
             selectedItemTitle: state.selectedTarget?.serialNumber())
 
         clearCacheCheckbox.updateCheckedState(isChecked: state.cleanCacheEnabled)
-        
+
         modulesPopupButton.updateState(
             items: state.modules.map { $0.name },
             selectedItemTitle: state.selectedModuleName)
-        
+
         buildVariantsPopupButton.updateState(
             items: variantsForModule(modules: state.modules, moduleName: state.selectedModuleName),
             selectedItemTitle: state.selectedBuildVariant)
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        updateState(action: .setProjectDirectory(newProjectDirectory: "/Users/timojaask/projects/work/pluto-tv/pluto-tv-android"))
-        refreshTargets()
-        refreshProject()
+
+        buildProgressLabel.stringValue = buildProgressToString(progress: state.buildProgress)
+
+        buildProgressIndicator.updateState(visible: buildProgressToProgressIndicatorVisible(progress: state.buildProgress))
     }
     
     @IBAction func buildClicked(_ sender: Any) {
-        guard let moduleName = state.selectedModuleName, let buildVariant = state.selectedBuildVariant else { return }
-        let command = Commands.build(buildVariant: buildVariant, cleanCache: state.cleanCacheEnabled, project: moduleName)
-        logln(command)
-        Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
-            guard let strongSelf = self else { return }
-            switch progress {
-            case .output(let string):
-                strongSelf.log(string)
-            case .error(let errorReason):
-                switch errorReason {
-                case .processLaunchingError(let localizedDescription):
-                    strongSelf.logln("Unable to execute command: \(localizedDescription)")
-                case .processTerminatedWithError(let status, let standardError):
-                    let buildErrors = BuildErrorParser.parseBuildErrors(fromString: standardError)
-                    if buildErrors.count > 0 {
-                        strongSelf.logln("Build failed with errors:")
-                        buildErrors.forEach { buildError in
-                            strongSelf.logln("  File: \(buildError.filePath)")
-                            strongSelf.logln("    Line: \(buildError.lineNumber != nil ? String(buildError.lineNumber!) : "N/A")")
-                            strongSelf.logln("    Column: \(buildError.columnNumber != nil ? String(buildError.columnNumber!) : "N/A")")
-                            strongSelf.logln("    Message: \(buildError.errorMessage)")
-                        }
-                    } else {
-                        strongSelf.logln("Command failed with status (\(status)) and row error output: \(standardError)")
-                    }
-                case .noSuchFile(let path):
-                    strongSelf.logln("File not found: \(String(describing: path))")
-                }
-            case .success:
-                strongSelf.logln("Installed with succcess")
-                strongSelf.updateAndroidManifest { [weak self] success in
-                    if (success) { self?.startApp() }
-                }
-            case .errorOutput(let string):
-                strongSelf.log(string)
-            }
-        }
+        businessLogic.applyAction(action: .build)
     }
     
     @IBAction func buildAndRunClicked(_ sender: Any) {
-        guard let moduleName = state.selectedModuleName,
-            let buildVariant = state.selectedBuildVariant,
-            let target = getSelectedTarget() else { return }
-        let command = Commands.buildAndInstall(buildVariant: buildVariant, cleanCache: state.cleanCacheEnabled, project: moduleName, target: target)
+        guard let moduleName = businessLogic.internalState.selectedModuleName,
+            let buildVariant = businessLogic.internalState.selectedBuildVariant,
+            let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        let command = Commands.buildAndInstall(buildVariant: buildVariant, cleanCache: businessLogic.internalState.cleanCacheEnabled, project: moduleName, target: target)
         logln(command)
-        Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
+        Shell.runAsync(command: command, directory: businessLogic.internalState.projectDirectory) { [weak self] progress in
             guard let strongSelf = self else { return }
             switch progress {
             case .output(let string):
@@ -209,82 +118,18 @@ class ViewController: NSViewController, XMLParserDelegate {
             }
         }
     }
-
-    func updateAndroidManifest(completion: ((_ success: Bool) -> ())? = nil) {
-        logln("Updating manifest...")
-        guard let module = state.selectedModuleName else {
-            logln("Error updating manifest: no module selected")
-            return
-        }
-        guard let latestApk = findLatestApk(projectDirectory: state.projectDirectory, module: module) else {
-            logln("Error updating manifest: unable to find APK for module \"\(module)\"")
-            return
-        }
-        Shell.runAsyncWithOutput(command: Commands.getAndroidManifest(apkPath: latestApk), directory: state.projectDirectory) { [weak self] result in
-            guard let strongSelf = self else { return }
-            switch result {
-            case .success(let output):
-                parseManifest(xmlString: output) { [weak self] manifest in
-                    guard let strongSelf = self else { return }
-                    strongSelf.updateState(action: .setLatestAndroidManifestForSelectedModule(newLatestAndroidManifestForSelectedModule: manifest))
-                    strongSelf.logln("Manifest updated successfully")
-                    completion?(true)
-                }
-            case .error(let reason, _):
-                strongSelf.logln("Error updating manifest. Reason: \(reason.toString())")
-                completion?(false)
-            }
-        }
-    }
-
-    func refreshProject() {
-        logln("Refreshing project...")
-        Shell.runAsyncWithOutput(command: Commands.listGradleTasks(), directory: state.projectDirectory) { [weak self] result in
-            guard let strongSelf = self else { return }
-            switch result {
-            case .success(let output):
-                let modules = parseInstallableModules(fromString: output)
-                strongSelf.updateState(action: .setModules(newModules: modules))
-                strongSelf.updateAndroidManifest()
-                strongSelf.logln("Project refreshed successfully")
-            case .error(let reason, _):
-                strongSelf.logln("Error refreshing project. Reason: \(reason.toString())")
-            }
-        }
-    }
-
-    func startApp() {
-        guard let manifest = state.latestAndroidManifestForSelectedModule else {
-            logln("Error starting app: no manifest found")
-            return
-        }
-        guard let launcherActivity = findLauncherActivity(manifest: manifest) else {
-            logln("Error starting app: no launcher activity found")
-            return
-        }
-        guard let target = getSelectedTarget() else { return }
-        guard let package = manifest.package else {
-            logln("Error starting app: no package found")
-            return
-        }
-        let command = Commands.start(target: target, package: package, activity: launcherActivity.name)
-        logln(command)
-        Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
-            self?.progressHandler(progress)
-        }
-    }
     
     @IBAction func startClicked(_ sender: Any) {
         startApp()
     }
     
     @IBAction func stopClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        guard let manifest = state.latestAndroidManifestForSelectedModule else { return }
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        guard let manifest = businessLogic.internalState.latestAndroidManifestForSelectedModule else { return }
         guard let package = manifest.package else { return }
         let command = Commands.stop(target: target, package: package)
         logln(command)
-        Shell.runAsync(command: command, directory: state.projectDirectory) { [weak self] progress in
+        Shell.runAsync(command: command, directory: businessLogic.internalState.projectDirectory) { [weak self] progress in
             self?.progressHandler(progress)
         }
     }
@@ -298,26 +143,26 @@ class ViewController: NSViewController, XMLParserDelegate {
     }
     
     @IBAction func modulesPopupButtonUpdated(_ sender: NSPopUpButton) {
-        let oldValue = state.selectedModuleName
+        let oldValue = businessLogic.internalState.selectedModuleName
         let newValue = sender.selectedItem?.title
-        updateState(action: .setSelectedModuleName(newSelectedModuleName: newValue))
+        businessLogic.applyAction(action: .setSelectedModuleName(newSelectedModuleName: newValue))
         if oldValue != newValue {
-            updateAndroidManifest()
+            businessLogic.applyAction(action: .updateManifest)
         }
     }
 
     @IBAction func buildVariantsPopupButtonUpdated(_ sender: NSPopUpButton) {
-        updateState(action: .setSelectedBuildVariant(newSelectedBuildVariant: sender.selectedItem?.title))
+        businessLogic.applyAction(action: .setSelectedBuildVariant(newSelectedBuildVariant: sender.selectedItem?.title))
     }
     
     @IBAction func targetsPopupButtonChanged(_ sender: NSPopUpButton) {
         if let selectedTargetSerialNumber = sender.selectedItem?.title {
             let selectedTarget = Target.fromSerialNumber(serialNumber: selectedTargetSerialNumber, isOnline: nil)
-            updateState(action: .setSelectedTarget(newSelectedTarget: selectedTarget))
+            businessLogic.applyAction(action: .setSelectedTarget(newSelectedTarget: selectedTarget))
         } else {
-            updateState(action: .setSelectedTarget(newSelectedTarget: nil))
+            businessLogic.applyAction(action: .setSelectedTarget(newSelectedTarget: nil))
         }
-        logln("Selected target: \(state.selectedTarget?.serialNumber() ?? "none")")
+        logln("Selected target: \(businessLogic.internalState.selectedTarget?.serialNumber() ?? "none")")
     }
     
     @IBAction func refreshTargetsClicked(_ sender: NSButton) {
@@ -326,7 +171,7 @@ class ViewController: NSViewController, XMLParserDelegate {
 
     @IBAction func clearCacheToggled(_ sender: NSButton) {
         let clearCacheEnabled = sender.state == .on
-        updateState(action: .setClearCacheEnabled(newClearCacheEnabledValue: clearCacheEnabled))
+        businessLogic.applyAction(action: .setClearCacheEnabled(newClearCacheEnabledValue: clearCacheEnabled))
     }
 
     @IBAction func currentProjectButtonClicked(_ sender: NSButton) {
@@ -343,53 +188,51 @@ class ViewController: NSViewController, XMLParserDelegate {
             return dialog.url?.path
         }
         guard let newProjectDirectory = pickDirectory() else { return }
-        updateState(action: .setProjectDirectory(newProjectDirectory: newProjectDirectory))
+        businessLogic.applyAction(action: .setProjectDirectory(newProjectDirectory: newProjectDirectory))
         // TODO: This logic should really happen whenever project directory changes, not from here.
         refreshProject()
     }
 
     @IBAction func lockDeviceClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        AndroidHelperApi.lockDevice(target: target, projectDirectory: state.projectDirectory)
+        businessLogic.applyAction(action: .lockDeviceScreen)
     }
 
     @IBAction func unlockDeviceClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        AndroidHelperApi.unlockDevice(target: target, projectDirectory: state.projectDirectory)
+        businessLogic.applyAction(action: .unlockDeviceScreen)
     }
 
     @IBAction func smallFontClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        AndroidHelperApi.setFontSize(target: target, projectDirectory: state.projectDirectory, size: .small)
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        AndroidHelperApi.setFontSize(target: target, projectDirectory: businessLogic.internalState.projectDirectory, size: .small)
     }
 
     @IBAction func defaultFontClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        AndroidHelperApi.setFontSize(target: target, projectDirectory: state.projectDirectory, size: .default)
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        AndroidHelperApi.setFontSize(target: target, projectDirectory: businessLogic.internalState.projectDirectory, size: .default)
     }
 
     @IBAction func largeFontClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        AndroidHelperApi.setFontSize(target: target, projectDirectory: state.projectDirectory, size: .large)
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        AndroidHelperApi.setFontSize(target: target, projectDirectory: businessLogic.internalState.projectDirectory, size: .large)
     }
 
     @IBAction func largestFontClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        AndroidHelperApi.setFontSize(target: target, projectDirectory: state.projectDirectory, size: .largest)
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        AndroidHelperApi.setFontSize(target: target, projectDirectory: businessLogic.internalState.projectDirectory, size: .largest)
     }
 
     @IBAction func talkbackOnClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        AndroidHelperApi.setTalkbackEnabled(target: target, projectDirectory: state.projectDirectory, enabled: true)
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        AndroidHelperApi.setTalkbackEnabled(target: target, projectDirectory: businessLogic.internalState.projectDirectory, enabled: true)
     }
 
     @IBAction func talkbackOffClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        AndroidHelperApi.setTalkbackEnabled(target: target, projectDirectory: state.projectDirectory, enabled: false)
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        AndroidHelperApi.setTalkbackEnabled(target: target, projectDirectory: businessLogic.internalState.projectDirectory, enabled: false)
     }
 
     @IBAction func setResolutionClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
         guard let width = Int(widthTextField.stringValue) else {
             logln("Error: Please enter correct width")
             return
@@ -398,47 +241,111 @@ class ViewController: NSViewController, XMLParserDelegate {
             logln("Error: Please enter correct height")
             return
         }
-        AndroidHelperApi.setScreenResolution(target: target, projectDirectory: state.projectDirectory, width: width, height: height)
+        AndroidHelperApi.setScreenResolution(target: target, projectDirectory: businessLogic.internalState.projectDirectory, width: width, height: height)
     }
 
     @IBAction func setDensityClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
         guard let density = Int(densityTextField.stringValue) else {
             logln("Error: Please enter correct density")
             return
         }
-        AndroidHelperApi.setScreenDensity(target: target, projectDirectory: state.projectDirectory, density: density)
+        AndroidHelperApi.setScreenDensity(target: target, projectDirectory: businessLogic.internalState.projectDirectory, density: density)
     }
 
     @IBAction func resetResolutionClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        AndroidHelperApi.resetScreenResolution(target: target, projectDirectory: state.projectDirectory)
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        AndroidHelperApi.resetScreenResolution(target: target, projectDirectory: businessLogic.internalState.projectDirectory)
     }
 
     @IBAction func resetDensityClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        AndroidHelperApi.resetScreenDensity(target: target, projectDirectory: state.projectDirectory)
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        AndroidHelperApi.resetScreenDensity(target: target, projectDirectory: businessLogic.internalState.projectDirectory)
     }
 
     @IBAction func openLanguagesClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        AndroidHelperApi.openLanguageSettings(target: target, projectDirectory: state.projectDirectory)
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        AndroidHelperApi.openLanguageSettings(target: target, projectDirectory: businessLogic.internalState.projectDirectory)
     }
 
     @IBAction func maxBrightnessClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        AndroidHelperApi.setBrightness(target: target, projectDirectory: state.projectDirectory, brightness: 255)
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        AndroidHelperApi.setBrightness(target: target, projectDirectory: businessLogic.internalState.projectDirectory, brightness: 255)
     }
 
     @IBAction func muteClicked(_ sender: Any) {
-        guard let target = getSelectedTarget() else { return }
-        AndroidHelperApi.setVolume(target: target, projectDirectory: state.projectDirectory, volume: 0)
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        AndroidHelperApi.setVolume(target: target, projectDirectory: businessLogic.internalState.projectDirectory, volume: 0)
+    }
+
+    private func updateAndroidManifest(completion: ((_ success: Bool) -> ())? = nil) {
+        logln("Updating manifest...")
+        guard let module = businessLogic.internalState.selectedModuleName else {
+            logln("Error updating manifest: no module selected")
+            return
+        }
+        guard let latestApk = findLatestApk(projectDirectory: businessLogic.internalState.projectDirectory, module: module) else {
+            logln("Error updating manifest: unable to find APK for module \"\(module)\"")
+            return
+        }
+        Shell.runAsyncWithOutput(command: Commands.getAndroidManifest(apkPath: latestApk), directory: businessLogic.internalState.projectDirectory) { [weak self] result in
+            guard let strongSelf = self else { return }
+            switch result {
+            case .success(let output):
+                parseManifest(xmlString: output) { [weak self] manifest in
+                    guard let strongSelf = self else { return }
+                    strongSelf.businessLogic.applyAction(action: .setLatestAndroidManifestForSelectedModule(newLatestAndroidManifestForSelectedModule: manifest))
+                    strongSelf.logln("Manifest updated successfully")
+                    completion?(true)
+                }
+            case .error(let reason, _):
+                strongSelf.logln("Error updating manifest. Reason: \(reason.toString())")
+                completion?(false)
+            }
+        }
+    }
+
+    private func refreshProject() {
+        logln("Refreshing project...")
+        Shell.runAsyncWithOutput(command: Commands.listGradleTasks(), directory: businessLogic.internalState.projectDirectory) { [weak self] result in
+            guard let strongSelf = self else { return }
+            switch result {
+            case .success(let output):
+                let modules = parseInstallableModules(fromString: output)
+                strongSelf.businessLogic.applyAction(action: .setModules(newModules: modules))
+                strongSelf.businessLogic.applyAction(action: .updateManifest)
+                strongSelf.logln("Project refreshed successfully")
+            case .error(let reason, _):
+                strongSelf.logln("Error refreshing project. Reason: \(reason.toString())")
+            }
+        }
+    }
+
+    private func startApp() {
+        guard let manifest = businessLogic.internalState.latestAndroidManifestForSelectedModule else {
+            logln("Error starting app: no manifest found")
+            return
+        }
+        guard let launcherActivity = findLauncherActivity(manifest: manifest) else {
+            logln("Error starting app: no launcher activity found")
+            return
+        }
+        guard let target = getSelectedTarget(state: businessLogic.internalState) else { return }
+        guard let package = manifest.package else {
+            logln("Error starting app: no package found")
+            return
+        }
+        let command = Commands.start(target: target, package: package, activity: launcherActivity.name)
+        logln(command)
+        Shell.runAsync(command: command, directory: businessLogic.internalState.projectDirectory) { [weak self] progress in
+            self?.progressHandler(progress)
+        }
     }
 
     /**
      Use this function instead of accessing state.selectedTarget in order to log errors when they occur, and reduce boilerplate logging all over the code
      */
-    private func getSelectedTarget() -> Target? {
+    private func getSelectedTarget(state: State) -> Target? {
         guard let target = state.selectedTarget else {
             logln("Error: no target selected")
             return nil
@@ -449,13 +356,13 @@ class ViewController: NSViewController, XMLParserDelegate {
     private func refreshTargets() {
         let command = Commands.listTargets()
         logln(command)
-        Shell.runAsyncWithOutput(command: command, directory: state.projectDirectory) { [weak self] result in
+        Shell.runAsyncWithOutput(command: command, directory: businessLogic.internalState.projectDirectory) { [weak self] result in
             guard let strongSelf = self else { return }
             switch result {
             case .success(let output):
                 let newTargets = parseTargets(fromString: output)
-                strongSelf.updateState(action: .setTargets(newTargets: newTargets))
-                strongSelf.logln("Available targets: \(strongSelf.state.targets.map { String($0.serialNumber()) })")
+                strongSelf.businessLogic.applyAction(action: .setTargets(newTargets: newTargets))
+                strongSelf.logln("Available targets: \(strongSelf.businessLogic.internalState.targets.map { String($0.serialNumber()) })")
             case .error(let reason, _):
                 strongSelf.logln(reason.toString())
             }

@@ -34,3 +34,14 @@ extension NSTextField {
         }
     }
 }
+
+extension NSProgressIndicator {
+    func updateState(visible: Bool) {
+        if visible {
+            startAnimation(nil)
+        } else {
+            stopAnimation(nil)
+        }
+        isHidden = !visible
+    }
+}

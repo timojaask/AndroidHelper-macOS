@@ -14,6 +14,7 @@
 		2F4A013B23F8582F00F9E519 /* UrlPickLastCreated_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4A013A23F8582F00F9E519 /* UrlPickLastCreated_Tests.swift */; };
 		2F4A013D23F8C44D00F9E519 /* FileManagerExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4A013C23F8C44D00F9E519 /* FileManagerExt.swift */; };
 		2F4A013F23F8C56A00F9E519 /* FileManagerFindLastCreatedFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4A013E23F8C56A00F9E519 /* FileManagerFindLastCreatedFile.swift */; };
+		2F77FAC224252A22003E610E /* BusinessLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F77FAC124252A22003E610E /* BusinessLogic.swift */; };
 		2FB2AE7A23FCD072006A9C1D /* GradleTasksSampleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB2AE7923FCD072006A9C1D /* GradleTasksSampleOutput.swift */; };
 		2FB2AE7C23FCD0B9006A9C1D /* ParseModules_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB2AE7B23FCD0B9006A9C1D /* ParseModules_Tests.swift */; };
 		2FB7FF0223E7BD200075530A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB7FF0123E7BD200075530A /* AppDelegate.swift */; };
@@ -52,6 +53,7 @@
 		2F4A013A23F8582F00F9E519 /* UrlPickLastCreated_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlPickLastCreated_Tests.swift; sourceTree = "<group>"; };
 		2F4A013C23F8C44D00F9E519 /* FileManagerExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerExt.swift; sourceTree = "<group>"; };
 		2F4A013E23F8C56A00F9E519 /* FileManagerFindLastCreatedFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerFindLastCreatedFile.swift; sourceTree = "<group>"; };
+		2F77FAC124252A22003E610E /* BusinessLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessLogic.swift; sourceTree = "<group>"; };
 		2FB2AE7923FCD072006A9C1D /* GradleTasksSampleOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradleTasksSampleOutput.swift; sourceTree = "<group>"; };
 		2FB2AE7B23FCD0B9006A9C1D /* ParseModules_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseModules_Tests.swift; sourceTree = "<group>"; };
 		2FB7FEFE23E7BD200075530A /* AndroidHelper-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AndroidHelper-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				2FB7FF0123E7BD200075530A /* AppDelegate.swift */,
+				2F77FAC124252A22003E610E /* BusinessLogic.swift */,
 				2FB7FF0323E7BD200075530A /* ViewController.swift */,
 				2F4A013623F2161B00F9E519 /* UIStateUpdateExtensions.swift */,
 				2FC2084123F634BD00732A9E /* AndroidHelperApi.swift */,
@@ -264,6 +267,7 @@
 				2FFD0F9723EBB4CF0059BB4B /* Commands.swift in Sources */,
 				2FC2084223F634BD00732A9E /* AndroidHelperApi.swift in Sources */,
 				2F4A013D23F8C44D00F9E519 /* FileManagerExt.swift in Sources */,
+				2F77FAC224252A22003E610E /* BusinessLogic.swift in Sources */,
 				2FB7FF0223E7BD200075530A /* AppDelegate.swift in Sources */,
 				2F342DB123F9912B000E384F /* AndroidManifestParser.swift in Sources */,
 				2FF1DCDC23FE4DC9009D2AF7 /* BuildErrorParser.swift in Sources */,
