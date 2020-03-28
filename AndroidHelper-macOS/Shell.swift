@@ -13,7 +13,7 @@ struct Shell {
             switch self {
             case .processLaunchingError(let localizedDescription):
                 return "Error launching process: \(localizedDescription)"
-            case .processTerminatedWithError(let status):
+            case .processTerminatedWithError(let status, _):
                 return "Process terminated with error code: \(status)"
             case .noSuchFile(let path):
                 let additionalInfo = path != nil ? ": \(path ?? "")" : ""

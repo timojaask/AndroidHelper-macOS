@@ -194,12 +194,12 @@ extension Target: Equatable {
             switch rhs {
             case .device(let rhsSerial, _):
                 return lhsSerial == rhsSerial
-            case .emulator(_):
+            case .emulator(_, _):
                 return false
             }
         case .emulator(let lhsPort, _):
             switch rhs {
-            case .device(_):
+            case .device(_, _):
                 return false
             case .emulator(let rhsPort, _):
                 return lhsPort == rhsPort
