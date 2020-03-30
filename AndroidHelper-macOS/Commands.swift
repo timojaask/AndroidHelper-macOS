@@ -44,19 +44,40 @@ public struct AdbCommands {
         return "\(platformToolsPath)/adb devices"
     }
 
+    public static func getDisplayStatsAndBrightness(platformToolsPath: String, targetSerial: String) -> String {
+        return shellCommand(platformToolsPath: platformToolsPath, targetSerial: targetSerial, command: "dumpsys display | grep 'mBaseDisplayInfo\\|mOverrideDisplayInfo\\|mScreenBrightnessRangeMaximum\\|mScreenBrightnessRangeMinimum\\|mCurrentScreenBrightnessSetting'")
+    }
+
+    public static func getPhysicalDeviceScreenState(platformToolsPath: String, targetSerial: String) -> String {
+        return shellCommand(platformToolsPath: platformToolsPath, targetSerial: targetSerial, command: "dumpsys nfc | grep 'mScreenState=' | awk -F= '{ print $2 }'")
+    }
+
+    public static func getEmulatorScreenState(platformToolsPath: String, targetSerial: String) -> String {
+        return shellCommand(platformToolsPath: platformToolsPath, targetSerial: targetSerial, command: "dumpsys input_method | grep 'mInteractive=' | awk -F= '{ print $3 }'")
+    }
+
     public static func setScreenBrightness(platformToolsPath: String, targetSerial: String, brightness: UInt8) -> String {
         return shellCommand(platformToolsPath: platformToolsPath, targetSerial: targetSerial, command: setSystemSetting("screen_brightness \(brightness)"))
     }
 
-    public static func lockScreen(platformToolsPath: String, targetSerial: String) -> String {
+    public static func screenSwitchOff(platformToolsPath: String, targetSerial: String) -> String {
         return shellCommand(platformToolsPath: platformToolsPath, targetSerial: targetSerial, command: keypress(.power))
     }
 
-    public static func unlockScreen(platformToolsPath: String, targetSerial: String) -> String {
+    public static func screenSwitchOn(platformToolsPath: String, targetSerial: String) -> String {
+        return shellCommand(platformToolsPath: platformToolsPath, targetSerial: targetSerial, command: keypress(.power))
+    }
+
+    public static func screenSwitchOnAndUnlock(platformToolsPath: String, targetSerial: String) -> String {
         let powerButtonPressCommand = shellCommand(platformToolsPath: platformToolsPath, targetSerial: targetSerial, command: keypress(.power))
         let swipeUpCommand = shellCommand(platformToolsPath: platformToolsPath, targetSerial: targetSerial, command: keypress(.menu))
         return "\(powerButtonPressCommand) && \(swipeUpCommand)"
     }
+
+    public static func screenUnlock(platformToolsPath: String, targetSerial: String) -> String {
+        return shellCommand(platformToolsPath: platformToolsPath, targetSerial: targetSerial, command: keypress(.menu))
+    }
+
 
     /**
      Possible volume values are 0 - 25. Any other value will be set to 25.

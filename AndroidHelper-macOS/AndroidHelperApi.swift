@@ -3,7 +3,7 @@ import Foundation
 struct State {
     var projectDirectory = "/"
     var targets: [Target] = []
-    var selectedTarget: Target? = nil
+    var selectedTargetIndex: UInt? = nil
     var cleanCacheEnabled: Bool = false
     var modules: [Module] = []
     var selectedModuleName: String? = nil
@@ -24,17 +24,33 @@ enum Action {
 }
 
 class AndroidHelperApi {
-    private var state = State()
-
     var onLog: ((String) -> Void)? = nil
     var onStateChanged: ((State) -> Void)? = nil
+
+    private var state = State()
+    private var targetStateRefreshTimer: Timer?
+
+    init() {
+        targetStateRefreshTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] timer in
+            self?.targetStateRefreshTimerTick(timer: timer)
+        })
+    }
 
     func dispatch(_ action: Action) {
         state = applyAction(state: state, action: action)
         onStateChanged?(state)
     }
 
+    private func targetStateRefreshTimerTick(timer: Timer) {
+        getDisplaySpecsAndBrightness()
+        getScreenState()
+    }
+
     private func applyAction(state: State, action: Action) -> State {
+        func targetExists(targets: [Target], targetIndex: UInt?) -> Bool {
+            guard let targetIndex = targetIndex else { return false }
+            return targets.count > targetIndex
+        }
         func targetExists(targets: [Target], target: Target?) -> Bool {
             guard let target = target else { return false }
             return targets.contains(target)
@@ -62,15 +78,18 @@ class AndroidHelperApi {
             newState.projectDirectory = newProjectDirectory
         case .setTargets(let newTargets):
             newState.targets = newTargets
-            if !targetExists(targets: newTargets, target: newState.selectedTarget) {
-                newState.selectedTarget = newTargets.first
+            if !targetExists(targets: newTargets, targetIndex: newState.selectedTargetIndex) {
+                newState.selectedTargetIndex = newTargets.isEmpty ? nil : 0
             }
         case .setSelectedTarget(let newSelectedTarget):
-            if targetExists(targets: newState.targets, target: newSelectedTarget) {
-                newState.selectedTarget = newSelectedTarget
-            } else {
-                newState.selectedTarget = newState.targets.first
+            guard
+                let newSelectedTarget = newSelectedTarget,
+                let newSelectedTargetIndex = newState.targets.firstIndex(of: newSelectedTarget)
+            else {
+                newState.selectedTargetIndex = newState.targets.isEmpty ? nil : 0
+                break
             }
+            newState.selectedTargetIndex = UInt(newSelectedTargetIndex)
         case .setClearCacheEnabled(let newClearCacheEnabledValue):
             newState.cleanCacheEnabled = newClearCacheEnabledValue
         case .setModules(let newModules):
@@ -133,7 +152,7 @@ class AndroidHelperApi {
     }
 
     func buildAndRun(completion: ((_ success: Bool) -> ())? = nil) {
-        guard let moduleName = getSelectedModule(), let buildVariant = getSelectedBuildVariant(), let target = getSelectedTarget() else {
+        guard let moduleName = getSelectedModule(), let buildVariant = getSelectedBuildVariant(), let target = getSelectedTarget(state) else {
             completion?(false)
             return
         }
@@ -221,7 +240,7 @@ class AndroidHelperApi {
     }
 
     func startApp(completion: ((_ success: Bool) -> ())? = nil) {
-        guard let manifest = getLatestManifest(), let target = getSelectedTarget(), let package = getAppPackage(manifest: manifest) else {
+        guard let manifest = getLatestManifest(), let target = getSelectedTarget(state), let package = getAppPackage(manifest: manifest) else {
             completion?(false)
             return
         }
@@ -239,7 +258,7 @@ class AndroidHelperApi {
     }
 
     func stopApp(completion: ((_ success: Bool) -> ())? = nil) {
-        guard let manifest = getLatestManifest(), let target = getSelectedTarget(), let package = getAppPackage(manifest: manifest) else {
+        guard let manifest = getLatestManifest(), let target = getSelectedTarget(state), let package = getAppPackage(manifest: manifest) else {
             completion?(false)
             return
         }
@@ -294,8 +313,9 @@ class AndroidHelperApi {
         }
     }
 
-    private func getSelectedTarget() -> Target? {
-        return getOrError(value: state.selectedTarget, errorMessage: "no target selected")
+    func getSelectedTarget(_ state: State) -> Target? {
+        guard let selectedTargetIndex = getOrError(value: state.selectedTargetIndex, errorMessage: "no target selected") else { return  nil }
+        return getOrError(value: state.targets[safe: Int(selectedTargetIndex)], errorMessage: "no target selected")
     }
 
     private func getSelectedModule() -> String? {
@@ -330,73 +350,213 @@ class AndroidHelperApi {
         log("\(string)\n")
     }
 
-    func lockDevice(completion: ((_ success: Bool) -> ())? = nil) {
-        guard let target = getSelectedTarget() else { completion?(false); return }
-        Shell.runAsync(command: Commands.deviceLock(target: target), directory: state.projectDirectory) { [weak self] progress in
+    func screenSwitchOff(completion: ((_ success: Bool) -> ())? = nil) {
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
+        Shell.runAsync(command: Commands.screenSwitchOff(target: target), directory: state.projectDirectory) { [weak self] progress in
             self?.handleSimpleShellCommandProgress(progress: progress, completion: completion)
         }
     }
 
-    func unlockDevice(completion: ((_ success: Bool) -> ())? = nil) {
-        guard let target = getSelectedTarget() else { completion?(false); return }
-        Shell.runAsync(command: Commands.deviceUnlock(target: target), directory: state.projectDirectory) { [weak self] progress in
+    func screenSwitchOn(completion: ((_ success: Bool) -> ())? = nil) {
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
+        Shell.runAsync(command: Commands.screenSwitchOn(target: target), directory: state.projectDirectory) { [weak self] progress in
             self?.handleSimpleShellCommandProgress(progress: progress, completion: completion)
+        }
+    }
+
+    func screenSwitchOnAndUnlock(completion: ((_ success: Bool) -> ())? = nil) {
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
+        Shell.runAsync(command: Commands.screenSwitchOnAndUnlock(target: target), directory: state.projectDirectory) { [weak self] progress in
+            self?.handleSimpleShellCommandProgress(progress: progress, completion: completion)
+        }
+    }
+
+    func screenUnlock(completion: ((_ success: Bool) -> ())? = nil) {
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
+        Shell.runAsync(command: Commands.screenUnlock(target: target), directory: state.projectDirectory) { [weak self] progress in
+            self?.handleSimpleShellCommandProgress(progress: progress, completion: completion)
+        }
+    }
+
+    func setScreenOn(isOn: Bool, completion: ((_ success: Bool) -> ())? = nil) {
+        switch getSelectedTarget(state) {
+        case .device(_, _, _, _, let screenState):
+            setPhysicalDeviceScreenOn(isOn: isOn, screenState: screenState, completion: completion)
+        case .emulator(_, _, _, let screenState):
+            setEmulatorScreenOn(isOn: isOn, screenState: screenState, completion: completion)
+        case nil: completion?(false)
+        }
+    }
+
+    private func setPhysicalDeviceScreenOn(isOn: Bool, screenState: PhysicalDeviceScreenState?, completion: ((_ success: Bool) -> ())? = nil) {
+        switch (screenState, isOn) {
+            case (.LockedOff, true): screenSwitchOnAndUnlock(completion: completion)
+            case (.LockedOn, true): screenUnlock(completion: completion)
+            case (.UnlockedOff, true): screenSwitchOnAndUnlock(completion: completion)
+            case (.UnlockedOn, true): completion?(true)
+            case (.LockedOff, false): completion?(true)
+            case (.LockedOn, false): screenSwitchOff(completion: completion)
+            case (.UnlockedOff, false): completion?(true)
+            case (.UnlockedOn, false): screenSwitchOff(completion: completion)
+            case (nil, _): completion?(false)
+        }
+    }
+
+    private func setEmulatorScreenOn(isOn: Bool, screenState: EmulatorScreenState?, completion: ((_ success: Bool) -> ())? = nil) {
+        switch (screenState, isOn) {
+        case (.Locked, true): screenSwitchOn(completion: completion)
+        case (.Locked, false): completion?(true)
+        case (.Unlocked, true): completion?(true)
+        case (.Unlocked, false): screenSwitchOff(completion: completion)
+        case (nil, _): completion?(false)
         }
     }
 
     func setFontSize(size: AdbCommands.AccessibilityFontSize, completion: ((_ success: Bool) -> ())? = nil) {
-        guard let target = getSelectedTarget() else { completion?(false); return }
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
         Shell.runAsync(command: Commands.setFontSize(target: target, size: size), directory: state.projectDirectory) { [weak self] progress in
             self?.handleSimpleShellCommandProgress(progress: progress, completion: completion)
         }
     }
 
     func setTalkbackEnabled(enabled: Bool, completion: ((_ success: Bool) -> ())? = nil) {
-        guard let target = getSelectedTarget() else { completion?(false); return }
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
         Shell.runAsync(command: Commands.setTalkbackEnabled(target: target, enabled: enabled), directory: state.projectDirectory) { [weak self] progress in
             self?.handleSimpleShellCommandProgress(progress: progress, completion: completion)
         }
     }
 
     func setScreenResolution(width: Int, height: Int, completion: ((_ success: Bool) -> ())? = nil) {
-        guard let target = getSelectedTarget() else { completion?(false); return }
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
         Shell.runAsync(command: Commands.setScreenResolution(target: target, width: width, height: height), directory: state.projectDirectory) { [weak self] progress in
             self?.handleSimpleShellCommandProgress(progress: progress, completion: completion)
         }
     }
 
     func setScreenDensity(density: Int, completion: ((_ success: Bool) -> ())? = nil) {
-        guard let target = getSelectedTarget() else { completion?(false); return }
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
         Shell.runAsync(command: Commands.setScreenDensity(target: target, density: density), directory: state.projectDirectory) { [weak self] progress in
             self?.handleSimpleShellCommandProgress(progress: progress, completion: completion)
         }
     }
 
     func resetScreenResolution(completion: ((_ success: Bool) -> ())? = nil) {
-        guard let target = getSelectedTarget() else { completion?(false); return }
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
         Shell.runAsync(command: Commands.resetScreenResolution(target: target), directory: state.projectDirectory) { [weak self] progress in
             self?.handleSimpleShellCommandProgress(progress: progress, completion: completion)
         }
     }
 
     func resetScreenDensity(completion: ((_ success: Bool) -> ())? = nil) {
-        guard let target = getSelectedTarget() else { completion?(false); return }
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
         Shell.runAsync(command: Commands.resetScreenDensity(target: target), directory: state.projectDirectory) { [weak self] progress in
             self?.handleSimpleShellCommandProgress(progress: progress, completion: completion)
         }
     }
 
     func openLanguageSettings(completion: ((_ success: Bool) -> ())? = nil) {
-        guard let target = getSelectedTarget() else { completion?(false); return }
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
         Shell.runAsync(command: Commands.openLanguageSettings(target: target), directory: state.projectDirectory) { [weak self] progress in
             self?.handleSimpleShellCommandProgress(progress: progress, completion: completion)
         }
     }
 
     func setBrightness(brightness: UInt8, completion: ((_ success: Bool) -> ())? = nil) {
-        guard let target = getSelectedTarget() else { completion?(false); return }
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
         Shell.runAsync(command: Commands.setScreenBrightness(target: target, brightness: brightness), directory: state.projectDirectory) { [weak self] progress in
             self?.handleSimpleShellCommandProgress(progress: progress, completion: completion)
+        }
+    }
+
+    func getDisplaySpecsAndBrightness(completion: ((_ success: Bool) -> ())? = nil) {
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
+        let command = Commands.getDisplayStatsAndBrightness(target: target)
+        Shell.runAsyncWithOutput(command: command, directory: state.projectDirectory) { [weak self] result in
+            guard let strongSelf = self else { return }
+            switch result {
+            case .success(let output):
+                let (displaySpecs, screenBrightness) = parseDisplaySpecsAndBrightness(displaySpecsAndBrightnessOutput: output)
+                strongSelf.dispatch(.setTargets(newTargets: strongSelf.state.targets.map { existingTarget in
+                    if existingTarget == target {
+                        switch existingTarget {
+                        case .device(let serial, let isOnline, _, _, let screenState):
+                            return .device(serial: serial, isOnline: isOnline, displaySpecs: displaySpecs, screenBrightness: screenBrightness, screenState: screenState)
+                        case .emulator(let port, let isOnline, _, let screenState):
+                            return .emulator(port: port, isOnline: isOnline, displaySpecs: displaySpecs, screenState: screenState)
+                        }
+                    } else {
+                        return existingTarget
+                    }
+                }))
+                completion?(true)
+            case .error(let reason, _):
+                strongSelf.logln("Error: \(reason)")
+                completion?(false)
+            }
+        }
+    }
+
+    func getScreenState(completion: ((_ success: Bool) -> ())? = nil) {
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
+        switch target {
+        case .device(_, _, _, _, _):
+            getPhysicalDeviceScreenState(target: target, completion: completion)
+        case .emulator(_, _, _, _):
+            getEmulatorScreenState(target: target, completion: completion)
+        }
+    }
+
+    private func getPhysicalDeviceScreenState(target: Target, completion: ((_ success: Bool) -> ())? = nil) {
+        let command = Commands.getPhysicalDeviceScreenState(target: target)
+        Shell.runAsyncWithOutput(command: command, directory: state.projectDirectory) { [weak self] result in
+            guard let strongSelf = self else { return }
+            switch result {
+            case .success(let output):
+                let screenState = parsePhysicalDeviceScreenState(screenStateOutput: output)
+                strongSelf.dispatch(.setTargets(newTargets: strongSelf.state.targets.map { existingTarget in
+                    if existingTarget == target {
+                        switch existingTarget {
+                        case .device(let serial, let isOnline, let displaySpecs, let screenBrightness, _):
+                            return .device(serial: serial, isOnline: isOnline, displaySpecs: displaySpecs, screenBrightness: screenBrightness, screenState: screenState)
+                        case .emulator(_, _, _, _):
+                            // This case shouldn't be possible, since our target is a physical device
+                            return existingTarget
+                        }
+                    } else {
+                        return existingTarget
+                    }
+                }))
+            case .error(let reason, _):
+                strongSelf.logln("Error: \(reason)")
+                completion?(false)
+            }
+        }
+    }
+
+    private func getEmulatorScreenState(target: Target, completion: ((_ success: Bool) -> ())? = nil) {
+        let command = Commands.getEmulatorScreenState(target: target)
+        Shell.runAsyncWithOutput(command: command, directory: state.projectDirectory) { [weak self] result in
+            guard let strongSelf = self else { return }
+            switch result {
+            case .success(let output):
+                let screenState = parseEmulatorScreenState(screenStateOutput: output)
+                strongSelf.dispatch(.setTargets(newTargets: strongSelf.state.targets.map { existingTarget in
+                    if existingTarget == target {
+                        switch existingTarget {
+                        case .device(_, _, _, _, _):
+                            // This case shouldn't be possible, since our target is an emulator
+                            return existingTarget
+                        case .emulator(let port, let isOnline, let displaySpecs, _):
+                            return .emulator(port: port, isOnline: isOnline, displaySpecs: displaySpecs, screenState: screenState)
+                        }
+                    } else {
+                        return existingTarget
+                    }
+                }))
+            case .error(let reason, _):
+                strongSelf.logln("Error: \(reason)")
+                completion?(false)
+            }
         }
     }
 
@@ -404,7 +564,7 @@ class AndroidHelperApi {
      Valid value range [0 - 25]
      */
     func setVolume(volume: Int, completion: ((_ success: Bool) -> ())? = nil) {
-        guard let target = getSelectedTarget() else { completion?(false); return }
+        guard let target = getSelectedTarget(state) else { completion?(false); return }
         Shell.runAsync(command: Commands.setVolume(target: target, volume: volume), directory: state.projectDirectory) { [weak self] progress in
             self?.handleSimpleShellCommandProgress(progress: progress, completion: completion)
         }
@@ -443,12 +603,20 @@ struct Commands {
         return AdbCommands.setScreenBrightness(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber(), brightness: brightness)
     }
 
-    static func deviceLock(target: Target) -> String {
-        return AdbCommands.lockScreen(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    static func screenSwitchOff(target: Target) -> String {
+        return AdbCommands.screenSwitchOff(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
     }
 
-    static func deviceUnlock(target: Target) -> String {
-        return AdbCommands.unlockScreen(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    static func screenSwitchOn(target: Target) -> String {
+        return AdbCommands.screenSwitchOn(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    }
+
+    static func screenUnlock(target: Target) -> String {
+        return AdbCommands.screenUnlock(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    }
+
+    static func screenSwitchOnAndUnlock(target: Target) -> String {
+        return AdbCommands.screenSwitchOnAndUnlock(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
     }
 
     /**
@@ -497,35 +665,47 @@ struct Commands {
     static func getAndroidManifest(apkPath: String) -> String {
         return ApkAnalyzerCommands.getAndroidManifest(toolsPath: toolsPath, apkPath: apkPath)
     }
+
+    static func getDisplayStatsAndBrightness(target: Target) -> String {
+        return AdbCommands.getDisplayStatsAndBrightness(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    }
+
+    static func getPhysicalDeviceScreenState(target: Target) -> String {
+        return AdbCommands.getPhysicalDeviceScreenState(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    }
+
+    static func getEmulatorScreenState(target: Target) -> String {
+        return AdbCommands.getEmulatorScreenState(platformToolsPath: platformToolsPath, targetSerial: target.serialNumber())
+    }
 }
 
 enum Target {
-    case device(serial: String, isOnline: Bool?)
-    case emulator(port: Int, isOnline: Bool?)
-    
+    case device(serial: String, isOnline: Bool?, displaySpecs: DisplaySpecs?, screenBrightness: ScreenBrightness?, screenState: PhysicalDeviceScreenState?)
+    case emulator(port: Int, isOnline: Bool?, displaySpecs: DisplaySpecs?, screenState: EmulatorScreenState?)
+
     private static let emulatorPortSeparator = "-"
     private static let emulatorPrefix = "emulator"
-    
+
     static func fromSerialNumber<S: StringProtocol>(serialNumber: S, isOnline: Bool?) -> Target? {
         if serialNumber.starts(with: emulatorPrefix) {
             guard let port = parseEmulatorPortNumber(emulatorName: serialNumber) else {
                 return nil
             }
-            return .emulator(port: port, isOnline: isOnline)
+            return .emulator(port: port, isOnline: isOnline, displaySpecs: nil, screenState: nil)
         } else {
-            return .device(serial: String(serialNumber), isOnline: isOnline)
+            return .device(serial: String(serialNumber), isOnline: isOnline, displaySpecs: nil, screenBrightness: nil, screenState: nil)
         }
     }
-    
+
     func serialNumber() -> String {
         switch self {
-        case .device(let serial, _):
+        case .device(let serial, _, _, _, _):
             return serial
-        case .emulator(let port, _):
+        case .emulator(let port, _, _, _):
             return "emulator-\(port)"
         }
     }
-    
+
     private static func parseEmulatorPortNumber<S: StringProtocol>(emulatorName: S) -> Int? {
         guard let portString = emulatorName.components(separatedBy: emulatorPortSeparator)[safeIndex: 1] else {
             return nil
@@ -551,18 +731,18 @@ extension Module: Equatable {
 extension Target: Equatable {
     public static func == (lhs: Target, rhs: Target) -> Bool {
         switch lhs {
-        case .device(let lhsSerial, _):
+        case .device(let lhsSerial, _, _, _, _):
             switch rhs {
-            case .device(let rhsSerial, _):
+            case .device(let rhsSerial, _, _, _, _):
                 return lhsSerial == rhsSerial
-            case .emulator(_, _):
+            case .emulator(_, _, _, _):
                 return false
             }
-        case .emulator(let lhsPort, _):
+        case .emulator(let lhsPort, _, _, _):
             switch rhs {
-            case .device(_, _):
+            case .device(_, _, _, _, _):
                 return false
-            case .emulator(let rhsPort, _):
+            case .emulator(let rhsPort, _, _, _):
                 return lhsPort == rhsPort
             }
         }
@@ -632,6 +812,112 @@ func parseInstallableModules(fromString string: String) -> [Module] {
         .sorted(by: { $0.name < $1.name })
 }
 
+enum PhysicalDeviceScreenState {
+    case LockedOn
+    case LockedOff
+    case UnlockedOn
+    case UnlockedOff
+}
+
+enum EmulatorScreenState {
+    case Locked
+    case Unlocked
+}
+
+struct DisplaySpecs {
+    let widthDefault: Int
+    let heightDefault: Int
+    let densityDefault: Int
+    let widthCurrent: Int
+    let heightCurrent: Int
+    let densityCurrent: Int
+}
+
+struct ScreenBrightness {
+    let brightnessMin: Int
+    let brightnessMax: Int
+    let brightnessCurrent: Int
+}
+
+func parsePhysicalDeviceScreenState(screenStateOutput: String) -> PhysicalDeviceScreenState? {
+    switch screenStateOutput.trimmingCharacters(in: .whitespacesAndNewlines) {
+    case "ON_LOCKED": return .LockedOn
+    case "OFF_LOCKED": return .LockedOff
+    case "ON_UNLOCKED": return .UnlockedOn
+    case "OFF_UNLOCKED": return .UnlockedOff
+    default: return nil
+    }
+}
+
+func parseEmulatorScreenState(screenStateOutput: String) -> EmulatorScreenState? {
+    switch screenStateOutput.trimmingCharacters(in: .whitespacesAndNewlines) {
+    case "false": return .Locked
+    case "true": return .Unlocked
+    default: return nil
+    }
+}
+
+func parseDisplaySpecsAndBrightness(displaySpecsAndBrightnessOutput: String) -> (DisplaySpecs?, ScreenBrightness?) {
+    let string = displaySpecsAndBrightnessOutput
+    guard let rangeOfBaseDisplayInfo = string.range(of: "mBaseDisplayInfo"),
+          let rangeOfOverrideDisplayInfo = string.range(of: "mOverrideDisplayInfo"),
+          let rangeOfBrightnessMin = string.range(of: "mScreenBrightnessRangeMinimum") else { return (nil, nil) }
+    let substringBaseDisplayInfo = string[rangeOfBaseDisplayInfo.upperBound..<rangeOfOverrideDisplayInfo.lowerBound]
+    let substringOverrideDisplayInfo = string[rangeOfOverrideDisplayInfo.upperBound..<rangeOfBrightnessMin.lowerBound]
+
+    guard
+        let widthDefaultString = substringBaseDisplayInfo.getPropertyValue(propertyName: "width", valueStartDelimiter: "=", valueEndDelimiter: ","),
+        let heightDefaultString = substringBaseDisplayInfo.getPropertyValue(propertyName: "height", valueStartDelimiter: "=", valueEndDelimiter: ","),
+        let densityDefaultString = substringBaseDisplayInfo.getPropertyValue(propertyName: "density", valueStartDelimiter: " ", valueEndDelimiter: " "),
+        let widthCurrentString = substringOverrideDisplayInfo.getPropertyValue(propertyName: "width", valueStartDelimiter: "=", valueEndDelimiter: ","),
+        let heightCurrentString = substringOverrideDisplayInfo.getPropertyValue(propertyName: "height", valueStartDelimiter: "=", valueEndDelimiter: ","),
+        let densityCurrentString = substringOverrideDisplayInfo.getPropertyValue(propertyName: "density", valueStartDelimiter: " ", valueEndDelimiter: " ")
+        else { return (nil, nil) }
+
+    guard
+        let widthDefault = Int(widthDefaultString),
+        let heightDefault = Int(heightDefaultString),
+        let densityDefault = Int(densityDefaultString),
+        let widthCurrent = Int(widthCurrentString),
+        let heightCurrent = Int(heightCurrentString),
+        let densityCurrent = Int(densityCurrentString)
+        else { return (nil, nil) }
+
+    let displayState = DisplaySpecs(widthDefault: widthDefault, heightDefault: heightDefault, densityDefault: densityDefault, widthCurrent: widthCurrent, heightCurrent: heightCurrent, densityCurrent: densityCurrent)
+
+    guard
+        let brightnessMinString = string.getPropertyValue(propertyName: "mScreenBrightnessRangeMinimum", valueStartDelimiter: "=", valueEndDelimiter: "\n"),
+        let brightnessMaxString = string.getPropertyValue(propertyName: "mScreenBrightnessRangeMaximum", valueStartDelimiter: "=", valueEndDelimiter: "\n"),
+        let brightnessCurrentString = string.getPropertyValue(propertyName: "mCurrentScreenBrightnessSetting", valueStartDelimiter: "=", valueEndDelimiter: "\n")
+        else { return (displayState, nil) }
+    guard
+        let brightnessMin = Int(brightnessMinString),
+        let brightnessMax = Int(brightnessMaxString),
+        let brightnessCurrent = Int(brightnessCurrentString)
+        else { return (displayState, nil) }
+
+    return (displayState, ScreenBrightness(brightnessMin: brightnessMin, brightnessMax: brightnessMax, brightnessCurrent: brightnessCurrent))
+}
+
+extension StringProtocol {
+    func getPropertyValue(propertyName: String, valueStartDelimiter: String, valueEndDelimiter: String) -> SubSequence? {
+        guard let rangeOfPropertyName = self.range(of: propertyName) else {
+            print("Unable to find range of property named \"\(propertyName)\"")
+            return nil
+        }
+        let substringOfPropertyValueWithDelimiters = self[rangeOfPropertyName.upperBound..<self.endIndex]
+        guard let startDelimiterEndIndex = substringOfPropertyValueWithDelimiters.range(of: valueStartDelimiter)?.upperBound else {
+            print("Unable to find start index of value")
+            return nil
+        }
+        let substringOfValueWithEndDelimiter = substringOfPropertyValueWithDelimiters[startDelimiterEndIndex..<substringOfPropertyValueWithDelimiters.endIndex]
+        let endIndex = substringOfValueWithEndDelimiter.range(of: valueEndDelimiter)?.lowerBound ?? self.endIndex
+        let substringOfValue = substringOfValueWithEndDelimiter[substringOfValueWithEndDelimiter.startIndex..<endIndex]
+
+        return substringOfValue
+    }
+}
+
 extension Substring {
     func dropPrefix(prefix: Substring) -> Substring {
         guard hasPrefix(prefix) else { return self }
@@ -645,4 +931,13 @@ extension Substring {
 func findLatestApk(projectDirectory: String, module: String) -> String? {
     let basePath = "\(projectDirectory)/\(module)/build/outputs/apk"
     return FileManager.default.fildLastCreatedFile(directory: basePath, fileExtension: "apk")
+}
+
+extension Collection {
+
+    /// Returns the element at the specified index if it is within bounds, otherwise nil.
+    /// Usave: if let item = array[safe: index] { ... }
+    subscript (safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
 }

@@ -1,5 +1,15 @@
 import Cocoa
 
+extension String {
+    /**
+        Converts Int to String representation, or if value is nil the default value. By default, the default value is empty string
+     */
+    init(_ optionalIntValue: Int?, `default`: String = "") {
+        guard let intValue = optionalIntValue else { self = `default`; return }
+        self = String(intValue)
+    }
+}
+
 class ViewController: NSViewController, XMLParserDelegate {
 
     @IBOutlet weak var currentProjectButton: NSButton!
@@ -12,8 +22,19 @@ class ViewController: NSViewController, XMLParserDelegate {
     @IBOutlet weak var widthTextField: NSTextField!
     @IBOutlet weak var heightTextField: NSTextField!
     @IBOutlet weak var densityTextField: NSTextField!
+    @IBOutlet weak var widthCurrentValue: NSTextField!
+    @IBOutlet weak var heightCurrentValue: NSTextField!
+    @IBOutlet weak var densityCurrentValue: NSTextField!
+    @IBOutlet weak var brightnessCurrentValue: NSTextField!
+    @IBOutlet weak var widthDefaultValue: NSTextField!
+    @IBOutlet weak var heightDefaultValue: NSTextField!
+    @IBOutlet weak var densityDefaultValue: NSTextField!
+    @IBOutlet weak var brightnessMinValue: NSTextField!
+    @IBOutlet weak var brightnessMaxValue: NSTextField!
+    @IBOutlet weak var screenLockSwitch: NSSwitch!
 
     private var androidHelperApi = AndroidHelperApi()
+    private var freezeControlScreenLockSwitchTimer: Timer? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +45,7 @@ class ViewController: NSViewController, XMLParserDelegate {
         androidHelperApi.refreshProject()
     }
 
+    private var prevScreenOn: Bool = false
     private func updateUi(state: State) {
         func variantsForModule(modules: [Module], moduleName: String?) -> [String] {
             guard let module = modules.first(where: { $0.name == moduleName }) else { return [] }
@@ -35,11 +57,33 @@ class ViewController: NSViewController, XMLParserDelegate {
             return String(shortName)
         }
 
+        func targetDisplaySpecs(target: Target?) -> DisplaySpecs? {
+            guard let target = target else { return nil }
+            switch target {
+            case .device(_, _, let displaySpecs, _, _):
+                return displaySpecs
+            case .emulator(_, _, let displaySpecs, _):
+                return displaySpecs
+            }
+        }
+
+        func targetScreenBrightness(target: Target?) -> ScreenBrightness? {
+            guard let target = target else { return nil }
+            switch target {
+            case .device(_, _, _, let screenBrightness, _):
+                return screenBrightness
+            case .emulator(_, _, _, _):
+                return nil
+            }
+        }
+
+        let selectedTarget = androidHelperApi.getSelectedTarget(state)
+
         currentProjectButton.title = projectNameFromPath(path: state.projectDirectory)
 
         targetsPopupButton.updateState(
             items: state.targets.map { $0.serialNumber() },
-            selectedItemTitle: state.selectedTarget?.serialNumber())
+            selectedItemTitle: selectedTarget?.serialNumber())
 
         clearCacheCheckbox.updateCheckedState(isChecked: state.cleanCacheEnabled)
         
@@ -50,6 +94,42 @@ class ViewController: NSViewController, XMLParserDelegate {
         buildVariantsPopupButton.updateState(
             items: variantsForModule(modules: state.modules, moduleName: state.selectedModuleName),
             selectedItemTitle: state.selectedBuildVariant)
+
+        widthCurrentValue.stringValue = String(targetDisplaySpecs(target: selectedTarget)?.widthCurrent, default: "--")
+        heightCurrentValue.stringValue = String(targetDisplaySpecs(target: selectedTarget)?.heightCurrent, default: "--")
+        densityCurrentValue.stringValue = String(targetDisplaySpecs(target: selectedTarget)?.densityCurrent, default: "--")
+
+        widthDefaultValue.stringValue = String(targetDisplaySpecs(target: selectedTarget)?.widthDefault, default: "--")
+        heightDefaultValue.stringValue = String(targetDisplaySpecs(target: selectedTarget)?.heightDefault, default: "--")
+        densityDefaultValue.stringValue = String(targetDisplaySpecs(target: selectedTarget)?.densityDefault, default: "--")
+
+        brightnessCurrentValue.stringValue = String(targetScreenBrightness(target: selectedTarget)?.brightnessCurrent, default: "--")
+        brightnessMinValue.stringValue = String(targetScreenBrightness(target: selectedTarget)?.brightnessMin, default: "--")
+        brightnessMaxValue.stringValue = String(targetScreenBrightness(target: selectedTarget)?.brightnessMax, default: "--")
+
+
+        var screenOn: Bool
+        var screenLockSwitchEnabled: Bool
+        switch selectedTarget {
+        case .device(_, _, _, _, let screenState):
+            screenOn = screenState == .UnlockedOn
+            screenLockSwitchEnabled = true
+        case .emulator(_, _, _, let screenState):
+            screenOn = screenState == .Unlocked
+            screenLockSwitchEnabled = true
+        case nil:
+            screenOn = false
+            screenLockSwitchEnabled = false
+        }
+
+        if screenOn != prevScreenOn {
+            prevScreenOn = screenOn
+            print("\(screenOn ? "ON" : "OFF")")
+        }
+        if freezeControlScreenLockSwitchTimer == nil {
+            screenLockSwitch.state = screenOn ? .on : .off
+        }
+        screenLockSwitch.isEnabled = screenLockSwitchEnabled
     }
     
     @IBAction func buildClicked(_ sender: Any) {
@@ -121,12 +201,12 @@ class ViewController: NSViewController, XMLParserDelegate {
         androidHelperApi.refreshProject()
     }
 
-    @IBAction func lockDeviceClicked(_ sender: Any) {
-        androidHelperApi.lockDevice()
-    }
-
-    @IBAction func unlockDeviceClicked(_ sender: Any) {
-        androidHelperApi.unlockDevice()
+    @IBAction func screenLockSwitchToggled(_ sender: NSSwitch) {
+        freezeControlScreenLockSwitchTimer?.invalidate()
+        freezeControlScreenLockSwitchTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false, block: { [weak self] _ in
+            self?.freezeControlScreenLockSwitchTimer = nil
+        })
+        androidHelperApi.setScreenOn(isOn: sender.state == .on)
     }
 
     @IBAction func smallFontClicked(_ sender: Any) {
@@ -193,6 +273,10 @@ class ViewController: NSViewController, XMLParserDelegate {
         androidHelperApi.setVolume(volume: 0)
     }
     
+    @IBAction func debug_getDisplayStateClicked(_ sender: Any) {
+        androidHelperApi.getDisplaySpecsAndBrightness()
+    }
+
     private func logln(_ text: String) {
         log("\(text)\n")
     }
