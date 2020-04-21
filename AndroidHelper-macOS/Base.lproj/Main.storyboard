@@ -706,7 +706,7 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="AndroidHelper_macOS" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="872" height="521"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="521"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QMG-1d-U7A">
@@ -842,17 +842,17 @@
                                 </connections>
                             </button>
                             <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eIK-PS-En5">
-                                <rect key="frame" x="20" y="98" width="674" height="327"/>
+                                <rect key="frame" x="20" y="98" width="802" height="327"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="ugD-Vw-D2V">
-                                    <rect key="frame" x="0.0" y="0.0" width="674" height="327"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="802" height="327"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="l3a-00-9HM">
-                                            <rect key="frame" x="0.0" y="0.0" width="674" height="327"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="802" height="327"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="minSize" width="674" height="327"/>
+                                            <size key="minSize" width="802" height="327"/>
                                             <size key="maxSize" width="832" height="10000000"/>
                                             <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                         </textView>
@@ -863,12 +863,12 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="Cso-C8-FOE">
-                                    <rect key="frame" x="658" y="0.0" width="16" height="327"/>
+                                    <rect key="frame" x="786" y="0.0" width="16" height="327"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Xe-0r-OEj">
-                                <rect key="frame" x="614.5" y="479" width="21" height="23"/>
+                                <rect key="frame" x="742.5" y="479" width="21" height="23"/>
                                 <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSRefreshTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" inset="2" id="eP1-fu-5gr">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -878,7 +878,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sWf-r9-46Z">
-                                <rect key="frame" x="643" y="482" width="209" height="17"/>
+                                <rect key="frame" x="771" y="482" width="209" height="17"/>
                                 <buttonCell key="cell" type="bevel" title="android-project-name" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="Huo-eZ-M7X">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" size="17" name="AppleBraille"/>
@@ -954,7 +954,7 @@
                                 </customSpacing>
                             </stackView>
                             <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LMF-zB-doO">
-                                <rect key="frame" x="20" y="8" width="797" height="52"/>
+                                <rect key="frame" x="20" y="8" width="907" height="52"/>
                                 <subviews>
                                     <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="x0f-1d-eBE">
                                         <rect key="frame" x="0.0" y="4" width="43" height="45"/>
@@ -1318,11 +1318,33 @@
                                             <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
                                     </stackView>
+                                    <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M03-g2-FIA">
+                                        <rect key="frame" x="805" y="19" width="102" height="14"/>
+                                        <subviews>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fdp-kt-gdS">
+                                                <rect key="frame" x="-2" y="-2" width="106" height="18"/>
+                                                <buttonCell key="cell" type="check" title="Clear on build" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="azm-Cr-cuf">
+                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="clearLogOnBuildCheckBoxToggled:" target="XfG-lQ-9wD" id="RXW-uY-akB"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="52" id="ZvX-2k-70f"/>
                                 </constraints>
                                 <visibilityPriorities>
+                                    <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
@@ -1351,10 +1373,11 @@
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CJd-2S-63g">
-                                <rect key="frame" x="702" y="169" width="150" height="256"/>
+                                <rect key="frame" x="830" y="169" width="150" height="256"/>
                                 <subviews>
                                     <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5yT-5w-QCv">
                                         <rect key="frame" x="0.0" y="240" width="50" height="16"/>
@@ -1728,6 +1751,7 @@
                         <outlet property="brightnessMinValue" destination="SA8-2E-J3T" id="q96-VX-Ch0"/>
                         <outlet property="buildVariantsPopupButton" destination="YtG-nT-IzO" id="Kah-gY-UPG"/>
                         <outlet property="clearCacheCheckbox" destination="atj-5u-1OL" id="R98-QN-Gje"/>
+                        <outlet property="clearLogOnBuildCheckBox" destination="fdp-kt-gdS" id="fvg-8F-Msp"/>
                         <outlet property="currentProjectButton" destination="sWf-r9-46Z" id="Wic-Z8-CFi"/>
                         <outlet property="densityCurrentValue" destination="fs4-JF-gck" id="hcT-xd-v9u"/>
                         <outlet property="densityDefaultValue" destination="LFe-M4-Pcw" id="mui-mW-uAn"/>
@@ -1747,7 +1771,7 @@
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="263" y="870.5"/>
+            <point key="canvasLocation" x="327" y="870.5"/>
         </scene>
     </scenes>
     <resources>

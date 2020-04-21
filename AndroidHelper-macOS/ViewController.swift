@@ -32,9 +32,11 @@ class ViewController: NSViewController, XMLParserDelegate {
     @IBOutlet weak var brightnessMinValue: NSTextField!
     @IBOutlet weak var brightnessMaxValue: NSTextField!
     @IBOutlet weak var screenLockSwitch: NSSwitch!
+    @IBOutlet weak var clearLogOnBuildCheckBox: NSButton!
 
     private var androidHelperApi = AndroidHelperApi()
     private var freezeControlScreenLockSwitchTimer: Timer? = nil
+    private var clearLogOnBuild = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +45,7 @@ class ViewController: NSViewController, XMLParserDelegate {
         androidHelperApi.dispatch(.setProjectDirectory(newProjectDirectory: "/Users/timojaask/projects/work/pluto-tv/pluto-tv-android"))
         androidHelperApi.refreshTargets()
         androidHelperApi.refreshProject()
+        clearLogOnBuildCheckBox.state = clearLogOnBuild ? .on : .off
     }
 
     private var prevScreenOn: Bool = false
@@ -133,10 +136,16 @@ class ViewController: NSViewController, XMLParserDelegate {
     }
     
     @IBAction func buildClicked(_ sender: Any) {
+        if clearLogOnBuild {
+            clearLog()
+        }
         androidHelperApi.build()
     }
     
     @IBAction func buildAndRunClicked(_ sender: Any) {
+        if clearLogOnBuild {
+            clearLog()
+        }
         androidHelperApi.buildAndRun()
     }
     
@@ -275,6 +284,9 @@ class ViewController: NSViewController, XMLParserDelegate {
     
     @IBAction func debug_getDisplayStateClicked(_ sender: Any) {
         androidHelperApi.getDisplaySpecsAndBrightness()
+    }
+    @IBAction func clearLogOnBuildCheckBoxToggled(_ sender: NSButton) {
+        clearLogOnBuild = sender.state == .on
     }
 
     private func logln(_ text: String) {
