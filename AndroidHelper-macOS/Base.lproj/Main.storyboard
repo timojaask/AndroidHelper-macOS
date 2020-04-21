@@ -1319,10 +1319,10 @@
                                         </customSpacing>
                                     </stackView>
                                     <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M03-g2-FIA">
-                                        <rect key="frame" x="805" y="19" width="102" height="14"/>
+                                        <rect key="frame" x="805" y="8" width="102" height="36"/>
                                         <subviews>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fdp-kt-gdS">
-                                                <rect key="frame" x="-2" y="-2" width="106" height="18"/>
+                                                <rect key="frame" x="-2" y="20" width="106" height="18"/>
                                                 <buttonCell key="cell" type="check" title="Clear on build" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="azm-Cr-cuf">
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -1331,11 +1331,23 @@
                                                     <action selector="clearLogOnBuildCheckBoxToggled:" target="XfG-lQ-9wD" id="RXW-uY-akB"/>
                                                 </connections>
                                             </button>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kbE-ns-MMD">
+                                                <rect key="frame" x="-2" y="-2" width="103" height="18"/>
+                                                <buttonCell key="cell" type="check" title="Stop on build" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="hkn-FQ-v9J">
+                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="stopOnBuildCheckBoxToggled:" target="XfG-lQ-9wD" id="1W2-GL-DLV"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <visibilityPriorities>
                                             <integer value="1000"/>
+                                            <integer value="1000"/>
                                         </visibilityPriorities>
                                         <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
                                     </stackView>
@@ -1763,6 +1775,7 @@
                         <outlet property="logTextView" destination="l3a-00-9HM" id="e8S-ZE-44g"/>
                         <outlet property="modulesPopupButton" destination="QMG-1d-U7A" id="rPe-zR-kxQ"/>
                         <outlet property="screenLockSwitch" destination="bHN-d8-ztV" id="vLD-P7-aja"/>
+                        <outlet property="stopOnBuildCheckBox" destination="kbE-ns-MMD" id="36X-CW-0in"/>
                         <outlet property="targetsPopupButton" destination="v2W-hp-gX7" id="Alh-ST-yLy"/>
                         <outlet property="widthCurrentValue" destination="0ou-bo-qWd" id="iGD-eG-hjM"/>
                         <outlet property="widthDefaultValue" destination="R6k-tj-BaS" id="1xh-Wz-B6B"/>

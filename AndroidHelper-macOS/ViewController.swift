@@ -33,6 +33,7 @@ class ViewController: NSViewController, XMLParserDelegate {
     @IBOutlet weak var brightnessMaxValue: NSTextField!
     @IBOutlet weak var screenLockSwitch: NSSwitch!
     @IBOutlet weak var clearLogOnBuildCheckBox: NSButton!
+    @IBOutlet weak var stopOnBuildCheckBox: NSButton!
 
     private var androidHelperApi = AndroidHelperApi()
     private var freezeControlScreenLockSwitchTimer: Timer? = nil
@@ -89,6 +90,8 @@ class ViewController: NSViewController, XMLParserDelegate {
             selectedItemTitle: selectedTarget?.serialNumber())
 
         clearCacheCheckbox.updateCheckedState(isChecked: state.cleanCacheEnabled)
+
+        stopOnBuildCheckBox.updateCheckedState(isChecked: state.stopOnBuildEnabled)
         
         modulesPopupButton.updateState(
             items: state.modules.map { $0.name },
@@ -285,8 +288,14 @@ class ViewController: NSViewController, XMLParserDelegate {
     @IBAction func debug_getDisplayStateClicked(_ sender: Any) {
         androidHelperApi.getDisplaySpecsAndBrightness()
     }
+
     @IBAction func clearLogOnBuildCheckBoxToggled(_ sender: NSButton) {
         clearLogOnBuild = sender.state == .on
+    }
+
+    @IBAction func stopOnBuildCheckBoxToggled(_ sender: NSButton) {
+        let stopOnBuildEnabled = sender.state == .on
+        androidHelperApi.dispatch(.setStopOnBuildEnabled(newStopOnBuildEnabledValue: stopOnBuildEnabled))
     }
 
     private func logln(_ text: String) {

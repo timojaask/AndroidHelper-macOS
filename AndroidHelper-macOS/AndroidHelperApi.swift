@@ -5,6 +5,7 @@ struct State {
     var targets: [Target] = []
     var selectedTargetIndex: UInt? = nil
     var cleanCacheEnabled: Bool = false
+    var stopOnBuildEnabled: Bool = true
     var modules: [Module] = []
     var selectedModuleName: String? = nil
     var selectedBuildVariant: String? = nil
@@ -17,6 +18,7 @@ enum Action {
     case setTargets(newTargets: [Target])
     case setSelectedTarget(newSelectedTarget: Target?)
     case setClearCacheEnabled(newClearCacheEnabledValue: Bool)
+    case setStopOnBuildEnabled(newStopOnBuildEnabledValue: Bool)
     case setModules(newModules: [Module])
     case setSelectedModuleName(newSelectedModuleName: String?)
     case setSelectedBuildVariant(newSelectedBuildVariant: String?)
@@ -92,6 +94,8 @@ class AndroidHelperApi {
             newState.selectedTargetIndex = UInt(newSelectedTargetIndex)
         case .setClearCacheEnabled(let newClearCacheEnabledValue):
             newState.cleanCacheEnabled = newClearCacheEnabledValue
+        case .setStopOnBuildEnabled(let newStopOnBuildEnabledValue):
+            newState.stopOnBuildEnabled = newStopOnBuildEnabledValue
         case .setModules(let newModules):
             // TODO: This case is getting complicated. Make it more human readable
             newState.modules = newModules
@@ -135,6 +139,9 @@ class AndroidHelperApi {
             completion?(false)
             return
         }
+        if state.stopOnBuildEnabled {
+            stopApp()
+        }
         let projectDirectory = state.projectDirectory
         let cleanCache = state.cleanCacheEnabled
         let command = Commands.build(buildVariant: buildVariant, cleanCache: cleanCache, project: moduleName)
@@ -155,6 +162,9 @@ class AndroidHelperApi {
         guard let moduleName = getSelectedModule(), let buildVariant = getSelectedBuildVariant(), let target = getSelectedTarget(state) else {
             completion?(false)
             return
+        }
+        if state.stopOnBuildEnabled {
+            stopApp()
         }
         let projectDirectory = state.projectDirectory
         let command = Commands.buildAndInstall(buildVariant: buildVariant, cleanCache: state.cleanCacheEnabled, project: moduleName, target: target)
